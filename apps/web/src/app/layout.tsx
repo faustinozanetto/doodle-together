@@ -5,6 +5,7 @@ import React from 'react';
 import { Inter } from 'next/font/google';
 import { Metadata } from 'next';
 import { siteConfig } from '@config/config';
+import Providers from './providers';
 
 const interFont = Inter({
   variable: '--font-sans',
@@ -68,7 +69,9 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={interFont.variable} suppressHydrationWarning>
-      <body className="bg-background font-sans antialiased transition-colors">{children}</body>
+      <body className="bg-background font-sans antialiased transition-colors">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
