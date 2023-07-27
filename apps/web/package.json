@@ -15,8 +15,9 @@
   },
   "dependencies": {
     "@doodle-together/ui": "*",
+    "@hookform/resolvers": "3.1.1",
+    "zod": "3.21.4",
     "next": "13.4.11",
-    "next-auth": "^4.22.3",
     "next-theme-kit": "0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
