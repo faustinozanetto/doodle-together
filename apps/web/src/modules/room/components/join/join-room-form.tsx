@@ -18,15 +18,17 @@ import {
 } from '@modules/ui/components/forms/forms';
 import { Input } from '@modules/ui/components/forms/input';
 import { PasswordInput } from '@modules/ui/components/forms/password-input';
+import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
 
 export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
 
 type JoinRoomFormProps = {
   onSubmit: (formData: JoinRoomFormData) => void;
+  isPending: boolean;
 };
 
 const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
-  const { onSubmit } = props;
+  const { onSubmit, isPending } = props;
 
   const form = useForm<JoinRoomFormData>({
     resolver: zodResolver(joinRoomValidationSchema),
@@ -81,7 +83,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button aria-label="Join Room" type="submit" className="w-full" icon={isPending && <LoadingIcon />}>
           Join Room
         </Button>
       </form>

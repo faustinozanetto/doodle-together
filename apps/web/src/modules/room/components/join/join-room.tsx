@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useTransition } from 'react';
 import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
@@ -12,20 +12,25 @@ const JoinRoom: React.FC = () => {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleRoomJoin = async (formData: JoinRoomFormData) => {
-    const response = await fetch('/api/room/join', { method: 'POST', body: JSON.stringify(formData) });
+  const [isPending, startTransition] = useTransition();
 
-    const data: ApiResponseData = await response.json();
-    if (!response.ok) {
-      let content = 'Could not join room!';
-      if ('message' in data) content = data.message;
+  const handleRoomJoin = (formData: JoinRoomFormData) => {
+    startTransition(async () => {
+      const response = await fetch('/api/room/join', { method: 'POST', body: JSON.stringify(formData) });
 
-      toast({ variant: 'danger', content });
-      return;
-    }
+      const data: ApiResponseData = await response.json();
 
-    toast({ variant: 'success', content: 'Room joined successfully!' });
-    router.push(`/room/${formData.id}`);
+      if (!response.ok) {
+        let content = 'Could not join room!';
+        if ('message' in data) content = data.message;
+
+        toast({ variant: 'danger', content });
+        return;
+      }
+
+      toast({ variant: 'success', content: 'Room joined successfully!' });
+      router.push(`/room/${formData.id}`);
+    });
   };
 
   return (
@@ -34,7 +39,7 @@ const JoinRoom: React.FC = () => {
         <h1 className="text-2xl font-semibold leading-none tracking-tight">Join Room</h1>
         <p className="text-sm">Unleash Your Artistic Bond. Doodle Together - Enter a Room!</p>
       </div>
-      <JoinRoomForm onSubmit={handleRoomJoin} />
+      <JoinRoomForm onSubmit={handleRoomJoin} isPending={isPending} />
       {/* Create Room */}
       <div className="flex flex-col gap-2 text-center">
         <span className="text-xs font-semibold">OR</span>

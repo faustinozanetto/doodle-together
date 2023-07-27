@@ -18,15 +18,17 @@ import {
 } from '@modules/ui/components/forms/forms';
 import { Input } from '@modules/ui/components/forms/input';
 import { PasswordInput } from '@modules/ui/components/forms/password-input';
+import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
 
 export type CreateRoomFormData = z.infer<typeof createRoomValidationSchema>;
 
 type CreateRoomFormProps = {
   onSubmit: (data: CreateRoomFormData) => void;
+  isPending: boolean;
 };
 
 const CreateRoomForm: React.FC<CreateRoomFormProps> = (props) => {
-  const { onSubmit } = props;
+  const { onSubmit, isPending } = props;
 
   const form = useForm<CreateRoomFormData>({
     resolver: zodResolver(createRoomValidationSchema),
@@ -66,7 +68,7 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = (props) => {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button aria-label="Create Room" type="submit" className="w-full" icon={isPending && <LoadingIcon />}>
           Create Room
         </Button>
       </form>

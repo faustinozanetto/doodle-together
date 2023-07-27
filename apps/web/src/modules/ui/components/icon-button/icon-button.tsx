@@ -35,7 +35,7 @@ export const iconButtonVariants = cva(
 
 export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof iconButtonVariants> & {
-    icon: React.ReactElement | JSX.Element;
+    icon: React.ReactNode;
   };
 
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
