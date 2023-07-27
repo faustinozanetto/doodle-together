@@ -1,5 +1,5 @@
 import React from 'react';
-import JoinRoom from '@modules/room/components/join/join-room';
+import CreateRoom from '@modules/room/components/create/create-room';
 
 const CreateRoomPage: React.FC = () => {
   return <CreateRoom />;

@@ -31,7 +31,6 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
   const form = useForm<JoinRoomFormData>({
     resolver: zodResolver(joinRoomValidationSchema),
     mode: 'all',
-    defaultValues: {},
   });
 
   return (

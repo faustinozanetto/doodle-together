@@ -17,3 +17,8 @@ export const joinRoomValidationSchema = z.object({
   password: roomPasswordValidationSchema,
   username: usernameValidationSchema,
 });
+
+export const createRoomValidationSchema = z.object({
+  password: roomPasswordValidationSchema,
+  username: usernameValidationSchema,
+});

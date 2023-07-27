@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Form, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { z } from 'zod';
 
-import { joinRoomValidationSchema } from '@modules/room/lib/room.validations';
+import { createRoomValidationSchema } from '@modules/room/lib/room.validations';
 import { Button } from '@modules/ui/components/button/button';
 import {
   FormField,
@@ -17,33 +17,35 @@ import {
   FormMessage,
 } from '@modules/ui/components/forms/forms';
 import { Input } from '@modules/ui/components/forms/input';
+import { PasswordInput } from '@modules/ui/components/forms/password-input';
 
-export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
+export type CreateRoomFormData = z.infer<typeof createRoomValidationSchema>;
 
-type JoinRoomFormProps = {
-  onSubmit: (data: JoinRoomFormData) => void;
+type CreateRoomFormProps = {
+  onSubmit: (data: CreateRoomFormData) => void;
 };
 
-const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
+const CreateRoomForm: React.FC<CreateRoomFormProps> = (props) => {
   const { onSubmit } = props;
 
-  const form = useForm({
-    resolver: zodResolver(joinRoomValidationSchema),
+  const form = useForm<CreateRoomFormData>({
+    resolver: zodResolver(createRoomValidationSchema),
+    mode: 'all',
   });
 
   return (
-    <Form {...form}>
-      <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+    <FormProvider {...form}>
+      <form className="space-y-2" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
-          name="roomId"
+          name="password"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel>Room ID</FormLabel>
+              <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="3DA243K" {...field} />
+                <PasswordInput placeholder="3DA243K" {...field} />
               </FormControl>
-              <FormDescription>Room to Join</FormDescription>
+              <FormDescription>Room Password</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -56,7 +58,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
             <FormItem className="w-full">
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="FunnyGuy" {...field} />
+                <Input placeholder="Funny Guy" {...field} />
               </FormControl>
               <FormDescription>Your username</FormDescription>
               <FormMessage />
@@ -65,11 +67,11 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
         />
 
         <Button type="submit" className="w-full">
-          Join Room
+          Create Room
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 };
 
-export default JoinRoomForm;
+export default CreateRoomForm;
