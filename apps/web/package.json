@@ -16,7 +16,7 @@
   "dependencies": {
     "@doodle-together/database": "*",
     "zod": "3.21.4",
-    "next": "13.4.11",
+    "next": "13.4.12",
     "next-theme-kit": "0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
