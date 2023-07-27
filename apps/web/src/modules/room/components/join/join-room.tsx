@@ -3,7 +3,7 @@
 import React from 'react';
 import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 import Link from 'next/link';
-import { buttonVariants } from '@doodle-together/ui';
+import { buttonVariants } from '@modules/ui/components/button/button';
 
 const JoinRoom: React.FC = () => {
   const handleRoomJoin = async (data: JoinRoomFormData) => {};
@@ -15,8 +15,9 @@ const JoinRoom: React.FC = () => {
         <p className="text-sm">Unleash Your Artistic Bond. Doodle Together - Enter a Room!</p>
       </div>
       <JoinRoomForm onSubmit={handleRoomJoin} />
+      {/* Create Room */}
       <div className="flex flex-col gap-2 text-center">
-        <span className="text-sm font-semibold">OR</span>
+        <span className="text-xs font-semibold">OR</span>
         <Link href="/create" className={buttonVariants({ variant: 'outline' })}>
           Create Room
         </Link>

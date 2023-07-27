@@ -1,5 +1,5 @@
-import { Button } from '@doodle-together/ui';
 import ThemeToggler from '@modules/theme/components/theme-toggler';
+import { Button } from '@modules/ui/components/button/button';
 
 export default async function HomePage() {
   return (

@@ -1,5 +1,4 @@
 import '../styles/global.css';
-import '@doodle-together/ui/styles.css';
 
 import React from 'react';
 import { Inter } from 'next/font/google';

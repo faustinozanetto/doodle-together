@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { IconButton } from '@doodle-together/ui';
 import { useTheme } from 'next-theme-kit';
+import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 
 const ThemeToggler: React.FC = () => {
   const { theme, setTheme } = useTheme();
