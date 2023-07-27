@@ -34,6 +34,8 @@
   --popover-foreground: 215 20.2% 65.1%;
 }
 
-* {
-  @apply border-border;
+@layer base {
+  * {
+    @apply border-border;
+  }
 }

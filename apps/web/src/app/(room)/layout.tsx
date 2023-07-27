@@ -9,7 +9,7 @@ const RoomLayout: React.FC<RoomLayoutProps> = (props) => {
   const { children } = props;
 
   return (
-    <main className="flex items-center justify-center min-h-screen px-4 sm:px-0 relative">
+    <main className="flex items-center justify-center min-h-screen relative">
       <div className="absolute top-2 right-2">
         <ThemeToggler />
       </div>

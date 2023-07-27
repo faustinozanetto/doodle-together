@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button, Form } from '@doodle-together/ui';
+import { Button, Form, buttonVariants } from '@doodle-together/ui';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -9,6 +9,7 @@ import { joinRoomValidationSchema } from '../lib/room.validations';
 import { z } from 'zod';
 import { FormField } from '@doodle-together/ui';
 import { FormItem, FormLabel, FormControl, Input, FormDescription, FormMessage } from '@doodle-together/ui';
+import Link from 'next/link';
 
 export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
 
@@ -57,7 +58,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
         />
 
         <Button type="submit" className="w-full">
-          Join
+          Join Room
         </Button>
       </form>
     </Form>
