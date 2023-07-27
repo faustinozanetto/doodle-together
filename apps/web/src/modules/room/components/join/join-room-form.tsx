@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Form, useForm } from 'react-hook-form';
+import { Form, FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { z } from 'zod';
@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from '@modules/ui/components/forms/forms';
 import { Input } from '@modules/ui/components/forms/input';
+import { PasswordInput } from '@modules/ui/components/forms/password-input';
 
 export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
 
@@ -27,13 +28,15 @@ type JoinRoomFormProps = {
 const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
   const { onSubmit } = props;
 
-  const form = useForm({
+  const form = useForm<JoinRoomFormData>({
     resolver: zodResolver(joinRoomValidationSchema),
+    mode: 'all',
+    defaultValues: {},
   });
 
   return (
-    <Form {...form}>
-      <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+    <FormProvider {...form}>
+      <form className="space-y-2" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="id"
@@ -56,7 +59,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
             <FormItem className="w-full">
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="3DA243K" {...field} />
+                <PasswordInput placeholder="3DA243K" {...field} />
               </FormControl>
               <FormDescription>Room Password</FormDescription>
               <FormMessage />
@@ -83,7 +86,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
           Join Room
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 };
 
