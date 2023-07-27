@@ -5,20 +5,27 @@ import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
+import { ApiResponseData } from '@modules/common/types/common.types';
+import { useRouter } from 'next/navigation';
 
 const JoinRoom: React.FC = () => {
+  const router = useRouter();
   const { toast } = useToast();
 
-  const handleRoomJoin = async (data: JoinRoomFormData) => {
-    const response = await fetch('/api/room/join', { method: 'POST', body: JSON.stringify(data) });
+  const handleRoomJoin = async (formData: JoinRoomFormData) => {
+    const response = await fetch('/api/room/join', { method: 'POST', body: JSON.stringify(formData) });
 
+    const data: ApiResponseData = await response.json();
     if (!response.ok) {
-      toast({ variant: 'danger', content: 'Could not join room!' });
+      let content = 'Could not join room!';
+      if ('message' in data) content = data.message;
+
+      toast({ variant: 'danger', content });
       return;
     }
 
-    const responseData = await response.json();
     toast({ variant: 'success', content: 'Room joined successfully!' });
+    router.push(`/room/${formData.id}`);
   };
 
   return (

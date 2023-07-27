@@ -22,7 +22,7 @@ import { PasswordInput } from '@modules/ui/components/forms/password-input';
 export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
 
 type JoinRoomFormProps = {
-  onSubmit: (data: JoinRoomFormData) => void;
+  onSubmit: (formData: JoinRoomFormData) => void;
 };
 
 const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
