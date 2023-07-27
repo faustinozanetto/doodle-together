@@ -1,0 +1,39 @@
+{
+  "name": "doodlee-together",
+  "version": "0.0.1",
+  "description": "Draw with friends online.",
+  "author": {
+    "name": "Faustino Zanetto",
+    "email": "zanettofaustino@gmail.com"
+  },
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "clean": "turbo clean",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
+    "eslint-config-doodle-together": "*",
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.3.0",
+    "turbo": "^1.10.7"
+  },
+  "lint-staged": {
+    "extends": "./lint-staged.config.ts"
+  },
+  "packageManager": "^yarn@1.22.19"
+}
