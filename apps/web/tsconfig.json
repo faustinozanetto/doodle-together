@@ -1,0 +1,26 @@
+{
+  "extends": "@doodle-together/typescript-config/nextjs.json",
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next-auth.d.ts", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "allowJs": true,
+    "jsx": "preserve",
+    "baseUrl": "./src",
+    "types": ["node"],
+    "paths": {
+      "@config/*": ["config/*"],
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"],
+      "@lib/*": ["lib/*"],
+      "@styles/*": ["styles/*"],
+      "@utils/*": ["utils/*"],
+      "@modules/*": ["modules/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
+  }
+}
