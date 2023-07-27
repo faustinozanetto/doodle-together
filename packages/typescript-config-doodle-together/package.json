@@ -1,0 +1,16 @@
+{
+  "name": "@doodle-together/typescript-config",
+  "version": "0.0.1",
+  "description": "Draw with friends online.",
+  "author": {
+    "name": "Faustino Zanetto",
+    "email": "zanettofaustino@gmail.com"
+  },
+  "license": "MIT",
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "ui-library.json",
+    "node16.json"
+  ]
+}
