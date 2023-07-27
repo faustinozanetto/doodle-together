@@ -31,7 +31,7 @@ const JoinRoom: React.FC = () => {
       {/* Create Room */}
       <div className="flex flex-col gap-2 text-center">
         <span className="text-xs font-semibold">OR</span>
-        <Link href="/create" className={buttonVariants({ variant: 'outline' })}>
+        <Link href="/room/create" className={buttonVariants({ variant: 'outline' })}>
           Create Room
         </Link>
       </div>
