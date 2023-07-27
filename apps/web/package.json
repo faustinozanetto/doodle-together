@@ -14,6 +14,7 @@
     "lint": "next lint --fix"
   },
   "dependencies": {
+    "@doodle-together/ui": "*",
     "next": "13.4.11",
     "react": "18.2.0",
     "react-dom": "18.2.0"

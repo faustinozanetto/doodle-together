@@ -13,8 +13,8 @@ module.exports = {
     },
     extend: {
       colors: {
-        primary: colors.orange,
-        secondary: colors.amber,
+        primary: colors.cyan,
+        secondary: colors.blue,
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         border: 'hsl(var(--border))',
