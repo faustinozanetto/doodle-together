@@ -7,6 +7,11 @@ import { reducer } from './reducer';
 const initialState: RoomContextData = {
   state: {
     tool: 'pencil',
+    toolCustomization: {
+      color: '#ababab',
+      size: 'medium',
+      style: 'solid',
+    },
   },
   dispatch: () => {},
 };

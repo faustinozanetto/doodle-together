@@ -8,6 +8,33 @@ export const reducer = (state: RoomContextState, action: RoomActions): RoomConte
         tool: action.payload.tool,
       };
     }
+    case RoomActionType.SET_TOOL_COLOR: {
+      return {
+        ...state,
+        toolCustomization: {
+          ...state.toolCustomization,
+          color: action.payload.color,
+        },
+      };
+    }
+    case RoomActionType.SET_TOOL_SIZE: {
+      return {
+        ...state,
+        toolCustomization: {
+          ...state.toolCustomization,
+          size: action.payload.size,
+        },
+      };
+    }
+    case RoomActionType.SET_TOOL_STYLE: {
+      return {
+        ...state,
+        toolCustomization: {
+          ...state.toolCustomization,
+          style: action.payload.style,
+        },
+      };
+    }
 
     default:
       throw new Error('The action you requested does not exists!');
