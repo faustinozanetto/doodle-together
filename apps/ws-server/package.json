@@ -12,11 +12,15 @@
     "build": "rimraf build && tsc",
     "start": "yarn build && node dist/index.js"
   },
+  "engines": {
+    "node": ">=15"
+  },
   "dependencies": {
     "@doodle-together/database": "*",
     "express": "4.18.2",
     "cors": "2.8.5",
-    "socket.io": "4.7.1"
+    "socket.io": "4.7.1",
+    "dotenv": "16.3.1"
   },
   "devDependencies": {
     "@doodle-together/typescript-config": "*",

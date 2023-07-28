@@ -4,11 +4,13 @@ import http from 'http';
 import { Server as SocketServer } from 'socket.io';
 import { JoinRoomSocketData } from 'types/server.types';
 
+require('dotenv').config();
+
 const app = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_ENDPOINT,
   })
 );
 
@@ -35,6 +37,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(4000, () => {
-  console.log(`Server running on port 4000`);
+const PORT = process.env.PORT || 4000;
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

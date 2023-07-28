@@ -11,13 +11,13 @@ const RoomCanvas: React.FC = () => {
       <canvas
         id="canvas"
         ref={canvasRef}
+        className="cursor-pointer"
         onMouseDown={handleOnMouseDown}
         width={0}
         height={0}
-        className="cursor-pointer"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgb(217, 226, 233) 1px, transparent 1px), linear-gradient(rgb(217, 226, 233) 1px, transparent 1px)',
+            'linear-gradient(to right, hsl(var(--border)), 1px, transparent 1px), linear-gradient(hsl(var(--border)), 1px, transparent 1px)',
           backgroundSize: '10px 10px',
         }}
       />

@@ -7,7 +7,7 @@ import RoomCustomizationStyle from './room-customization-style';
 
 const RoomCustomization: React.FC = () => {
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border">
+    <div className="bg-foreground p-2 rounded-lg shadow-lg border pointer-events-auto">
       <RoomCustomizationColor />
       <RoomCustomizationSize />
       <RoomCustomizationStyle />

@@ -1,9 +1,9 @@
 'use client';
 
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
-import { RoomActionType, RoomToolSize, RoomToolStyle } from '@modules/room/types/room.types';
+import { RoomActionType, RoomToolStyle } from '@modules/room/types/room.types';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
-import { Separator } from '@radix-ui/react-separator';
+import { Separator } from '@modules/ui/components/separator/separator';
 import React from 'react';
 
 const TOOL_STYLES: ToolStyleOptionProps[] = [
@@ -106,7 +106,7 @@ const ToolStyleOption: React.FC<ToolStyleOptionProps> = (props) => {
 
 const RoomCustomizationStyle: React.FC = () => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
       <span className="font-bold">Style</span>
       <Separator />
       <div className="flex gap-1 mx-auto">

@@ -67,7 +67,7 @@ const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
 
 const RoomTools: React.FC = () => {
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-2 flex">
+    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-2 flex pointer-events-auto">
       {TOOLS.map((tool, index) => {
         return (
           <>
