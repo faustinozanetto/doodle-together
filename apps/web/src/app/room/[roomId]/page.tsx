@@ -1,5 +1,6 @@
 import { prisma } from '@doodle-together/database';
 import Room from '@modules/room/components/room';
+import { RoomProvider } from '@modules/room/context/room-context';
 import { notFound } from 'next/navigation';
 
 type RoomPageProps = {
@@ -20,7 +21,11 @@ const RoomPage: React.FC<RoomPageProps> = async (props) => {
     return notFound();
   }
 
-  return <Room />;
+  return (
+    <RoomProvider>
+      <Room />
+    </RoomProvider>
+  );
 };
 
 export default RoomPage;

@@ -1,5 +1,4 @@
 import React from 'react';
-import ThemeToggler from '@modules/theme/components/theme-toggler';
 import Navbar from '@modules/navbar/components/navbar';
 
 type RoomLayoutProps = {
@@ -10,9 +9,9 @@ const RoomLayout: React.FC<RoomLayoutProps> = (props) => {
   const { children } = props;
 
   return (
-    <main className="flex flex-col items-center justify-center h-screen">
+    <main className="flex flex-col min-h-screen">
       <Navbar />
-      {children}
+      <div className="flex items-center justify-center flex-1">{children}</div>
     </main>
   );
 };

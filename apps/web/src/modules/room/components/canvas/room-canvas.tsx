@@ -13,7 +13,7 @@ const RoomCanvas: React.FC = () => {
       style={{
         backgroundImage:
           'linear-gradient(to right, rgb(217, 226, 233) 1px, transparent 1px), linear-gradient(rgb(217, 226, 233) 1px, transparent 1px)',
-        backgroundSize: '20px 20px',
+        backgroundSize: '10px 10px',
       }}
     />
   );
