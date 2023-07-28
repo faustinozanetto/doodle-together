@@ -5,10 +5,16 @@ export type CreateRoomApiResponse = {
   room: Room;
 };
 
+/* Canvas Draw */
+export type CanvasPoint = {
+  x: number;
+  y: number;
+};
+
 /* Room Context Types */
 export type RoomTool = 'pencil' | 'eraser' | 'clear';
 
-export type RoomToolSize = 'small' | 'medium' | 'large';
+export type RoomToolSize = 'small' | 'medium' | 'large' | 'extra-large';
 
 export type RoomToolStyle = 'solid' | 'dashed' | 'dotted';
 

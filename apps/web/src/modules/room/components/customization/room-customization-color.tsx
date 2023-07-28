@@ -3,14 +3,15 @@
 import React from 'react';
 import RoomCustomizationColorPreselected from './room-customization-color-preselected';
 import RoomCustomizationColorCustom from './room-customization-color-custom';
+import { Separator } from '@modules/ui/components/separator/separator';
 
 const RoomCustomizationColor: React.FC = () => {
   return (
-    <div className="flex flex-col">
-      <span className="font-bold border-b mb-1">Color</span>
+    <div className="flex flex-col gap-2">
+      <span className="font-bold">Color</span>
+      <Separator />
       {/* Preselected */}
       <RoomCustomizationColorPreselected />
-      <div className="border-b my-2" />
       {/* Custom */}
       <RoomCustomizationColorCustom />
     </div>

@@ -3,6 +3,7 @@
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 import { RoomActionType, RoomToolSize } from '@modules/room/types/room.types';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
+import { Separator } from '@radix-ui/react-separator';
 import React from 'react';
 
 const TOOL_SIZES: ToolSizeOptionProps[] = [
@@ -57,6 +58,24 @@ const TOOL_SIZES: ToolSizeOptionProps[] = [
       </svg>
     ),
   },
+  {
+    size: 'extra-large',
+    icon: (
+      <svg
+        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <line x1="7" y1="4" x2="17" y2="20" />
+        <line x1="17" y1="4" x2="7" y2="20" />
+      </svg>
+    ),
+  },
 ];
 
 type ToolSizeOptionProps = {
@@ -88,8 +107,9 @@ const ToolSizeOption: React.FC<ToolSizeOptionProps> = (props) => {
 const RoomCustomizationSize: React.FC = () => {
   return (
     <div className="flex flex-col">
-      <span className="font-bold border-b mb-1">Size</span>
-      <div className="grid grid-cols-3 gap-1 mx-auto">
+      <span className="font-bold">Size</span>
+      <Separator />
+      <div className="flex gap-1 mx-auto">
         {TOOL_SIZES.map((size) => {
           return <ToolSizeOption key={size.size} {...size} />;
         })}

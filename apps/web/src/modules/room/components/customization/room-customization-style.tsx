@@ -3,6 +3,7 @@
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 import { RoomActionType, RoomToolSize, RoomToolStyle } from '@modules/room/types/room.types';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
+import { Separator } from '@radix-ui/react-separator';
 import React from 'react';
 
 const TOOL_STYLES: ToolStyleOptionProps[] = [
@@ -106,8 +107,9 @@ const ToolStyleOption: React.FC<ToolStyleOptionProps> = (props) => {
 const RoomCustomizationStyle: React.FC = () => {
   return (
     <div className="flex flex-col">
-      <span className="font-bold border-b mb-1">Style</span>
-      <div className="grid grid-cols-3 gap-1 mx-auto">
+      <span className="font-bold">Style</span>
+      <Separator />
+      <div className="flex gap-1 mx-auto">
         {TOOL_STYLES.map((style) => {
           return <ToolStyleOption key={style.style} {...style} />;
         })}

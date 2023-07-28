@@ -5,7 +5,7 @@ import { RoomActionType } from '@modules/room/types/room.types';
 import { Button } from '@modules/ui/components/button/button';
 import React from 'react';
 
-const PRESELECTED_COLORS: PreselectedColorProps[] = [
+const PRESELECTED_COLORS: ToolColorOptionProps[] = [
   { color: '#FFB6C1', label: 'LightPink' },
   { color: '#FFC0CB', label: 'Pink' },
   { color: '#FFD700', label: 'Gold' },
@@ -20,12 +20,12 @@ const PRESELECTED_COLORS: PreselectedColorProps[] = [
   { color: '#DDA0DD', label: 'Plum' },
 ];
 
-type PreselectedColorProps = {
+type ToolColorOptionProps = {
   color: string;
   label: string;
 };
 
-const PreselectedColor: React.FC<PreselectedColorProps> = (props) => {
+const ToolColorOption: React.FC<ToolColorOptionProps> = (props) => {
   const { color, label } = props;
   const { state, dispatch } = useRoomContext();
 
@@ -52,7 +52,7 @@ const RoomCustomizationColorPreselected: React.FC = () => {
   return (
     <div className="grid grid-cols-4 gap-1">
       {PRESELECTED_COLORS.map((color) => {
-        return <PreselectedColor key={color.color} {...color} />;
+        return <ToolColorOption key={color.color} {...color} />;
       })}
     </div>
   );

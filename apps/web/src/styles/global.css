@@ -38,4 +38,31 @@
   * {
     @apply border-border;
   }
+
+  .color-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+  }
+
+  .color-input::-webkit-color-swatch {
+    @apply rounded-md border-none;
+  }
+
+  .color-input::-moz-color-swatch {
+    @apply rounded-md border-none;
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
 }
