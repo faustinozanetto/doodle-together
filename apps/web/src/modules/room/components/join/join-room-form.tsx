@@ -60,7 +60,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
             <FormItem className="w-full">
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="3DA243K" {...field} />
+                <PasswordInput {...field} />
               </FormControl>
               <FormDescription>Room Password</FormDescription>
               <FormMessage />

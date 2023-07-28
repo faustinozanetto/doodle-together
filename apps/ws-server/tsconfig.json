@@ -1,8 +1,15 @@
 {
   "extends": "@doodle-together/typescript-config/node16.json",
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
     "allowJs": true,
     "baseUrl": "./src",
     "types": ["node"],

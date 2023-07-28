@@ -7,6 +7,7 @@ import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { ApiResponseData } from '@modules/common/types/common.types';
 import { useRouter } from 'next/navigation';
+import { socket } from '@modules/socket/lib/socket.lib';
 
 const JoinRoom: React.FC = () => {
   const router = useRouter();
@@ -28,7 +29,10 @@ const JoinRoom: React.FC = () => {
         return;
       }
 
+      const { id, username } = formData;
+
       toast({ variant: 'success', content: 'Room joined successfully!' });
+      socket.emit('join-room', { username, roomId: id });
       router.push(`/room/${formData.id}`);
     });
   };
