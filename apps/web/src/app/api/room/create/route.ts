@@ -2,7 +2,6 @@ import { ApiResponseData } from '@modules/common/types/common.types';
 import { createRoomValidationSchema } from '@modules/room/lib/room.validations';
 import { NextRequest, NextResponse } from 'next/server';
 import { CreateRoomApiResponse } from '@modules/room/types/room.types';
-import { hashRoomPassword } from '@modules/room/lib/room-password.lib';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();

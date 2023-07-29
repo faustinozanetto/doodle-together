@@ -1,9 +1,9 @@
-import { Room } from '@doodle-together/database';
-
+import { Room } from '@doodle-together/types';
 import * as bcrypt from 'bcrypt';
 
 export const SALT_OR_ROUNDS = 10;
 
+/*
 export const hashRoomPassword = async (password: Room['password']): Promise<string> => {
   const hash = await bcrypt.hash(password, SALT_OR_ROUNDS);
   return hash;
@@ -16,3 +16,4 @@ export const validateRoomPassword = async (
   const valid = await bcrypt.compare(password, hashedPassword);
   return valid;
 };
+*/

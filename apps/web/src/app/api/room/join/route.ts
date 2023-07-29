@@ -1,5 +1,4 @@
 import { ApiResponseData } from '@modules/common/types/common.types';
-import { validateRoomPassword } from '@modules/room/lib/room-password.lib';
 import { joinRoomValidationSchema } from '@modules/room/lib/room.validations';
 import { JoinRoomApiResponse } from '@modules/room/types/room.types';
 import { NextRequest, NextResponse } from 'next/server';
