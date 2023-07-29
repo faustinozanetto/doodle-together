@@ -11,17 +11,11 @@ export class SocketAdapter extends IoAdapter {
   }
 
   createIOServer(port: number, options?: ServerOptions) {
-    const cors = {
-      origin: [`http://localhost:3000`],
-    };
-
-    this.logger.log('Configuring SocketIO server with custom CORS options', {
-      cors,
-    });
-
     const optionsWithCORS: ServerOptions = {
       ...options,
-      cors,
+      cors: {
+        origin: [process.env.NODE_ENV === 'production' ? 'http://localhost:3000' : 'https://doodletogether.vercel.app'],
+      },
     };
 
     const jwtService = this.app.get(JwtService);

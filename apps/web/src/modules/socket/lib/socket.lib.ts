@@ -8,7 +8,7 @@ type SocketConnectionPayload = {
 
 export const createSocketConnection = ({ state, actions }: SocketConnectionPayload): Socket => {
   console.log({ state });
-  const socket = io('http://localhost:4000/rooms', {
+  const socket = io(`${process.env.BACKEND_ENDPOINT}/rooms`, {
     auth: {
       token: state.accessToken,
     },
