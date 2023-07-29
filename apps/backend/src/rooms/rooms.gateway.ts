@@ -1,17 +1,17 @@
 import {
-  MessageBody,
+  OnGatewayInit,
+  WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
-  SubscribeMessage,
-  WebSocketGateway,
   WebSocketServer,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { RoomJoinDto } from './dto/join-room.dto';
-import { RoomLeaveDto } from './dto/leave-room.dto';
-import { Logger, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Namespace, Socket } from 'socket.io';
+import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
+import { JoinRoomDto } from './dto/join-room.dto';
 
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({
@@ -21,27 +21,34 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   private readonly logger = new Logger(RoomsGateway.name);
   constructor(private readonly roomsService: RoomsService) {}
 
-  @WebSocketServer() server: Server;
+  @WebSocketServer() io: Namespace;
 
-  afterInit(server: Socket) {
+  afterInit() {
     this.logger.log('Room Gateway initialized successfully!');
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
+    const sockets = this.io.sockets;
+
     this.logger.log(`WS Client with id: ${client.id} connected!`);
+    this.logger.debug(`Number of connected sockets: ${sockets.size}`);
   }
 
-  handleDisconnect(client: Socket) {
-    console.log('Room Gateway client disonnected! ID: ' + client.id);
+  async handleDisconnect(client: Socket) {
+    const sockets = this.io.sockets;
+
+    this.logger.log(`Disconnected socket id: ${client.id}`);
+    this.logger.debug(`Number of connected sockets: ${sockets.size}`);
   }
 
-  @SubscribeMessage('room_join')
-  handleJoinRoom(@MessageBody() data: RoomJoinDto) {
-    console.log({ data });
-  }
+  @SubscribeMessage('join_room')
+  async joinRoom(@MessageBody() data: JoinRoomDto, @ConnectedSocket() client: Socket): Promise<void> {
+    const { roomId, username } = data;
 
-  @SubscribeMessage('room_leave')
-  handleLeaveRoom(@MessageBody() data: RoomLeaveDto) {
-    console.log({ data });
+    const join = await this.roomsService.joinRoom({ roomId, username });
+
+    await client.join(roomId);
+
+    this.logger.debug(`User : ${join.userId} joined room with id: ${roomId}`);
   }
 }

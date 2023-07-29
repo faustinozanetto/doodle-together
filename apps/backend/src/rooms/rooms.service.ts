@@ -3,6 +3,7 @@ import { RoomsRepository } from './rooms.repository';
 import { CreateRoomInputFields } from './types';
 import { DeleteRoomDto } from './dto/delete-room.dto';
 import { JoinRoomDto } from './dto/join-room.dto';
+import { generateUserId } from 'src/utils/utils';
 
 @Injectable()
 export class RoomsService {
@@ -23,6 +24,16 @@ export class RoomsService {
   }
 
   async joinRoom(input: JoinRoomDto) {
-    const joined = await this.roomsRepository.addUseToRoom(input);
+    const { roomId, username } = input;
+    const userId = generateUserId();
+
+    this.logger.log({ userId, username, roomId });
+
+    const room = await this.roomsRepository.addUserToRoom({ roomId, userId, username });
+
+    this.logger.debug(`Joining room id: ${room.roomId} and userId: ${userId}`);
+
+    return { userId, room };
+    //   const joined = await this.roomsRepository.addUseToRoom();
   }
 }

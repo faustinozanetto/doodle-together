@@ -15,7 +15,6 @@ const RoomCanvas: React.FC = () => {
   const onPointDraw = useCallback(
     (point: CanvasPoint, prevPoint: CanvasPoint | null) => {
       if (!socket) return;
-
       socket.emit('draw-point', { roomId: state.roomId, point });
     },
     [state.roomId]
@@ -25,7 +24,6 @@ const RoomCanvas: React.FC = () => {
 
   useEffect(() => {
     if (!socket) return;
-
     socket.on('canvas-update', (data) => {
       console.log('Update Canvas');
     });

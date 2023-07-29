@@ -15,9 +15,9 @@ const JoinRoom: React.FC = () => {
   const [isPending, startTransition] = useTransition();
 
   const handleRoomJoin = (formData: JoinRoomFormData) => {
-    startTransition(async () => {
-      if (!socket) return;
+    if (!socket) return;
 
+    startTransition(async () => {
       const response = await fetch('/api/room/join', { method: 'POST', body: JSON.stringify(formData) });
 
       const data: ApiResponseData = await response.json();
@@ -33,7 +33,7 @@ const JoinRoom: React.FC = () => {
       const { id, username } = formData;
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
-      socket.emit('room_join', { username, roomId: id });
+      socket.emit('join_room', { username, roomId: id });
     });
   };
 

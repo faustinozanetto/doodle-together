@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useEffect, useReducer, useState } from 'react';
+import React, { createContext } from 'react';
 import { Socket } from 'socket.io-client';
 
 import { io } from 'socket.io-client';
@@ -11,20 +11,13 @@ type SocketProviderProps = {
   children: React.ReactNode;
 };
 
+const socket = io('http://localhost:4000/rooms', {
+  withCredentials: true,
+  transports: ['websocket'],
+});
+
 export const SocketProvider: React.FC<SocketProviderProps> = (props) => {
   const { children } = props;
 
-  const [socketClient, setSocketClient] = useState<Socket | null>(null);
-
-  useEffect(() => {
-    const socket = io('http://localhost:4000', { withCredentials: true, transports: ['websocket'] });
-    socket.on('connect', () => {
-      console.log('Socket client connected!');
-    });
-    setSocketClient(socket);
-
-    return () => socket.disconnect();
-  }, [setSocketClient]);
-
-  return <SocketContext.Provider value={{ socket: socketClient }}>{children}</SocketContext.Provider>;
+  return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;
 };
