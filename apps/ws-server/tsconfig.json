@@ -11,6 +11,8 @@
     "skipLibCheck": true,
     "noImplicitAny": true,
     "allowJs": true,
+    "outDir": "dist",
+    "rootDir": "src",
     "baseUrl": "./src",
     "types": ["node"],
     "strictNullChecks": true

@@ -9,8 +9,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon",
-    "build": "rimraf build && tsc",
-    "start": "yarn build && node dist/index.js"
+    "build": "rimraf dist && tsc",
+    "start": "node dist/index.js"
   },
   "engines": {
     "node": ">=15"
