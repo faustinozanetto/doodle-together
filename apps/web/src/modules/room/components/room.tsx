@@ -20,12 +20,6 @@ const Room: React.FC<RoomProps> = (props) => {
 
   const currentState = useSnapshot(state);
 
-  const { dispatch } = useRoomContext();
-
-  useEffect(() => {
-    dispatch({ type: RoomActionType.SET_ROOM, payload: { roomId } });
-  }, [roomId]);
-
   return (
     <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
       <RoomCanvas />

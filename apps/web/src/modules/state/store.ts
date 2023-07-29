@@ -1,5 +1,6 @@
 import { CanvasPoint, Room, User } from '@doodle-together/types';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
+import { RoomDrawPointPayload } from '@modules/room/types/room.types';
 import { createSocketConnection } from '@modules/socket/lib/socket.lib';
 import { Socket } from 'socket.io-client';
 import { proxy, ref } from 'valtio';
@@ -41,10 +42,10 @@ export const actions = {
   setIsLoading: (isLoading: boolean) => {
     state.isLoading = isLoading;
   },
-  sendDrawPoint: (point: CanvasPoint) => {
+  sendDrawPoint: (data: Omit<RoomDrawPointPayload, 'context'>) => {
     if (!state.room) return;
 
-    state.socket?.emit('draw_point', { roomId: state.room.roomId, point });
+    state.socket?.emit('draw_point', { roomId: state.room.roomId, point: data });
   },
   reset: (): void => {
     state.socket?.disconnect();

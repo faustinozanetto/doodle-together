@@ -67,12 +67,40 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
   }
 
+  @SubscribeMessage('client_ready')
+  async clientReady(@ConnectedSocket() client: SocketWithAuth): Promise<void> {
+    const { roomId } = client;
+
+    // The non owner users need to emit a socket to the owner to request the canvas state to be sent
+    const room = await this.roomsService.findRoom({ roomId });
+
+    this.io.to(room.room.ownerId).emit('get_canvas_state');
+  }
+
+  @SubscribeMessage('send_canvas_state')
+  async sendCanvasState(
+    @MessageBody() data: { canvasState: string; roomId: string },
+    @ConnectedSocket() client: SocketWithAuth
+  ): Promise<void> {
+    const { roomId } = client;
+
+    const room = await this.roomsService.findRoom({ roomId });
+
+    const users = [];
+    for (const userId in room.room.users) {
+      users.push({ userId, username: room.room.users[userId] });
+    }
+
+    const lastUser = users[users.length - 1];
+    if (!lastUser) return;
+
+    this.io.to(lastUser.userId).emit('canvas_state_from_server', data.canvasState);
+  }
+
   @SubscribeMessage('draw_point')
-  async drawPoint(@MessageBody() data: DrawPointDto, @ConnectedSocket() client: SocketWithAuth): Promise<void> {
+  async drawPoint(@MessageBody() data: DrawPointDto): Promise<void> {
     const { roomId, point } = data;
 
-    this.logger.log(`Room draw point with id: ${data.roomId} and point ${JSON.stringify(data.point)}`);
-
-    this.io.to(roomId).emit('update_canvas', { point });
+    this.io.to(roomId).emit('update_canvas_state', { point });
   }
 }

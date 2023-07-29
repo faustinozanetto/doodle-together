@@ -1,9 +1,10 @@
 import { ElementRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { CanvasPoint } from '../types/room.types';
 import { useRoomContext } from './use-room-context';
-import { getToolSizeToWidth } from '../lib/room.lib';
+import { CanvasPoint } from '@doodle-together/types';
+import { drawPoint } from '../lib/room-draw.lib';
+import { RoomDrawPointPayload } from '../types/room.types';
 
-export const useRoomDraw = (onPointDraw: (point: CanvasPoint, prevPoint: CanvasPoint | null) => void) => {
+export const useRoomDraw = (onPointDraw: (data: RoomDrawPointPayload) => void) => {
   const { state } = useRoomContext();
 
   const [mouseDown, setMouseDown] = useState<boolean>(false);
@@ -29,28 +30,11 @@ export const useRoomDraw = (onPointDraw: (point: CanvasPoint, prevPoint: CanvasP
     return context;
   };
 
-  const drawPoint = (point: CanvasPoint, context: CanvasRenderingContext2D) => {
+  const drawEraser = (point: CanvasPoint) => {
     if (!previousPoint.current) return;
 
-    const { toolCustomization } = state;
-    // Setup style.
-    context.globalCompositeOperation = 'source-over';
-    context.strokeStyle = toolCustomization.color;
-    context.lineWidth = getToolSizeToWidth(toolCustomization.size);
-    context.lineJoin = 'round';
-    context.lineCap = 'round';
-
-    const startPoint: CanvasPoint = previousPoint.current ?? point;
-
-    // Draw
-    context.beginPath();
-    context.moveTo(startPoint.x, startPoint.y);
-    context.lineTo(point.x, point.y);
-    context.stroke();
-  };
-
-  const drawEraser = (point: CanvasPoint, context: CanvasRenderingContext2D) => {
-    if (!previousPoint.current) return;
+    const context = getCanvasContext();
+    if (!context) return;
 
     // Setup style.
     context.globalCompositeOperation = 'destination-out';
@@ -65,8 +49,11 @@ export const useRoomDraw = (onPointDraw: (point: CanvasPoint, prevPoint: CanvasP
     context.stroke();
   };
 
-  const handleCanvasDraw = (event: MouseEvent, context: CanvasRenderingContext2D) => {
+  const handleCanvasDraw = (event: MouseEvent) => {
     if (!canvasRef.current) return;
+
+    const context = getCanvasContext();
+    if (!context) return;
 
     const { tool } = state;
 
@@ -80,11 +67,21 @@ export const useRoomDraw = (onPointDraw: (point: CanvasPoint, prevPoint: CanvasP
 
     // Pencil draw logic
     if (tool === 'pencil') {
-      drawPoint(currentPoint, context);
-      onPointDraw(currentPoint, previousPoint.current);
+      const { toolCustomization } = state;
+      const drawPointData: RoomDrawPointPayload = {
+        point: currentPoint,
+        prevPoint: previousPoint.current,
+        color: toolCustomization.color,
+        size: toolCustomization.size,
+        context,
+      };
+
+      drawPoint(drawPointData);
+      onPointDraw(drawPointData);
+
       previousPoint.current = currentPoint;
     } else if (tool === 'eraser') {
-      drawEraser(currentPoint, context);
+      drawEraser(currentPoint);
       previousPoint.current = currentPoint;
     } else if (tool === 'clear') {
       context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -94,10 +91,7 @@ export const useRoomDraw = (onPointDraw: (point: CanvasPoint, prevPoint: CanvasP
   const handleOnMouseMove = (event: MouseEvent) => {
     if (!mouseDown) return;
 
-    const context = getCanvasContext();
-    if (!context) return;
-
-    handleCanvasDraw(event, context);
+    handleCanvasDraw(event);
   };
 
   const handleOnMouseDown = useCallback(() => {
@@ -133,5 +127,5 @@ export const useRoomDraw = (onPointDraw: (point: CanvasPoint, prevPoint: CanvasP
     };
   }, [mouseDown]);
 
-  return { wrapperRef, canvasRef, handleOnMouseDown };
+  return { wrapperRef, canvasRef, handleOnMouseDown, drawPoint };
 };

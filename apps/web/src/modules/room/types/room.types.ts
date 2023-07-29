@@ -1,4 +1,4 @@
-import { Room } from '@doodle-together/types';
+import { CanvasPoint, Room } from '@doodle-together/types';
 import { ActionMap } from '@modules/common/types/common.types';
 
 export type CreateRoomApiResponse = {
@@ -9,6 +9,15 @@ export type CreateRoomApiResponse = {
 export type JoinRoomApiResponse = {
   room: Room;
   accessToken: string;
+};
+
+/* Room Draw */
+export type RoomDrawPointPayload = {
+  point: CanvasPoint;
+  prevPoint: CanvasPoint | null;
+  color: RoomToolCustomization['color'];
+  size: RoomToolCustomization['size'];
+  context: CanvasRenderingContext2D;
 };
 
 /* Room Context Types */
@@ -25,7 +34,6 @@ export type RoomToolCustomization = {
 };
 
 export type RoomContextState = {
-  roomId: string;
   tool: RoomTool;
   toolCustomization: RoomToolCustomization;
 };
@@ -36,7 +44,6 @@ export type RoomContextData = {
 };
 
 export enum RoomActionType {
-  SET_ROOM,
   SET_TOOL,
   SET_TOOL_COLOR,
   SET_TOOL_SIZE,
@@ -44,9 +51,6 @@ export enum RoomActionType {
 }
 
 export type RoomPayload = {
-  [RoomActionType.SET_ROOM]: {
-    roomId: string;
-  };
   [RoomActionType.SET_TOOL]: {
     tool: RoomTool;
   };

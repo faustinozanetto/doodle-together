@@ -11,6 +11,8 @@ import { JwtService } from '@nestjs/jwt';
 import { RemoveUserFromRoomDto } from './dto/remove-user-to-room.dto';
 import { AddUserToRoomDto } from './dto/add-user-to-room.dto';
 import { RoomResponse } from './responses/room-response';
+import { FindRoomDto } from './dto/find-room.dto';
+import { Room } from '@doodle-together/types';
 
 @Injectable()
 export class RoomsService {
@@ -46,6 +48,11 @@ export class RoomsService {
   async deleteRoom(input: DeleteRoomDto): Promise<DeleteRoomResponse> {
     const deleted = await this.roomsRepository.deleteRoom(input);
     return { deleted };
+  }
+
+  async findRoom(input: FindRoomDto): Promise<RoomResponse> {
+    const room = await this.roomsRepository.findRoom({ roomId: input.roomId });
+    return { room };
   }
 
   async joinRoom(input: JoinRoomDto): Promise<JoinRoomResponse> {
