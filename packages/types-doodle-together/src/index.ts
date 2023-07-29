@@ -1,6 +1,11 @@
 export type Room = {
   roomId: string;
-  users: User[];
+  ownerId: string;
+  users: RoomUsers;
+};
+
+export type RoomUsers = {
+  [userId: string]: string;
 };
 
 export type User = {

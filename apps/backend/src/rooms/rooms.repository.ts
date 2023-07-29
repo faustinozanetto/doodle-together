@@ -2,37 +2,31 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
-import { CreateRoomDto } from './dto/create-room.dto';
-import { DeleteRoomDto } from './dto/delete-room.dto';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import { AddUserToRoomDto } from './dto/add-user-to-room.dto';
-import { FindRoomDto } from './dto/find-room.dto';
-import { FindRoomUsersDto } from './dto/find-room-users.dto';
-import { Room, User } from '@doodle-together/types';
-import { RemoveUserFromRoomDto } from './dto/remove-user-to-room.dto';
-import { generateRoomId } from 'src/utils/utils';
+import { Room } from '@doodle-together/types';
 
 @Injectable()
 export class RoomsRepository {
   private readonly logger = new Logger(RoomsRepository.name);
 
-  constructor(configService: ConfigService, @InjectRedis() private readonly redis: Redis) {}
+  constructor(private configService: ConfigService, @InjectRedis() private readonly redis: Redis) {}
 
-  async createRoom(input: CreateRoomDto): Promise<Room> {
-    const roomId = generateRoomId();
-
-    const room: Room = {
+  async createRoom({ userId, roomId }: { userId: string; roomId: string }): Promise<Room> {
+    const room = {
       roomId,
-      users: [],
+      ownerId: userId,
+      users: {},
     };
 
     this.logger.log(`Creating new room: ${JSON.stringify(room, null, 2)}`);
 
     const key = `rooms:${roomId}`;
+    const roomExpireDate = this.configService.get<string>('ROOM_EXPIRES');
 
     try {
-      // TODO: set expiry date in command
-      await this.redis.set(key, JSON.stringify(room));
+      // await this.redis.call('JSON.SET', key, '.', JSON.stringify(flattenedRoom));
+      await this.redis.hmset(key, 'roomId', room.roomId, 'ownerId', room.ownerId, 'users', JSON.stringify(room.users));
+
       return room;
     } catch (error) {
       this.logger.error(`Failed to create room ${JSON.stringify(room)}\n${error}`);
@@ -40,97 +34,104 @@ export class RoomsRepository {
     }
   }
 
-  async deleteRoom(input: DeleteRoomDto): Promise<boolean> {
-    const { roomId } = input;
+  async deleteRoom({ roomId }: { roomId: string }): Promise<boolean> {
     const key = `rooms:${roomId}`;
 
     this.logger.log(`Deleting room: ${key}`);
 
     try {
-      await this.redis.del(key);
+      await this.redis.call('JSON.DEL', key);
       return true;
     } catch (error) {
-      this.logger.error(`Failed to delete room ${key}\n${error}`);
+      this.logger.error(`Failed to delete room ${roomId}\n${error}`);
       throw new InternalServerErrorException();
     }
   }
 
-  async findRoom(input: FindRoomDto): Promise<Room> {
-    const { roomId } = input;
+  async findRoom({ roomId }: { roomId: string }): Promise<Room> {
     const key = `rooms:${roomId}`;
 
     this.logger.log(`Trying to find room with id: ${key}`);
 
     try {
-      const result = await this.redis.get(key);
-      return JSON.parse(result) as Room;
+      //  const room = (await this.redis.call('JSON.GET', key, '.')) as string;
+      const room = await this.redis.hgetall(key);
+      this.logger.verbose(room);
+      this.logger.log({ roomId, room });
+
+      return {
+        roomId: room.roomId,
+        ownerId: room.ownerId,
+        users: JSON.parse(room.users),
+      };
     } catch (error) {
-      this.logger.error(`Failed to find room with id: ${key}\n${error}`);
-      throw new InternalServerErrorException();
+      this.logger.error(`Failed to find room with id: ${roomId}\n${error}`);
+      throw new InternalServerErrorException(`Failed to find room with id: ${roomId}`);
     }
   }
 
-  async addUserToRoom(input: AddUserToRoomDto): Promise<Room> {
-    const { roomId, userId, username } = input;
-
-    const roomKey = `rooms:${roomId}`;
-    const userKey = `user:${userId}`;
-
+  async addUserToRoom({
+    roomId,
+    userId,
+    username,
+  }: {
+    roomId: string;
+    userId: string;
+    username: string;
+  }): Promise<Room> {
     this.logger.log(`Trying to add user with id: ${userId} to room with id: ${roomId}`);
 
-    const user = {
-      userId,
-      username,
-    };
+    const key = `rooms:${roomId}`;
+    //  const usersPath = `.users.${userId}`;
 
     try {
-      await this.redis.set(userKey, JSON.stringify(user));
-      await this.redis.sadd(`${roomKey}:users`, userId);
+      //await this.redis.call('JSON.SET', key, usersPath, JSON.stringify(username));
+      const roomData = await this.redis.hgetall(key);
+      const room: Room = {
+        roomId: roomData.roomId,
+        ownerId: roomData.ownerId,
+        users: JSON.parse(roomData.users),
+      };
 
-      return this.findRoom({ roomId });
+      // Add the user to the room's users object
+      room.users[userId] = username;
+
+      this.logger.log({ room });
+
+      // Update the room data in Redis
+      await this.redis.hset(key, 'users', JSON.stringify(room.users));
+
+      return room;
     } catch (error) {
       this.logger.error(`Failed to add user with id: ${userId} to room with id: ${roomId}`, error);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(`Failed to add user with id: ${userId} to room with id: ${roomId}`);
     }
   }
 
-  async removeUserFromRoom(input: RemoveUserFromRoomDto): Promise<Room> {
-    const { roomId, userId } = input;
-
-    const roomKey = `rooms:${roomId}`;
-    const userKey = `user:${userId}`;
+  async removeUserFromRoom({ roomId, userId }: { roomId: string; userId: string }): Promise<Room> {
+    const key = `rooms:${roomId}`;
 
     this.logger.log(`Trying to remove user with id: ${userId} to room with id: ${roomId}`);
 
     try {
-      await this.redis.hdel(roomKey, userKey);
-      await this.redis.srem(`${roomKey}:users`, userId);
+      // await this.redis.call('JSON.DEL', roomKey, usersPath);
+      const roomData = await this.redis.hgetall(key);
+      const room: Room = {
+        roomId: roomData.roomId,
+        ownerId: roomData.ownerId,
+        users: JSON.parse(roomData.users),
+      };
 
-      return this.findRoom({ roomId });
+      // Remove the user from the room's users object
+      delete room.users[userId];
+
+      // Update the room data in Redis
+      await this.redis.hset(key, 'users', JSON.stringify(room.users));
+
+      return room;
     } catch (error) {
       this.logger.error(`Failed to remove user with id: ${userId} to room with id: ${roomId}`, error);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async findRoomUsers(input: FindRoomUsersDto): Promise<User[]> {
-    const { roomId } = input;
-
-    const roomKey = `rooms:${roomId}`;
-    try {
-      const userIds = await this.redis.smembers(`${roomKey}:users`);
-      const users: User[] = [];
-
-      for (const userId of userIds) {
-        const userKey = `user:${userId}`;
-        const data = await this.redis.get(userKey);
-        users.push(JSON.parse(data));
-      }
-
-      return users;
-    } catch (error) {
-      this.logger.error(`Failed to find room users for roomId: ${roomId}`, error);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(`Failed to remove user with id: ${userId} to room with id: ${roomId}`);
     }
   }
 }

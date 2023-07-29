@@ -53,19 +53,10 @@ export async function POST(request: NextRequest) {
   }
 
   const data = await response.json();
-  const { room, token } = data;
+  const { room, accessToken } = data;
 
-  const returnData = NextResponse.json<ApiResponseData<JoinRoomApiResponse>>({
+  return NextResponse.json<ApiResponseData<JoinRoomApiResponse>>({
     success: true,
-    data: { room, token },
+    data: { room, accessToken },
   });
-
-  returnData.cookies.set({
-    name: 'auth',
-    value: token,
-    httpOnly: true,
-    maxAge: 60 * 60,
-  });
-
-  return returnData;
 }

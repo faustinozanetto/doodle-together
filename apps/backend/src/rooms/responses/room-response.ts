@@ -1,6 +1,5 @@
 import { Room } from '@doodle-together/types';
 
-export class JoinRoomResponse {
+export class RoomResponse {
   room: Room;
-  accessToken: string;
 }

@@ -10,3 +10,11 @@ export type ActionMap<M extends { [index: string]: unknown }> = {
         payload: M[Key];
       };
 };
+
+export type TokenPayload = {
+  iat: number;
+  exp: number;
+  sub: string;
+  roomId: string;
+  username: string;
+};

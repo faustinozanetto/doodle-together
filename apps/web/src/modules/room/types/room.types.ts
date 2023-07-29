@@ -3,12 +3,12 @@ import { ActionMap } from '@modules/common/types/common.types';
 
 export type CreateRoomApiResponse = {
   room: Room;
-  token: string;
+  accessToken: string;
 };
 
 export type JoinRoomApiResponse = {
   room: Room;
-  token: string;
+  accessToken: string;
 };
 
 /* Room Context Types */

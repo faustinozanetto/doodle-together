@@ -1,26 +1,23 @@
 'use client';
 
-import React, { useContext, useTransition } from 'react';
+import React, { useTransition } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { ApiResponseData } from '@modules/common/types/common.types';
 import { CreateRoomApiResponse } from '@modules/room/types/room.types';
-import { SocketContext } from '@modules/socket/context/socket.context';
 import { useRouter } from 'next/navigation';
+import { actions } from '@modules/state/store';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
-  const { socket } = useContext(SocketContext);
 
   const [isPending, startTransition] = useTransition();
 
   const handleRoomCreate = (formData: CreateRoomFormData) => {
-    if (!socket) return;
-
     startTransition(async () => {
       const response = await fetch('/api/room/create', { method: 'POST', body: JSON.stringify(formData) });
 
@@ -35,9 +32,11 @@ const CreateRoom: React.FC = () => {
       }
 
       const { data: responseData } = data;
+      const { room, accessToken } = responseData;
+      actions.setAccessToken(accessToken);
+      actions.setRoom(room);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
-
       router.push(`/room/${responseData.room.roomId}`);
     });
   };

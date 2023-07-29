@@ -1,26 +1,23 @@
 'use client';
 
-import React, { useContext, useTransition } from 'react';
+import React, { useTransition } from 'react';
 import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { ApiResponseData } from '@modules/common/types/common.types';
-import { SocketContext } from '@modules/socket/context/socket.context';
 import { useRouter } from 'next/navigation';
 import { JoinRoomApiResponse } from '@modules/room/types/room.types';
+import { actions } from '@modules/state/store';
 
 const JoinRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
-  const { socket } = useContext(SocketContext);
 
   const [isPending, startTransition] = useTransition();
 
   const handleRoomJoin = (formData: JoinRoomFormData) => {
-    if (!socket) return;
-
     startTransition(async () => {
       const response = await fetch('/api/room/join', { method: 'POST', body: JSON.stringify(formData) });
 
@@ -35,6 +32,9 @@ const JoinRoom: React.FC = () => {
       }
 
       const { data: responseData } = data;
+      const { room, accessToken } = responseData;
+      actions.setAccessToken(accessToken);
+      actions.setRoom(room);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
       router.push(`/room/${responseData.room.roomId}`);

@@ -5,33 +5,30 @@ import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 
-import { SocketContext } from '@modules/socket/context/socket.context';
 import { CanvasPoint } from '@doodle-together/types';
+import { actions, state } from '@modules/state/store';
 
 const RoomCanvas: React.FC = () => {
-  const { state } = useRoomContext();
-  const { socket } = useContext(SocketContext);
+  const { state: roomState } = useRoomContext();
 
   const onPointDraw = useCallback(
     (point: CanvasPoint, prevPoint: CanvasPoint | null) => {
-      if (!socket) return;
-      socket.emit('draw_point', { roomId: state.roomId, point });
+      actions.sendDrawPoint(point);
     },
-    [state.roomId]
+    [roomState.roomId]
   );
 
-  const { wrapperRef, canvasRef, handleOnMouseDown } = useRoomDraw(onPointDraw);
-
   useEffect(() => {
-    if (!socket) return;
-    socket.on('update_canvas', (data) => {
-      console.log('Update Canvas', data);
+    state.socket?.on('update_canvas', (data) => {
+      console.log('Update canvas ' + JSON.stringify(data));
     });
 
     return () => {
-      socket.off('update_canvas');
+      state.socket?.off('update_canvas');
     };
-  }, [canvasRef, state.roomId]);
+  }, [state.socket]);
+
+  const { wrapperRef, canvasRef, handleOnMouseDown } = useRoomDraw(onPointDraw);
 
   return (
     <div ref={wrapperRef} className="h-full w-full">

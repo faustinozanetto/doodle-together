@@ -8,6 +8,8 @@ import RoomCustomization from './customization/room-customization';
 import RoomUsers from './users/room-users';
 import { useRoomContext } from '../hooks/use-room-context';
 import { RoomActionType } from '../types/room.types';
+import { actions, state } from '@modules/state/store';
+import { useSnapshot } from 'valtio';
 
 type RoomProps = {
   roomId: string;
@@ -15,6 +17,8 @@ type RoomProps = {
 
 const Room: React.FC<RoomProps> = (props) => {
   const { roomId } = props;
+
+  const currentState = useSnapshot(state);
 
   const { dispatch } = useRoomContext();
 
@@ -30,7 +34,7 @@ const Room: React.FC<RoomProps> = (props) => {
       <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
         {/* Top */}
         <div className="flex justify-between">
-          <RoomUsers />
+          <RoomUsers users={currentState.room?.users} />
           <RoomCustomization />
         </div>
 

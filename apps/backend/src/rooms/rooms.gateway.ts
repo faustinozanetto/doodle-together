@@ -8,7 +8,7 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Namespace, Socket } from 'socket.io';
+import { Namespace } from 'socket.io';
 import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { DrawPointDto } from './dto/draw-point.dto';
@@ -45,16 +45,16 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.debug(`userID: ${userId} joined roomId: ${roomId}`);
     this.logger.debug(`Total clients connected to roomId '${roomId}': ${connectedClients}`);
 
-    const { updatedRoom } = await this.roomsService.addUserToRoom({ roomId, userId, username });
+    const { room } = await this.roomsService.addUserToRoom({ roomId, userId, username });
 
-    this.io.to(roomId).emit('room_updated', { updatedRoom });
+    this.io.to(roomId).emit('room_updated', { room });
   }
 
   async handleDisconnect(client: SocketWithAuth) {
     const { roomId, userId } = client;
     const sockets = this.io.sockets;
 
-    const { updatedRoom } = await this.roomsService.removeUserFromRoom({ roomId, userId });
+    const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
 
     const clientCount = this.io.adapter.rooms?.get(roomId)?.size ?? 0;
 
@@ -62,13 +62,13 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.debug(`Number of connected sockets: ${sockets.size}`);
     this.logger.debug(`Total clients connected to roomId '${roomId}': ${clientCount}`);
 
-    if (updatedRoom) {
-      this.io.to(roomId).emit('room_updated', { updatedRoom });
+    if (room) {
+      this.io.to(roomId).emit('room_updated', { room });
     }
   }
 
   @SubscribeMessage('draw_point')
-  async drawPoint(@MessageBody() data: DrawPointDto, @ConnectedSocket() client: Socket): Promise<void> {
+  async drawPoint(@MessageBody() data: DrawPointDto, @ConnectedSocket() client: SocketWithAuth): Promise<void> {
     const { roomId, point } = data;
 
     this.logger.log(`Room draw point with id: ${data.roomId} and point ${JSON.stringify(data.point)}`);
