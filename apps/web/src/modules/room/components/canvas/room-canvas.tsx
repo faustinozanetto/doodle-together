@@ -5,8 +5,8 @@ import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 
-import { CanvasPoint } from '@modules/room/types/room.types';
 import { SocketContext } from '@modules/socket/context/socket.context';
+import { CanvasPoint } from '@doodle-together/types';
 
 const RoomCanvas: React.FC = () => {
   const { state } = useRoomContext();
@@ -15,7 +15,7 @@ const RoomCanvas: React.FC = () => {
   const onPointDraw = useCallback(
     (point: CanvasPoint, prevPoint: CanvasPoint | null) => {
       if (!socket) return;
-      socket.emit('draw-point', { roomId: state.roomId, point });
+      socket.emit('draw_point', { roomId: state.roomId, point });
     },
     [state.roomId]
   );
@@ -24,12 +24,12 @@ const RoomCanvas: React.FC = () => {
 
   useEffect(() => {
     if (!socket) return;
-    socket.on('canvas-update', (data) => {
-      console.log('Update Canvas');
+    socket.on('update_canvas', (data) => {
+      console.log('Update Canvas', data);
     });
 
     return () => {
-      socket.off('canvas-update');
+      socket.off('update_canvas');
     };
   }, [canvasRef, state.roomId]);
 

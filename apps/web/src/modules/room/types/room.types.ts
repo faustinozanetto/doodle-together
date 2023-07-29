@@ -1,21 +1,14 @@
-import { Room } from '@doodle-together/database';
+import { Room } from '@doodle-together/types';
 import { ActionMap } from '@modules/common/types/common.types';
 
-/* Nextjs API */
 export type CreateRoomApiResponse = {
   room: Room;
+  token: string;
 };
 
-/* Canvas Draw */
-export type CanvasPoint = {
-  x: number;
-  y: number;
-};
-
-export type RoomUser = {
-  roomId: string;
-  userId: string;
-  username: string;
+export type JoinRoomApiResponse = {
+  room: Room;
+  token: string;
 };
 
 /* Room Context Types */

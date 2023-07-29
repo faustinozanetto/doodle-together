@@ -7,8 +7,12 @@ import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { ApiResponseData } from '@modules/common/types/common.types';
 import { SocketContext } from '@modules/socket/context/socket.context';
+import { useRouter } from 'next/navigation';
+import { JoinRoomApiResponse } from '@modules/room/types/room.types';
 
 const JoinRoom: React.FC = () => {
+  const router = useRouter();
+
   const { toast } = useToast();
   const { socket } = useContext(SocketContext);
 
@@ -20,9 +24,9 @@ const JoinRoom: React.FC = () => {
     startTransition(async () => {
       const response = await fetch('/api/room/join', { method: 'POST', body: JSON.stringify(formData) });
 
-      const data: ApiResponseData = await response.json();
+      const data: ApiResponseData<JoinRoomApiResponse> = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || !('data' in data)) {
         let content = 'Could not join room!';
         if ('message' in data) content = data.message;
 
@@ -30,10 +34,10 @@ const JoinRoom: React.FC = () => {
         return;
       }
 
-      const { id, username } = formData;
+      const { data: responseData } = data;
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
-      socket.emit('join_room', { username, roomId: id });
+      router.push(`/room/${responseData.room.roomId}`);
     });
   };
 

@@ -1,38 +1,44 @@
 'use client';
 
-import React, { useTransition } from 'react';
+import React, { useContext, useTransition } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { ApiResponseData } from '@modules/common/types/common.types';
 import { CreateRoomApiResponse } from '@modules/room/types/room.types';
+import { SocketContext } from '@modules/socket/context/socket.context';
 import { useRouter } from 'next/navigation';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();
+
   const { toast } = useToast();
+  const { socket } = useContext(SocketContext);
 
   const [isPending, startTransition] = useTransition();
 
   const handleRoomCreate = (formData: CreateRoomFormData) => {
+    if (!socket) return;
+
     startTransition(async () => {
       const response = await fetch('/api/room/create', { method: 'POST', body: JSON.stringify(formData) });
 
       const data: ApiResponseData<CreateRoomApiResponse> = await response.json();
 
-      if (!response.ok) {
-        let content = 'Could not create room!';
+      if (!response.ok || !('data' in data)) {
+        let content = 'Could not join room!';
         if ('message' in data) content = data.message;
 
         toast({ variant: 'danger', content });
         return;
       }
 
-      if (!('data' in data)) return;
+      const { data: responseData } = data;
 
       toast({ variant: 'success', content: 'Room created successfully!' });
-      router.push(`/room/${data.data.room.id}`);
+
+      router.push(`/room/${responseData.room.roomId}`);
     });
   };
 

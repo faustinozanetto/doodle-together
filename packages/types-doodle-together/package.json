@@ -1,0 +1,24 @@
+{
+  "name": "@doodle-together/types",
+  "version": "0.0.1",
+  "description": "Draw with friends online.",
+  "author": {
+    "name": "Faustino Zanetto",
+    "email": "zanettofaustino@gmail.com"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint --fix"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "devDependencies": {
+    "@types/react": "18.2.15",
+    "@types/react-dom": "18.2.7",
+    "eslint-config-doodle-together": "*",
+    "typescript": "^5.1.6"
+  }
+}

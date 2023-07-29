@@ -1,39 +1,39 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Separator } from '@radix-ui/react-separator';
-import { RoomUser } from '@modules/room/types/room.types';
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 import { SocketContext } from '@modules/socket/context/socket.context';
+import { User } from '@doodle-together/types';
+import RoomUserEntry from './room-user-entry';
+import { Separator } from '@modules/ui/components/separator/separator';
 
 const RoomUsers: React.FC = () => {
   const { state } = useRoomContext();
   const { socket } = useContext(SocketContext);
 
-  const [users, setUsers] = useState<RoomUser[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     if (!socket) return;
-    console.log('update users hook');
 
-    socket.on('update-users', (data: { roomUsers: RoomUser[] }) => {
-      console.log({ data });
-
-      setUsers(data.roomUsers);
+    socket.on('update_users', (data: { users: User[] }) => {
+      setUsers(users);
     });
 
     return () => {
-      socket.off('update-users');
+      socket.off('update_users');
     };
-  }, [socket, state.roomId]);
+  }, [socket, state.roomId, setUsers]);
 
   return (
     <div className="bg-foreground p-2 rounded-lg shadow-lg border pointer-events-auto h-fit">
       <span className="font-bold">Users</span>
       <Separator />
-      {users.map((user) => {
-        return <span key={user.userId}>{JSON.stringify(user)}</span>;
-      })}
+      <ul>
+        {users.map((user) => {
+          return <RoomUserEntry key={user.userId} user={user} />;
+        })}
+      </ul>
     </div>
   );
 };

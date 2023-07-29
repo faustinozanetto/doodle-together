@@ -1,4 +1,4 @@
-export class LeaveRoomDto {
+export class RemoveUserFromRoomDto {
   roomId: string;
   userId: string;
 }

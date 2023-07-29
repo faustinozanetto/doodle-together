@@ -1,7 +1,7 @@
-import { prisma } from '@doodle-together/database';
 import { ApiResponseData } from '@modules/common/types/common.types';
 import { validateRoomPassword } from '@modules/room/lib/room-password.lib';
 import { joinRoomValidationSchema } from '@modules/room/lib/room.validations';
+import { JoinRoomApiResponse } from '@modules/room/types/room.types';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -14,8 +14,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json<ApiResponseData>({ success: false, message: errors[0].message });
   }
 
-  const { id, username, password } = parsed.data;
+  const { id: roomId, username, password } = parsed.data;
 
+  /*
   const room = await prisma.room.findFirst({
     where: {
       id,
@@ -33,4 +34,38 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json<ApiResponseData>({ success: true, message: 'Join success!' }, { status: 200 });
+  */
+
+  const response = await fetch(`${process.env.BACKEND_ENDPOINT}/rooms/join`, {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      roomId,
+      username,
+    }),
+  });
+
+  if (!response.ok) {
+    return NextResponse.json<ApiResponseData>({ success: false, message: 'Could not create room!' });
+  }
+
+  const data = await response.json();
+  const { room, token } = data;
+
+  const returnData = NextResponse.json<ApiResponseData<JoinRoomApiResponse>>({
+    success: true,
+    data: { room, token },
+  });
+
+  returnData.cookies.set({
+    name: 'auth',
+    value: token,
+    httpOnly: true,
+    maxAge: 60 * 60,
+  });
+
+  return returnData;
 }
