@@ -7,12 +7,6 @@
     "email": "zanettofaustino@gmail.com"
   },
   "license": "MIT",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint --fix"
-  },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "devDependencies": {
