@@ -10,21 +10,25 @@ import {
 import { Server, Socket } from 'socket.io';
 import { RoomJoinDto } from './dto/room-join.dto';
 import { RoomLeaveDto } from './dto/room-leave.dto';
+import { Logger, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { RoomsService } from './rooms.service';
 
-@WebSocketGateway(81, {
-  cors: {
-    origin: 'http://localhost:3000',
-  },
+@UsePipes(new ValidationPipe())
+@WebSocketGateway({
+  namespace: 'rooms',
 })
-export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  private readonly logger = new Logger(RoomsGateway.name);
+  constructor(private readonly roomsService: RoomsService) {}
+
   @WebSocketServer() server: Server;
 
   afterInit(server: Socket) {
-    console.log('Room Gateway initialized successfully!');
+    this.logger.log('Room Gateway initialized successfully!');
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
-    console.log('Room Gateway client connected! ID: ' + client.id);
+  handleConnection(client: Socket) {
+    this.logger.log(`WS Client with id: ${client.id} connected!`);
   }
 
   handleDisconnect(client: Socket) {
