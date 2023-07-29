@@ -1,10 +1,39 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
+import { useRoomContext } from '@modules/room/hooks/use-room-context';
+
+import { CanvasPoint } from '@modules/room/types/room.types';
+import { SocketContext } from '@modules/socket/context/socket.context';
+
 const RoomCanvas: React.FC = () => {
-  const { wrapperRef, canvasRef, handleOnMouseDown } = useRoomDraw();
+  const { state } = useRoomContext();
+  const { socket } = useContext(SocketContext);
+
+  const onPointDraw = useCallback(
+    (point: CanvasPoint, prevPoint: CanvasPoint | null) => {
+      if (!socket) return;
+
+      socket.emit('draw-point', { roomId: state.roomId, point });
+    },
+    [state.roomId]
+  );
+
+  const { wrapperRef, canvasRef, handleOnMouseDown } = useRoomDraw(onPointDraw);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('canvas-update', (data) => {
+      console.log('Update Canvas');
+    });
+
+    return () => {
+      socket.off('canvas-update');
+    };
+  }, [canvasRef, state.roomId]);
 
   return (
     <div ref={wrapperRef} className="h-full w-full">

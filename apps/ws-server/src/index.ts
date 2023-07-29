@@ -2,7 +2,12 @@ import cors from 'cors';
 import express from 'express';
 import http from 'http';
 import { Server as SocketServer } from 'socket.io';
-import { JoinRoomSocketData } from 'types/server.types';
+import {
+  DrawPointSocketData,
+  JoinRoomSocketData,
+  RoomJoinedSocketData,
+  UpdateCanvasSocketData,
+} from 'types/server.types';
 
 require('dotenv').config();
 
@@ -14,26 +19,52 @@ app.use(
   })
 );
 
-const server = http.createServer(app);
-const io = new SocketServer(server);
+type User = { userId: string; username: string; roomId: string };
 
-app.get('/ping', (req, res) => {
-  console.log('Ping detected');
-  res.send('pong');
+let users: User[] = [];
+
+const server = http.createServer(app);
+const io = new SocketServer(server, {
+  cors: {
+    origin: process.env.FRONTEND_ENDPOINT,
+    credentials: true,
+  },
 });
 
 io.on('connection', (socket) => {
-  console.log('Connected');
+  console.log(`Connected ${socket.id}`);
 
-  socket.on('join-room', (socket: JoinRoomSocketData) => {
-    console.log('Received join room');
+  io.on('join-room', (data: JoinRoomSocketData) => {
+    socket.join(data.roomId);
 
-    console.log({ socket });
+    const roomJoinedData: RoomJoinedSocketData = {
+      roomId: data.roomId,
+      userId: socket.id,
+      username: data.username,
+    };
+    users.push({ roomId: data.roomId, userId: socket.id, username: data.username });
+
+    const roomUsers = users.filter((u) => u.roomId === data.roomId);
+    io.emit('room-joined', roomJoinedData);
+
+    io.to(data.roomId).emit('update-users', { roomUsers });
   });
 
-  socket.on('disconnect', () => {
+  io.on('draw-point', (data: DrawPointSocketData) => {
+    const updateCanvasData: UpdateCanvasSocketData = {
+      point: data.point,
+    };
+
+    io.to(data.roomId).emit('canvas-update', updateCanvasData);
+  });
+
+  io.on('disconnect', () => {
     console.log('Disconnected');
-    socket.emit('disconnected');
+    io.emit('disconnected');
+    const user = users.find((u) => u.userId === socket.id);
+    if (!user) return;
+
+    socket.leave(user.roomId);
   });
 });
 

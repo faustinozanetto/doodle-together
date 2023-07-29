@@ -2,6 +2,12 @@ import { RoomActionType, RoomActions, RoomContextState } from '@modules/room/typ
 
 export const reducer = (state: RoomContextState, action: RoomActions): RoomContextState => {
   switch (action.type) {
+    case RoomActionType.SET_ROOM: {
+      return {
+        ...state,
+        roomId: action.payload.roomId,
+      };
+    }
     case RoomActionType.SET_TOOL: {
       return {
         ...state,

@@ -6,6 +6,7 @@ import { reducer } from './reducer';
 
 const initialState: RoomContextData = {
   state: {
+    roomId: '',
     tool: 'pencil',
     toolCustomization: {
       color: '#ababab',

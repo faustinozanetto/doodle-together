@@ -23,7 +23,7 @@ const RoomPage: React.FC<RoomPageProps> = async (props) => {
 
   return (
     <RoomProvider>
-      <Room />
+      <Room roomId={roomId} />
     </RoomProvider>
   );
 };

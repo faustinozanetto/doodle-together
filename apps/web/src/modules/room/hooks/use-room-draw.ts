@@ -3,7 +3,7 @@ import { CanvasPoint } from '../types/room.types';
 import { useRoomContext } from './use-room-context';
 import { getToolSizeToWidth } from '../lib/room.lib';
 
-export const useRoomDraw = () => {
+export const useRoomDraw = (onPointDraw: (point: CanvasPoint, prevPoint: CanvasPoint | null) => void) => {
   const { state } = useRoomContext();
 
   const [mouseDown, setMouseDown] = useState<boolean>(false);
@@ -81,6 +81,7 @@ export const useRoomDraw = () => {
     // Pencil draw logic
     if (tool === 'pencil') {
       drawPoint(currentPoint, context);
+      onPointDraw(currentPoint, previousPoint.current);
       previousPoint.current = currentPoint;
     } else if (tool === 'eraser') {
       drawEraser(currentPoint, context);

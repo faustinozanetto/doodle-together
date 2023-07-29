@@ -1,6 +1,7 @@
 import { Room } from '@doodle-together/database';
 import { ActionMap } from '@modules/common/types/common.types';
 
+/* Nextjs API */
 export type CreateRoomApiResponse = {
   room: Room;
 };
@@ -9,6 +10,12 @@ export type CreateRoomApiResponse = {
 export type CanvasPoint = {
   x: number;
   y: number;
+};
+
+export type RoomUser = {
+  roomId: string;
+  userId: string;
+  username: string;
 };
 
 /* Room Context Types */
@@ -25,6 +32,7 @@ export type RoomToolCustomization = {
 };
 
 export type RoomContextState = {
+  roomId: string;
   tool: RoomTool;
   toolCustomization: RoomToolCustomization;
 };
@@ -35,6 +43,7 @@ export type RoomContextData = {
 };
 
 export enum RoomActionType {
+  SET_ROOM,
   SET_TOOL,
   SET_TOOL_COLOR,
   SET_TOOL_SIZE,
@@ -42,6 +51,9 @@ export enum RoomActionType {
 }
 
 export type RoomPayload = {
+  [RoomActionType.SET_ROOM]: {
+    roomId: string;
+  };
   [RoomActionType.SET_TOOL]: {
     tool: RoomTool;
   };

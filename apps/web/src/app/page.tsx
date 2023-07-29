@@ -1,5 +1,6 @@
 import ThemeToggler from '@modules/theme/components/theme-toggler';
 import { Button } from '@modules/ui/components/button/button';
+import Link from 'next/link';
 
 export default async function HomePage() {
   return (
@@ -7,6 +8,7 @@ export default async function HomePage() {
       <h1>Doodle Together</h1>
       <Button>Test Button</Button>
       <ThemeToggler />
+      <Link href="/room/join">Join Room</Link>
     </div>
   );
 }
