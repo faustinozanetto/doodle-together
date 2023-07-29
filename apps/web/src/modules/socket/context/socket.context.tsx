@@ -17,7 +17,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = (props) => {
   const [socketClient, setSocketClient] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io('http://localhost:81', { withCredentials: true, transports: ['websocket'] });
+    const socket = io('http://localhost:4000', { withCredentials: true, transports: ['websocket'] });
     socket.on('connect', () => {
       console.log('Socket client connected!');
     });

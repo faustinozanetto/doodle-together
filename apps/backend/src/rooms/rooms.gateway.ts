@@ -8,8 +8,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { RoomJoinDto } from './dto/room-join.dto';
-import { RoomLeaveDto } from './dto/room-leave.dto';
+import { RoomJoinDto } from './dto/join-room.dto';
+import { RoomLeaveDto } from './dto/leave-room.dto';
 import { Logger, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 

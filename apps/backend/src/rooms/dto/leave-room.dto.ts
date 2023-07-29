@@ -1,4 +1,4 @@
-export class RoomJoinDto {
+export class LeaveRoomDto {
   roomId: string;
   username: string;
 }
