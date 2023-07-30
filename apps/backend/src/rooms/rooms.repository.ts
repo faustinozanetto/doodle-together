@@ -11,12 +11,16 @@ import { DeleteRoomInput } from './dto/inputs/delete-room.input';
 import { FindRoomInput } from './dto/inputs/find-room.input';
 import { AddUserToRoomInput } from './dto/inputs/add-user-to-room.input';
 import { RemoveUserFromRoomInput } from './dto/inputs/remove-user-from-room.input';
+import { ConfigInterface } from 'src/config/config.module';
 
 @Injectable()
 export class RoomsRepository {
   private readonly logger = new Logger(RoomsRepository.name);
 
-  constructor(private configService: ConfigService, @InjectRedis() private readonly redis: Redis) {}
+  constructor(
+    private configService: ConfigService<ConfigInterface>,
+    @InjectRedis() private readonly redis: Redis
+  ) {}
 
   /**
    * Creates a room and stores it to redis
@@ -24,17 +28,18 @@ export class RoomsRepository {
    * @returns Room response : room
    */
   async createRoom(input: CreateRoomInput): Promise<RoomResponse> {
-    const { roomId, userId } = input;
+    const { roomId, userId, password } = input;
     const room: Room = {
       roomId,
       ownerId: userId,
+      password,
       users: {},
     };
 
     this.logger.log(`Creating new room: ${JSON.stringify(room, null, 2)}`);
 
     const key = `rooms:${roomId}`;
-    const roomExpireDate = this.configService.get<string>('ROOM_EXPIRES');
+    const roomExpireDate = this.configService.get('app', { infer: true }).roomExpires;
 
     try {
       await this.redis.hmset(key, 'roomId', room.roomId, 'ownerId', room.ownerId, 'users', JSON.stringify(room.users));

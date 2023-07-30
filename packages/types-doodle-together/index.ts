@@ -1,6 +1,7 @@
 export type Room = {
   roomId: string;
   ownerId: string;
+  password: string;
   users: RoomUsers;
 };
 

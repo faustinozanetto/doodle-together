@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 import { RoomsRepository } from './rooms.repository';
 import { DeleteRoomDto } from './dto/delete-room.dto';
 import { JoinRoomDto } from './dto/join-room.dto';
@@ -14,12 +14,17 @@ import { FindRoomDto } from './dto/find-room.dto';
 import { FindRoomResponse } from './responses/find-room.response';
 import { AddUserToRoomResponse } from './responses/add-user-to-room.response';
 import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.response';
+import { PasswordsService } from 'src/passwords/passwords.service';
 
 @Injectable()
 export class RoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
-  constructor(private readonly roomsRepository: RoomsRepository, private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly roomsRepository: RoomsRepository,
+    private readonly jwtService: JwtService,
+    private readonly passwordService: PasswordsService
+  ) {}
 
   /**
    * Creates a room by a given input
@@ -27,14 +32,19 @@ export class RoomsService {
    * @returns Create room response : room & accessToken
    */
   async createRoom(input: CreateRoomDto): Promise<CreateRoomResponse> {
-    const { username } = input;
+    const { username, password } = input;
 
     const userId = generateUserId();
     const roomId = generateRoomId();
 
+    const { hashedPassword } = await this.passwordService.hashPassword({
+      password,
+    });
+
     const { room } = await this.roomsRepository.createRoom({
       roomId,
       userId,
+      password: hashedPassword,
     });
 
     this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
@@ -78,12 +88,20 @@ export class RoomsService {
    * @returns Join room response : room & accessToken
    */
   async joinRoom(input: JoinRoomDto): Promise<JoinRoomResponse> {
-    const { roomId, username } = input;
+    const { roomId, username, password } = input;
     const userId = generateUserId();
 
     this.logger.debug(`Fetching poll with roomId: ${roomId} for userId: ${userId}`);
 
     const { room } = await this.roomsRepository.findRoom({ roomId });
+
+    // Validate password
+    const { isPasswordValid } = await this.passwordService.validatePassword({
+      password,
+      hashedPassword: room.password,
+    });
+
+    if (!isPasswordValid) throw new ForbiddenException('Invalid room password!');
 
     this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
 
