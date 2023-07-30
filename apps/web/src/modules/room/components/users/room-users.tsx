@@ -11,7 +11,7 @@ const RoomUsers: React.FC<RoomUsersProps> = (props) => {
   const { users = {} } = props;
 
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border pointer-events-auto h-fit">
+    <div className="bg-foreground p-2 rounded-lg shadow-lg border pointer-events-auto h-fit min-w-[10rem]">
       <span className="font-bold">Users</span>
       <Separator />
       <ul>

@@ -1,9 +1,6 @@
-'use client';
-
 import React from 'react';
 import RoomTool from './room-tool';
-import { useRoomContext } from '@modules/room/hooks/use-room-context';
-import { RoomActionType } from '@modules/room/types/room.types';
+import { cn } from '@modules/ui/lib/ui.lib';
 
 const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
   {
@@ -70,10 +67,9 @@ const RoomTools: React.FC = () => {
     <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-2 flex pointer-events-auto">
       {TOOLS.map((tool, index) => {
         return (
-          <>
-            <RoomTool key={tool.tool} {...tool} />
-            {index < TOOLS.length - 1 && <div key={`separator-${tool.tool}`} className="border-r" />}
-          </>
+          <div key={`tool-${tool.tool}`} className={cn(TOOLS.length - index > 1 && 'border-r pr-2')}>
+            <RoomTool {...tool} />
+          </div>
         );
       })}
     </div>

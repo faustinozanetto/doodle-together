@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
@@ -77,8 +77,8 @@ export class RoomsRepository {
       await this.redis.call('JSON.DEL', key);
       return { deleted: true };
     } catch (error) {
-      this.logger.error(`Failed to delete room with roomId: ${roomId}`, error);
-      throw new InternalServerErrorException(`Failed to delete room with roomId: ${roomId}`);
+      this.logger.error(`Could not delete room with id: ${roomId}!`, error);
+      throw new InternalServerErrorException(`Could not delete room with id: ${roomId}!`);
     }
   }
 
@@ -105,8 +105,8 @@ export class RoomsRepository {
 
       return { room };
     } catch (error) {
-      this.logger.error(`Failed to find room with roomId: ${roomId}`, error);
-      throw new InternalServerErrorException(`Failed to find room with roomId: ${roomId}`);
+      this.logger.error(`Could not find a room with id: ${roomId}!`, error);
+      throw new NotFoundException(`Could not find a room with id: ${roomId}!`);
     }
   }
 
