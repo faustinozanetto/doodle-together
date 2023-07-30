@@ -9,6 +9,7 @@ import RoomUsers from './users/room-users';
 import { state } from '@modules/state/store';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { UserJoinedSocketPayload, UserLeftSocketPayload } from '@doodle-together/types';
+import RoomLeave from './leave/room-leave';
 
 type RoomProps = {
   roomId: string;
@@ -49,14 +50,16 @@ const Room: React.FC<RoomProps> = (props) => {
       {/* Panels */}
       <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
         {/* Top */}
-        <div className="flex justify-between">
+        <div className="flex justify-between items-start">
           <RoomUsers />
           <RoomCustomization />
         </div>
 
         {/* Bottom  */}
-        <div className="flex">
+        <div className="flex justify-between items-end">
           <RoomTools />
+
+          <RoomLeave />
         </div>
       </div>
     </div>

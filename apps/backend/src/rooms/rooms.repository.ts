@@ -57,7 +57,7 @@ export class RoomsRepository {
       return { room };
     } catch (error) {
       this.logger.error(`Failed to create room ${JSON.stringify(room)}`, error);
-      throw new InternalServerErrorException(`Failed to create room ${JSON.stringify(room)}`);
+      throw new InternalServerErrorException('Could not create room!');
     }
   }
 
@@ -78,7 +78,7 @@ export class RoomsRepository {
       return { deleted: true };
     } catch (error) {
       this.logger.error(`Could not delete room with id: ${roomId}!`, error);
-      throw new InternalServerErrorException(`Could not delete room with id: ${roomId}!`);
+      throw new InternalServerErrorException('Could not delete room!');
     }
   }
 
@@ -106,7 +106,7 @@ export class RoomsRepository {
       return { room };
     } catch (error) {
       this.logger.error(`Could not find a room with id: ${roomId}!`, error);
-      throw new NotFoundException(`Could not find a room with id: ${roomId}!`);
+      throw new NotFoundException('Room not found!');
     }
   }
 

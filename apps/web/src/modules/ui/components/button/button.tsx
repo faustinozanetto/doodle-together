@@ -18,6 +18,8 @@ export const buttonVariants = cva(
           'bg-transparent hover:bg-primary-300 focus-visible:ring-primary-400 dark:hover:bg-primary-900 text-neutral-900 dark:text-neutral-50',
         danger:
           'bg-transparent hover:bg-red-100 focus-visible:ring-red-400 dark:hover:bg-red-900 text-red-400 dark:text-neutral-50',
+        'danger-solid':
+          'bg-red-300 dark:bg-red-800 text-neutral-900 hover:bg-red-400 dark:hover:bg-red-700 dark:text-neutral-50',
       },
       size: {
         xs: 'text-xs h-6 px-3',

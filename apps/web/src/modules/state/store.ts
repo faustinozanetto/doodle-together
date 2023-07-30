@@ -47,6 +47,10 @@ export const actions = {
 
     state.socket?.emit('draw_point', { roomId: state.room.roomId, point: data });
   },
+  leaveRoom: () => {
+    actions.reset();
+    localStorage.removeItem('accessToken');
+  },
   reset: (): void => {
     state.socket?.disconnect();
     state.room = undefined;

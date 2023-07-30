@@ -27,8 +27,6 @@ const RoomCanvas: React.FC = () => {
     state.socket?.on('get_canvas_state', (data) => {
       const { user } = data;
 
-      console.log('Get Canvas State: ' + user.userId + ' | Me: ' + currentState.me?.userId);
-
       if (currentState.me?.userId === user.userId) return;
 
       const canvasState = canvasRef.current?.toDataURL();
@@ -39,7 +37,6 @@ const RoomCanvas: React.FC = () => {
 
     state.socket?.on('canvas_state_from_server', (data) => {
       if (!ctx || !canvasElement) return;
-      console.log({ data });
 
       const img = new Image();
       img.src = data;

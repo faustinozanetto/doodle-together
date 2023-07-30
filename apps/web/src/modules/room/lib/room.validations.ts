@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { usernameValidationSchema } from '@modules/user/lib/user.validations';
+import {
+  accessTokenValidationSchema,
+  userIdValidationSchema,
+  usernameValidationSchema,
+} from '@modules/user/lib/user.validations';
 
 export const ROOM_PASSWORD_MIN_LENGHT = 8;
 export const ROOM_PASSWORD_MAX_LENGHT = 24;
@@ -23,4 +27,10 @@ export const joinRoomValidationSchema = z.object({
 export const createRoomValidationSchema = z.object({
   password: roomPasswordValidationSchema,
   username: usernameValidationSchema,
+});
+
+export const leaveRoomValidationSchema = z.object({
+  roomId: roomIdValidationSchema,
+  userId: userIdValidationSchema,
+  accessToken: accessTokenValidationSchema,
 });

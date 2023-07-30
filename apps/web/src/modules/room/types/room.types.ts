@@ -1,15 +1,5 @@
-import { CanvasPoint, Room } from '@doodle-together/types';
+import { CanvasPoint } from '@doodle-together/types';
 import { ActionMap } from '@modules/common/types/common.types';
-
-export type CreateRoomApiResponse = {
-  room: Room;
-  accessToken: string;
-};
-
-export type JoinRoomApiResponse = {
-  room: Room;
-  accessToken: string;
-};
 
 /* Room Draw */
 export type RoomDrawPointPayload = {

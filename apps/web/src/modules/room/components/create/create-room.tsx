@@ -5,39 +5,35 @@ import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
-import { ApiResponseData } from '@modules/common/types/common.types';
-import { CreateRoomApiResponse } from '@modules/room/types/room.types';
 import { useRouter } from 'next/navigation';
 import { actions } from '@modules/state/store';
+import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
+import { CreateRoomApiResponse } from '@doodle-together/types';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
+  const { fetchData } = useApiFetch<CreateRoomApiResponse>('/rooms');
 
   const [isPending, startTransition] = useTransition();
 
   const handleRoomCreate = (formData: CreateRoomFormData) => {
     startTransition(async () => {
-      const response = await fetch('/api/room/create', { method: 'POST', body: JSON.stringify(formData) });
+      const response = await fetchData({
+        method: 'POST',
+        body: JSON.stringify(formData),
+      });
 
-      const data: ApiResponseData<CreateRoomApiResponse> = await response.json();
+      if (!response) return;
 
-      if (!response.ok || !('data' in data)) {
-        let content = 'Could not join room!';
-        if ('message' in data) content = data.message;
+      const { accessToken, room } = response;
 
-        toast({ variant: 'danger', content });
-        return;
-      }
-
-      const { data: responseData } = data;
-      const { room, accessToken } = responseData;
       actions.setAccessToken(accessToken);
       actions.setRoom(room);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
-      router.replace(`/room/${responseData.room.roomId}`);
+      router.replace(`/room/${room.roomId}`);
     });
   };
 

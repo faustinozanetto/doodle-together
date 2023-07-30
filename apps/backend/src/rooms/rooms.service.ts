@@ -15,6 +15,8 @@ import { FindRoomResponse } from './responses/find-room.response';
 import { AddUserToRoomResponse } from './responses/add-user-to-room.response';
 import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.response';
 import { PasswordsService } from 'src/passwords/passwords.service';
+import { LeaveRoomDto } from './dto/leave-room.dto';
+import { LeaveRoomResponse } from './responses/leave-room.response';
 
 @Injectable()
 export class RoomsService {
@@ -117,6 +119,10 @@ export class RoomsService {
     );
 
     return { room, accessToken };
+  }
+
+  async leaveRoom(input: LeaveRoomDto): Promise<LeaveRoomResponse> {
+    return { left: true };
   }
 
   /**

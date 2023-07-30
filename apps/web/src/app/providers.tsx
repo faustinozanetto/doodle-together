@@ -4,8 +4,7 @@ import React, { useEffect } from 'react';
 import { ThemeProvider } from 'next-theme-kit';
 import { ToastsProvider } from '@modules/ui/components/toasts/context/toasts-context';
 import { ToastsContainer } from '@modules/ui/components/toasts/components/toasts-container';
-import { useSnapshot } from 'valtio';
-import { actions, state } from '@modules/state/store';
+import { actions } from '@modules/state/store';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { useRouter } from 'next/navigation';
 
@@ -17,8 +16,6 @@ const Providers: React.FC<ProvidersProps> = (props) => {
   const { children } = props;
 
   const router = useRouter();
-
-  const currentState = useSnapshot(state);
 
   useEffect(() => {
     console.log('App useEffect - check token and send to proper page');
