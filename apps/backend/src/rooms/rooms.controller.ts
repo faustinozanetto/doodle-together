@@ -11,11 +11,26 @@ export class RoomsController {
 
   @Post()
   async create(@Body() body: CreateRoomDto) {
-    return await this.roomsService.createRoom(body);
+    const { room, accessToken } = await this.roomsService.createRoom(body);
+    const { room: updatedRoom } = await this.roomsService.addUserToRoom({
+      roomId: room.roomId,
+      userId: room.ownerId,
+      username: body.username,
+    });
+
+    return { room: updatedRoom, accessToken };
   }
 
   @Post('/join')
   async join(@Body() body: JoinRoomDto) {
-    return await this.roomsService.joinRoom(body);
+    const { room, accessToken } = await this.roomsService.joinRoom(body);
+
+    const { room: updatedRoom } = await this.roomsService.addUserToRoom({
+      roomId: room.roomId,
+      userId: room.ownerId,
+      username: body.username,
+    });
+
+    return { room: updatedRoom, accessToken };
   }
 }

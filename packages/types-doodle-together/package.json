@@ -7,8 +7,8 @@
     "email": "zanettofaustino@gmail.com"
   },
   "license": "MIT",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "devDependencies": {
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",

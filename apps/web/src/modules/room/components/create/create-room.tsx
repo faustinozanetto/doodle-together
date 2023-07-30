@@ -37,7 +37,7 @@ const CreateRoom: React.FC = () => {
       actions.setRoom(room);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
-      router.push(`/room/${responseData.room.roomId}`);
+      router.replace(`/room/${responseData.room.roomId}`);
     });
   };
 

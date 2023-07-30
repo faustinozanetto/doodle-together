@@ -37,7 +37,7 @@ const JoinRoom: React.FC = () => {
       actions.setRoom(room);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
-      router.push(`/room/${responseData.room.roomId}`);
+      router.replace(`/room/${responseData.room.roomId}`);
     });
   };
 

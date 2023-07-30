@@ -1,3 +1,5 @@
+export * from './sockets';
+
 export type Room = {
   roomId: string;
   ownerId: string;

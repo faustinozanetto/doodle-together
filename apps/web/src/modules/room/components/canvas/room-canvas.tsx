@@ -23,9 +23,14 @@ const RoomCanvas: React.FC = () => {
     const canvasElement = canvasRef.current;
     const ctx = canvasElement?.getContext('2d');
 
-    state.socket?.emit('client_ready');
+    // No owner users requrested canvas state so here we sent a socket with the canvas state back to the server
+    state.socket?.on('get_canvas_state', (data) => {
+      const { user } = data;
 
-    state.socket?.on('get_canvas_state', () => {
+      console.log('Get Canvas State: ' + user.userId + ' | Me: ' + currentState.me?.userId);
+
+      if (currentState.me?.userId === user.userId) return;
+
       const canvasState = canvasRef.current?.toDataURL();
       if (!canvasState) return;
 

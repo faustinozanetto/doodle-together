@@ -89,6 +89,7 @@ export class RoomsService {
    */
   async joinRoom(input: JoinRoomDto): Promise<JoinRoomResponse> {
     const { roomId, username, password } = input;
+
     const userId = generateUserId();
 
     this.logger.debug(`Fetching poll with roomId: ${roomId} for userId: ${userId}`);

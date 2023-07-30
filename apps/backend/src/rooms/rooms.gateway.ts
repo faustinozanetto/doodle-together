@@ -13,6 +13,7 @@ import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { DrawPointDto } from './dto/draw-point.dto';
 import { SocketWithAuth } from './types';
+import { User } from '@doodle-together/types';
 
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({
@@ -51,6 +52,13 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
     const { room } = await this.roomsService.addUserToRoom({ roomId, userId, username });
 
+    const user: User = { userId, username };
+
+    this.io.to(roomId).emit('user_joined', { roomId, user });
+
+    // Send a socket to the room owner to retrieve the current canvas state.
+    this.io.to(room.ownerId).emit('get_canvas_state', { user });
+
     this.io.to(roomId).emit('room_updated', { room });
   }
 
@@ -59,7 +67,7 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
    * @param client Socket data with auth details
    */
   async handleDisconnect(client: SocketWithAuth) {
-    const { roomId, userId } = client;
+    const { roomId, userId, username } = client;
     const sockets = this.io.sockets;
 
     const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
@@ -70,19 +78,11 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.debug(`Number of connected sockets: ${sockets.size}`);
     this.logger.debug(`Total clients connected to roomId '${roomId}': ${clientCount}`);
 
+    this.io.to(roomId).emit('user_left', { roomId, user: { userId, username } });
+
     if (room) {
       this.io.to(roomId).emit('room_updated', { room });
     }
-  }
-
-  @SubscribeMessage('client_ready')
-  async clientReady(@ConnectedSocket() client: SocketWithAuth): Promise<void> {
-    const { roomId } = client;
-
-    // The non owner users need to emit a socket to the owner to request the canvas state to be sent
-    const room = await this.roomsService.findRoom({ roomId });
-
-    this.io.to(room.room.ownerId).emit('get_canvas_state');
   }
 
   @SubscribeMessage('send_canvas_state')

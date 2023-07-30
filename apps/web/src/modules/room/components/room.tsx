@@ -6,10 +6,9 @@ import RoomCanvas from './canvas/room-canvas';
 
 import RoomCustomization from './customization/room-customization';
 import RoomUsers from './users/room-users';
-import { useRoomContext } from '../hooks/use-room-context';
-import { RoomActionType } from '../types/room.types';
-import { actions, state } from '@modules/state/store';
-import { useSnapshot } from 'valtio';
+import { state } from '@modules/state/store';
+import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
+import { UserJoinedSocketPayload, UserLeftSocketPayload } from '@doodle-together/types';
 
 type RoomProps = {
   roomId: string;
@@ -18,7 +17,30 @@ type RoomProps = {
 const Room: React.FC<RoomProps> = (props) => {
   const { roomId } = props;
 
-  const currentState = useSnapshot(state);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    state.socket?.on('user_joined', (data: UserJoinedSocketPayload) => {
+      const { user } = data;
+
+      if (state.me?.userId === user.userId) return;
+
+      toast({ variant: 'info', content: `User ${user.username} joined the room!` });
+    });
+
+    state.socket?.on('user_left', (data: UserLeftSocketPayload) => {
+      const { user } = data;
+
+      if (state.me?.userId === user.userId) return;
+
+      toast({ variant: 'info', content: `User ${user.username} left the room!` });
+    });
+
+    return () => {
+      state.socket?.off('user_joined');
+      state.socket?.off('user_left');
+    };
+  }, [roomId]);
 
   return (
     <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
@@ -28,7 +50,7 @@ const Room: React.FC<RoomProps> = (props) => {
       <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
         {/* Top */}
         <div className="flex justify-between">
-          <RoomUsers users={currentState.room?.users} />
+          <RoomUsers />
           <RoomCustomization />
         </div>
 

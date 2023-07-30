@@ -7,6 +7,7 @@ import { ToastsContainer } from '@modules/ui/components/toasts/components/toasts
 import { useSnapshot } from 'valtio';
 import { actions, state } from '@modules/state/store';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
+import { useRouter } from 'next/navigation';
 
 type ProvidersProps = {
   children?: React.ReactNode;
@@ -14,6 +15,8 @@ type ProvidersProps = {
 
 const Providers: React.FC<ProvidersProps> = (props) => {
   const { children } = props;
+
+  const router = useRouter();
 
   const currentState = useSnapshot(state);
 
@@ -28,6 +31,7 @@ const Providers: React.FC<ProvidersProps> = (props) => {
     // state.currentPage of AppPage.Welcome
     if (!accessToken) {
       actions.setIsLoading(false);
+      router.push('/');
       return;
     }
 
@@ -45,9 +49,7 @@ const Providers: React.FC<ProvidersProps> = (props) => {
       return;
     }
 
-    // reconnect to poll
-    actions.setAccessToken(accessToken); // needed for socket.io connection
-    // socket initialization on server sends updated poll to the client
+    actions.setAccessToken(accessToken); // needed for socket.io
     actions.setupSocket();
   }, []);
 
@@ -55,7 +57,7 @@ const Providers: React.FC<ProvidersProps> = (props) => {
     <ThemeProvider useSystem={false} useLocalStorage>
       <ToastsProvider>
         {children}
-        <ToastsContainer />
+        <ToastsContainer position="bottom-right" />
       </ToastsProvider>
     </ThemeProvider>
   );

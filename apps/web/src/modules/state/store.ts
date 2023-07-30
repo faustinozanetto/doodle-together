@@ -1,4 +1,4 @@
-import { CanvasPoint, Room, User } from '@doodle-together/types';
+import { Room, User } from '@doodle-together/types';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { RoomDrawPointPayload } from '@modules/room/types/room.types';
 import { createSocketConnection } from '@modules/socket/lib/socket.lib';
