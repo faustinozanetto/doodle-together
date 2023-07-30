@@ -3283,10 +3283,10 @@ eslint-config-prettier@^8.8.0:
   resolved "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-8.9.0.tgz"
   integrity sha512-+sbni7NfVXnOpnRadUA8S28AUlsZt9GjgFvABIRL9Hkn8KqNzOp+7Lw4QWtrwn20KzU3wqu1QoOj2m+7rKRqkA==
 
-eslint-define-config@1.21.0:
-  version "1.21.0"
-  resolved "https://registry.npmjs.org/eslint-define-config/-/eslint-define-config-1.21.0.tgz"
-  integrity sha512-OKfreV19Nw4yK4UX1CDkv5FXWdzeF+VSROsO28DVi1BrzqOD4a3U71LJqEhcupK65MoLXxARQ0pSg8bDvNPONA==
+eslint-define-config@1.22.0:
+  version "1.22.0"
+  resolved "https://registry.yarnpkg.com/eslint-define-config/-/eslint-define-config-1.22.0.tgz#fa791048e8ef0017d2896e4feb9f683818b8ccb6"
+  integrity sha512-pckNJppFwC4AX+AGK63aa4sX5BluPwWwHES3fq/ER0jDR2U2czwlngg38B4EQ2ibvofufc+R5QfmdPKI6+74vQ==
 
 eslint-import-resolver-node@^0.3.7:
   version "0.3.7"
