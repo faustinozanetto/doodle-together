@@ -7,8 +7,7 @@ type SocketConnectionPayload = {
 };
 
 export const createSocketConnection = ({ state, actions }: SocketConnectionPayload): Socket => {
-  console.log({ state });
-  const socket = io(`${process.env.BACKEND_ENDPOINT}/rooms`, {
+  const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}/rooms`, {
     auth: {
       token: state.accessToken,
     },

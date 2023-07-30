@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   }
   */
 
-  const response = await fetch(`${process.env.BACKEND_ENDPOINT}/rooms`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}/rooms`, {
     method: 'POST',
     mode: 'cors',
     headers: {

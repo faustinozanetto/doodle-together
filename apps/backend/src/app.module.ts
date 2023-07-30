@@ -5,7 +5,10 @@ import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     RedisModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

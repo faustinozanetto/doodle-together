@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json<ApiResponseData>({ success: true, message: 'Join success!' }, { status: 200 });
   */
 
-  const response = await fetch(`${process.env.BACKEND_ENDPOINT}/rooms/join`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}/rooms/join`, {
     method: 'POST',
     mode: 'cors',
     headers: {

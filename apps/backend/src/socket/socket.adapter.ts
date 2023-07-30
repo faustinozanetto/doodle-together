@@ -14,7 +14,7 @@ export class SocketAdapter extends IoAdapter {
     const optionsWithCORS: ServerOptions = {
       ...options,
       cors: {
-        origin: [process.env.NODE_ENV === 'production' ? 'http://localhost:3000' : 'https://doodletogether.vercel.app'],
+        origin: ['https://doodletogether.vercel.app'],
       },
     };
 
