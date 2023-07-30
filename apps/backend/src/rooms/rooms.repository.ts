@@ -42,7 +42,17 @@ export class RoomsRepository {
     const roomExpireDate = this.configService.get('app', { infer: true }).roomExpires;
 
     try {
-      await this.redis.hmset(key, 'roomId', room.roomId, 'ownerId', room.ownerId, 'users', JSON.stringify(room.users));
+      await this.redis.hmset(
+        key,
+        'roomId',
+        room.roomId,
+        'ownerId',
+        room.ownerId,
+        'password',
+        password,
+        'users',
+        JSON.stringify(room.users)
+      );
 
       return { room };
     } catch (error) {
@@ -86,7 +96,12 @@ export class RoomsRepository {
     try {
       const redisRoom = await this.redis.hgetall(key);
 
-      const room: Room = { roomId: redisRoom.roomId, ownerId: redisRoom.ownerId, users: JSON.parse(redisRoom.users) };
+      const room: Room = {
+        roomId: redisRoom.roomId,
+        ownerId: redisRoom.ownerId,
+        users: JSON.parse(redisRoom.users),
+        password: redisRoom.password,
+      };
 
       return { room };
     } catch (error) {
@@ -113,6 +128,7 @@ export class RoomsRepository {
         roomId: redisRoom.roomId,
         ownerId: redisRoom.ownerId,
         users: JSON.parse(redisRoom.users),
+        password: redisRoom.password,
       };
 
       // Add the user to the room's users object
@@ -146,6 +162,7 @@ export class RoomsRepository {
         roomId: redisRoom.roomId,
         ownerId: redisRoom.ownerId,
         users: JSON.parse(redisRoom.users),
+        password: redisRoom.password,
       };
 
       // Remove the user from the room's users object

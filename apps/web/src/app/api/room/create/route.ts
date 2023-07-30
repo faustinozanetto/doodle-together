@@ -15,20 +15,6 @@ export async function POST(request: NextRequest) {
 
   const { username, password } = parsed.data;
 
-  /*
-  const hashedPassword = await hashRoomPassword(password);
-
-  const room = await prisma.room.create({
-    data: {
-      password: hashedPassword,
-    },
-  });
-
-  if (!room) {
-    return NextResponse.json<ApiResponseData>({ success: false, message: 'Could not create room!' }, { status: 404 });
-  }
-  */
-
   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}/rooms`, {
     method: 'POST',
     mode: 'cors',
@@ -37,6 +23,7 @@ export async function POST(request: NextRequest) {
     },
     body: JSON.stringify({
       username,
+      password,
     }),
   });
 

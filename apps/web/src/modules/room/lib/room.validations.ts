@@ -13,7 +13,7 @@ export const roomPasswordValidationSchema = z
   .regex(/^(?=.*[A-Za-z])(?=.*\d)/, 'Password must contain at least one letter and number!');
 
 export const joinRoomValidationSchema = z.object({
-  id: roomIdValidationSchema,
+  roomId: roomIdValidationSchema,
   password: roomPasswordValidationSchema,
   username: usernameValidationSchema,
 });

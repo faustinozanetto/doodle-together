@@ -40,7 +40,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
       <form className="space-y-2" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
-          name="id"
+          name="roomId"
           render={({ field }) => (
             <FormItem className="w-full">
               <FormLabel>ID</FormLabel>

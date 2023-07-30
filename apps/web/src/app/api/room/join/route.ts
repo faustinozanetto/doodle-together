@@ -13,27 +13,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json<ApiResponseData>({ success: false, message: errors[0].message });
   }
 
-  const { id: roomId, username, password } = parsed.data;
-
-  /*
-  const room = await prisma.room.findFirst({
-    where: {
-      id,
-    },
-  });
-
-  if (!room) {
-    return NextResponse.json<ApiResponseData>({ success: false, message: 'Could not find room!' }, { status: 404 });
-  }
-
-  const validPassword = await validateRoomPassword(password, room.password);
-
-  if (!validPassword) {
-    return NextResponse.json<ApiResponseData>({ success: false, message: 'Invalid room password!' }, { status: 403 });
-  }
-
-  return NextResponse.json<ApiResponseData>({ success: true, message: 'Join success!' }, { status: 200 });
-  */
+  const { roomId, username, password } = parsed.data;
 
   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}/rooms/join`, {
     method: 'POST',
@@ -44,14 +24,18 @@ export async function POST(request: NextRequest) {
     body: JSON.stringify({
       roomId,
       username,
+      password,
     }),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    return NextResponse.json<ApiResponseData>({ success: false, message: 'Could not create room!' });
+    console.log({ data });
+
+    return NextResponse.json<ApiResponseData>({ success: false, message: data.message });
   }
 
-  const data = await response.json();
   const { room, accessToken } = data;
 
   return NextResponse.json<ApiResponseData<JoinRoomApiResponse>>({
