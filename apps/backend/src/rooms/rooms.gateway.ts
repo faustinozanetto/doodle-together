@@ -28,6 +28,10 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.log('Room Gateway initialized successfully!');
   }
 
+  /**
+   * Function responsible for the connection of a socket client
+   * @param client Socket data with auth details
+   */
   async handleConnection(client: SocketWithAuth) {
     const { roomId, userId, username } = client;
 
@@ -50,6 +54,10 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.io.to(roomId).emit('room_updated', { room });
   }
 
+  /**
+   * Function responsible for the disconnection of a socket client
+   * @param client Socket data with auth details
+   */
   async handleDisconnect(client: SocketWithAuth) {
     const { roomId, userId } = client;
     const sockets = this.io.sockets;

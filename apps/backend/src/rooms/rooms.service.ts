@@ -10,22 +10,29 @@ import { DeleteRoomResponse } from './responses/delete-room.response';
 import { JwtService } from '@nestjs/jwt';
 import { RemoveUserFromRoomDto } from './dto/remove-user-to-room.dto';
 import { AddUserToRoomDto } from './dto/add-user-to-room.dto';
-import { RoomResponse } from './responses/room-response';
 import { FindRoomDto } from './dto/find-room.dto';
-import { Room } from '@doodle-together/types';
+import { FindRoomResponse } from './responses/find-room.response';
+import { AddUserToRoomResponse } from './responses/add-user-to-room.response';
+import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.response';
 
 @Injectable()
 export class RoomsService {
   private readonly logger = new Logger(RoomsService.name);
+
   constructor(private readonly roomsRepository: RoomsRepository, private readonly jwtService: JwtService) {}
 
+  /**
+   * Creates a room by a given input
+   * @param input Create room input : username of owner
+   * @returns Create room response : room & accessToken
+   */
   async createRoom(input: CreateRoomDto): Promise<CreateRoomResponse> {
     const { username } = input;
 
     const userId = generateUserId();
     const roomId = generateRoomId();
 
-    const room = await this.roomsRepository.createRoom({
+    const { room } = await this.roomsRepository.createRoom({
       roomId,
       userId,
     });
@@ -45,23 +52,38 @@ export class RoomsService {
     return { room, accessToken };
   }
 
+  /**
+   * Deletes a room by a given input.
+   * @param input Delete room input : roomId
+   * @returns Delete room response : deleted
+   */
   async deleteRoom(input: DeleteRoomDto): Promise<DeleteRoomResponse> {
-    const deleted = await this.roomsRepository.deleteRoom(input);
+    const { deleted } = await this.roomsRepository.deleteRoom(input);
     return { deleted };
   }
 
-  async findRoom(input: FindRoomDto): Promise<RoomResponse> {
-    const room = await this.roomsRepository.findRoom({ roomId: input.roomId });
+  /**
+   * Finds a room by a given input
+   * @param input  Find room input : roomId
+   * @returns Find room response : room
+   */
+  async findRoom(input: FindRoomDto): Promise<FindRoomResponse> {
+    const { room } = await this.roomsRepository.findRoom({ roomId: input.roomId });
     return { room };
   }
 
+  /**
+   * Joins a room by a given input
+   * @param input Join room input : roomId & username
+   * @returns Join room response : room & accessToken
+   */
   async joinRoom(input: JoinRoomDto): Promise<JoinRoomResponse> {
     const { roomId, username } = input;
     const userId = generateUserId();
 
     this.logger.debug(`Fetching poll with roomId: ${roomId} for userId: ${userId}`);
 
-    const room = await this.roomsRepository.findRoom({ roomId });
+    const { room } = await this.roomsRepository.findRoom({ roomId });
 
     this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
 
@@ -78,17 +100,27 @@ export class RoomsService {
     return { room, accessToken };
   }
 
-  async addUserToRoom(input: AddUserToRoomDto): Promise<RoomResponse> {
+  /**
+   * Adds a user to a room
+   * @param input Add use to room input : roomId & userId & username
+   * @returns Add user to room response : room
+   */
+  async addUserToRoom(input: AddUserToRoomDto): Promise<AddUserToRoomResponse> {
     const { roomId, username, userId } = input;
 
-    const room = await this.roomsRepository.addUserToRoom({ roomId, userId, username });
+    const { room } = await this.roomsRepository.addUserToRoom({ roomId, userId, username });
     return { room };
   }
 
-  async removeUserFromRoom(input: RemoveUserFromRoomDto): Promise<RoomResponse> {
+  /**
+   * Removes a user from a room
+   * @param input Remove user from room input : roomId & userId
+   * @returns Remove user from room response : room
+   */
+  async removeUserFromRoom(input: RemoveUserFromRoomDto): Promise<RemoveUserFromRoomResponse> {
     const { roomId, userId } = input;
 
-    const room = await this.roomsRepository.removeUserFromRoom({ roomId, userId });
+    const { room } = await this.roomsRepository.removeUserFromRoom({ roomId, userId });
     return { room };
   }
 }
