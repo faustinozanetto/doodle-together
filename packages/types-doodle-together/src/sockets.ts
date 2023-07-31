@@ -1,11 +1,11 @@
 import { Room, User } from '.';
 
 export type UserJoinedSocketPayload = {
-  roomId: Room['roomId'];
+  room: Room;
   user: User;
 };
 
 export type UserLeftSocketPayload = {
-  roomId: Room['roomId'];
+  room: Room;
   user: User;
 };

@@ -6,7 +6,7 @@ import RoomCanvas from './canvas/room-canvas';
 
 import RoomCustomization from './customization/room-customization';
 import RoomUsers from './users/room-users';
-import { state } from '@modules/state/store';
+import { actions, state } from '@modules/state/store';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { UserJoinedSocketPayload, UserLeftSocketPayload } from '@doodle-together/types';
 import RoomLeave from './leave/room-leave';
@@ -22,7 +22,9 @@ const Room: React.FC<RoomProps> = (props) => {
 
   useEffect(() => {
     state.socket?.on('user_joined', (data: UserJoinedSocketPayload) => {
-      const { user } = data;
+      const { user, room } = data;
+
+      actions.setRoom(room);
 
       if (state.me?.userId === user.userId) return;
 
@@ -30,7 +32,9 @@ const Room: React.FC<RoomProps> = (props) => {
     });
 
     state.socket?.on('user_left', (data: UserLeftSocketPayload) => {
-      const { user } = data;
+      const { user, room } = data;
+
+      actions.setRoom(room);
 
       if (state.me?.userId === user.userId) return;
 

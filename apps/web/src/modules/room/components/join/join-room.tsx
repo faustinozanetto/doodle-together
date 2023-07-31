@@ -27,10 +27,11 @@ const JoinRoom: React.FC = () => {
 
       if (!response) return;
 
-      const { accessToken, room } = response;
+      const { room, me } = response;
 
-      actions.setAccessToken(accessToken);
       actions.setRoom(room);
+      actions.setMe(me);
+      actions.setupSocket();
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
       router.replace(`/room/${room.roomId}`);

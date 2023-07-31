@@ -8,9 +8,7 @@ type SocketConnectionPayload = {
 
 export const createSocketConnection = ({ state, actions }: SocketConnectionPayload): Socket => {
   const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}/rooms`, {
-    auth: {
-      token: state.accessToken,
-    },
+    withCredentials: true,
     transports: ['websocket', 'polling'],
   });
 

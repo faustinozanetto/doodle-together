@@ -2,7 +2,7 @@ import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 import { RoomsRepository } from './rooms.repository';
 import { DeleteRoomDto } from './dto/delete-room.dto';
 import { JoinRoomDto } from './dto/join-room.dto';
-import { generateRoomId, generateUserId } from 'src/utils/utils';
+import { generateRoomId, generateUserId } from '../utils/utils';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { JoinRoomResponse } from './responses/join-room.response';
 import { CreateRoomResponse } from './responses/create-room.response';
@@ -14,7 +14,7 @@ import { FindRoomDto } from './dto/find-room.dto';
 import { FindRoomResponse } from './responses/find-room.response';
 import { AddUserToRoomResponse } from './responses/add-user-to-room.response';
 import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.response';
-import { PasswordsService } from 'src/passwords/passwords.service';
+import { PasswordsService } from '../passwords/passwords.service';
 import { LeaveRoomDto } from './dto/leave-room.dto';
 import { LeaveRoomResponse } from './responses/leave-room.response';
 
@@ -49,6 +49,12 @@ export class RoomsService {
       password: hashedPassword,
     });
 
+    const { room: updatedRoom, user } = await this.addUserToRoom({
+      roomId,
+      userId,
+      username,
+    });
+
     this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
 
     const accessToken = this.jwtService.sign(
@@ -61,7 +67,7 @@ export class RoomsService {
       }
     );
 
-    return { room, accessToken };
+    return { room: updatedRoom, accessToken, me: user };
   }
 
   /**
@@ -106,22 +112,32 @@ export class RoomsService {
 
     if (!isPasswordValid) throw new ForbiddenException('Invalid room password!');
 
+    const { room: updatedRoom, user } = await this.addUserToRoom({
+      roomId,
+      userId,
+      username,
+    });
+
     this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
 
     const accessToken = this.jwtService.sign(
       {
         roomId: room.roomId,
-        username,
+        username: user.username,
       },
       {
-        subject: userId,
+        subject: user.userId,
       }
     );
 
-    return { room, accessToken };
+    return { room: updatedRoom, me: user, accessToken };
   }
 
   async leaveRoom(input: LeaveRoomDto): Promise<LeaveRoomResponse> {
+    const { roomId, userId } = input;
+
+    await this.removeUserFromRoom({ roomId, userId });
+
     return { left: true };
   }
 
@@ -133,8 +149,8 @@ export class RoomsService {
   async addUserToRoom(input: AddUserToRoomDto): Promise<AddUserToRoomResponse> {
     const { roomId, username, userId } = input;
 
-    const { room } = await this.roomsRepository.addUserToRoom({ roomId, userId, username });
-    return { room };
+    const { room, user } = await this.roomsRepository.addUserToRoom({ roomId, userId, username });
+    return { room, user };
   }
 
   /**

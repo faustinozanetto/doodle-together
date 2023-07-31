@@ -4,6 +4,7 @@ import { Logger } from '@nestjs/common';
 import { SocketAdapter } from './socket/socket.adapter';
 import { ConfigService } from '@nestjs/config';
 import { ConfigInterface } from './config/config.module';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const logger = new Logger('Main');
@@ -13,7 +14,8 @@ async function bootstrap() {
   const { frontendEndpoint }: ConfigInterface['app'] = configService.get('app');
 
   app.useWebSocketAdapter(new SocketAdapter(app));
-  app.enableCors({ origin: [frontendEndpoint] });
+  app.use(cookieParser());
+  app.enableCors({ origin: [frontendEndpoint], credentials: true });
 
   await app.listen(4000);
 

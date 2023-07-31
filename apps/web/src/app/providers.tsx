@@ -17,6 +17,7 @@ const Providers: React.FC<ProvidersProps> = (props) => {
 
   const router = useRouter();
 
+  /*
   useEffect(() => {
     console.log('App useEffect - check token and send to proper page');
 
@@ -46,10 +47,9 @@ const Providers: React.FC<ProvidersProps> = (props) => {
       return;
     }
 
-    actions.setAccessToken(accessToken); // needed for socket.io
-    actions.setupSocket();
+    // actions.setupSocket();
   }, []);
-
+*/
   return (
     <ThemeProvider useSystem={false} useLocalStorage>
       <ToastsProvider>

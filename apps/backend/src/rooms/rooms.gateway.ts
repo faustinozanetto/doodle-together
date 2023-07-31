@@ -50,16 +50,15 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.debug(`userID: ${userId} joined roomId: ${roomId}`);
     this.logger.debug(`Total clients connected to roomId '${roomId}': ${connectedClients}`);
 
-    const { room } = await this.roomsService.addUserToRoom({ roomId, userId, username });
-
     const user: User = { userId, username };
 
-    this.io.to(roomId).emit('user_joined', { roomId, user });
+    const { room } = await this.roomsService.findRoom({
+      roomId,
+    });
 
-    // Send a socket to the room owner to retrieve the current canvas state.
-    this.io.to(room.ownerId).emit('get_canvas_state', { user });
+    this.logger.log('User Joined room: ' + JSON.stringify(room) + ' user: ' + JSON.stringify(user));
 
-    this.io.to(roomId).emit('room_updated', { room });
+    this.io.to(roomId).emit('user_joined', { room, user });
   }
 
   /**
@@ -70,19 +69,24 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const { roomId, userId, username } = client;
     const sockets = this.io.sockets;
 
-    const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
+    //const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
 
     const clientCount = this.io.adapter.rooms?.get(roomId)?.size ?? 0;
 
     this.logger.log(`Disconnected socket id: ${client.id}`);
     this.logger.debug(`Number of connected sockets: ${sockets.size}`);
     this.logger.debug(`Total clients connected to roomId '${roomId}': ${clientCount}`);
+    const { room } = await this.roomsService.findRoom({
+      roomId,
+    });
 
-    this.io.to(roomId).emit('user_left', { roomId, user: { userId, username } });
+    this.io.to(roomId).emit('user_left', { room, user: { userId, username } });
 
+    /*
     if (room) {
       this.io.to(roomId).emit('room_updated', { room });
     }
+    */
   }
 
   @SubscribeMessage('send_canvas_state')

@@ -6,8 +6,9 @@ export const useApiFetch = <TData>(endpoint: string) => {
 
   const fetchData = async (options?: RequestInit): Promise<TData | null> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}${endpoint}`, {
-      mode: 'cors',
+      credentials: 'include',
       headers: {
+        'Access-Control-Allow-Credentials': 'true',
         'Content-Type': 'application/json',
         ...options?.headers,
       },

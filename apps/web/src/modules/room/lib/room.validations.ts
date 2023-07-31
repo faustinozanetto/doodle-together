@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import {
-  accessTokenValidationSchema,
   userIdValidationSchema,
   usernameValidationSchema,
 } from '@modules/user/lib/user.validations';
@@ -32,5 +31,4 @@ export const createRoomValidationSchema = z.object({
 export const leaveRoomValidationSchema = z.object({
   roomId: roomIdValidationSchema,
   userId: userIdValidationSchema,
-  accessToken: accessTokenValidationSchema,
 });

@@ -4,35 +4,19 @@ import { RoomDrawPointPayload } from '@modules/room/types/room.types';
 import { createSocketConnection } from '@modules/socket/lib/socket.lib';
 import { Socket } from 'socket.io-client';
 import { proxy, ref } from 'valtio';
-import { subscribeKey } from 'valtio/utils';
 
 export type AppState = {
   isLoading: boolean;
   room?: Room;
-  accessToken?: string;
   socket?: Socket;
   me?: User;
 };
 
 export const state = proxy<AppState>({
   isLoading: false,
-  get me() {
-    const accessToken = this.accessToken;
-    if (!accessToken) return;
-
-    const data = getDataFromToken(accessToken);
-
-    return {
-      userId: data.sub,
-      username: data.username,
-    };
-  },
 });
 
 export const actions = {
-  setAccessToken: (accessToken?: string): void => {
-    state.accessToken = accessToken;
-  },
   setRoom: (room?: Room): void => {
     state.room = room;
   },
@@ -41,6 +25,9 @@ export const actions = {
   },
   setIsLoading: (isLoading: boolean) => {
     state.isLoading = isLoading;
+  },
+  setMe: (me: User): void => {
+    state.me = me;
   },
   sendDrawPoint: (data: Omit<RoomDrawPointPayload, 'context'>) => {
     if (!state.room) return;
@@ -54,7 +41,6 @@ export const actions = {
   reset: (): void => {
     state.socket?.disconnect();
     state.room = undefined;
-    state.accessToken = undefined;
     state.isLoading = false;
     state.socket = undefined;
   },
@@ -78,11 +64,5 @@ export const actions = {
     actions.setIsLoading(false);
   },
 };
-
-subscribeKey(state, 'accessToken', () => {
-  if (state.accessToken) {
-    localStorage.setItem('accessToken', state.accessToken);
-  }
-});
 
 export type AppActions = typeof actions;

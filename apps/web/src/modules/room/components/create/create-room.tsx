@@ -14,7 +14,7 @@ const CreateRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
-  const { fetchData } = useApiFetch<CreateRoomApiResponse>('/rooms');
+  const { fetchData } = useApiFetch<CreateRoomApiResponse>('/rooms/create');
 
   const [isPending, startTransition] = useTransition();
 
@@ -27,10 +27,11 @@ const CreateRoom: React.FC = () => {
 
       if (!response) return;
 
-      const { accessToken, room } = response;
+      const { room, me } = response;
 
-      actions.setAccessToken(accessToken);
       actions.setRoom(room);
+      actions.setMe(me);
+      actions.setupSocket();
 
       toast({ variant: 'success', content: 'Room created successfully!' });
       router.replace(`/room/${room.roomId}`);
