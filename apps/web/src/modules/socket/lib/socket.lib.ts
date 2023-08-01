@@ -27,7 +27,7 @@ export const createSocketConnection = ({ state, actions }: SocketConnectionPaylo
   socket.on('room_updated', (data) => {
     const { room } = data;
     console.log('Received update room', room);
-    actions.updateRoom(room);
+    actions.setRoom(room);
   });
 
   return socket;

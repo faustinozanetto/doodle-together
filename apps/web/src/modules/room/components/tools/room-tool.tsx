@@ -5,7 +5,7 @@ import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { RoomActionType, RoomTool } from '@modules/room/types/room.types';
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 
-type RoomToolProps = {
+export type RoomToolProps = {
   tool: RoomTool;
   icon: React.ReactNode;
 };

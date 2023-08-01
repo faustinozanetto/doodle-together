@@ -134,9 +134,9 @@ export class RoomsService {
   }
 
   async leaveRoom(input: LeaveRoomDto): Promise<LeaveRoomResponse> {
-    const { roomId, userId } = input;
+    const { roomId, userId, removeUser } = input;
 
-    await this.removeUserFromRoom({ roomId, userId });
+    if (removeUser) await this.removeUserFromRoom({ roomId, userId });
 
     return { left: true };
   }

@@ -76,7 +76,7 @@ export class RoomsRepository {
     this.logger.log(`Deleting room: ${key}`);
 
     try {
-      await this.redis.call('JSON.DEL', key);
+      await this.redis.del(key);
       return { deleted: true };
     } catch (error) {
       this.logger.error(`Could not delete room with id: ${roomId}!`, error);

@@ -21,6 +21,7 @@ import { User } from '@doodle-together/types';
 })
 export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(RoomsGateway.name);
+
   constructor(private readonly roomsService: RoomsService) {}
 
   @WebSocketServer() io: Namespace;
@@ -69,9 +70,9 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const { roomId, userId, username } = client;
     const sockets = this.io.sockets;
 
-    //const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
-
     const clientCount = this.io.adapter.rooms?.get(roomId)?.size ?? 0;
+
+    await client.leave(roomId);
 
     this.logger.log(`Disconnected socket id: ${client.id}`);
     this.logger.debug(`Number of connected sockets: ${sockets.size}`);
@@ -80,13 +81,17 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       roomId,
     });
 
-    this.io.to(roomId).emit('user_left', { room, user: { userId, username } });
+    // User that left was not the owner of the room
+    if (userId !== room.ownerId) return this.io.to(roomId).emit('user_left', { room, user: { userId, username } });
 
-    /*
-    if (room) {
-      this.io.to(roomId).emit('room_updated', { room });
-    }
-    */
+    // Handle user left was room owner
+    const { deleted } = await this.roomsService.deleteRoom({
+      roomId,
+    });
+
+    if (!deleted) return;
+
+    this.io.to(roomId).emit('room_deleted', { room });
   }
 
   @SubscribeMessage('send_canvas_state')

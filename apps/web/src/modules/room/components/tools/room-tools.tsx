@@ -1,9 +1,13 @@
 import React from 'react';
-import RoomTool from './room-tool';
-import { cn } from '@modules/ui/lib/ui.lib';
+import RoomTool, { RoomToolProps } from './room-tool';
+import { useSnapshot } from 'valtio';
+import { state } from '@modules/state/store';
 
-const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
+type ToolData = RoomToolProps & { requiresOwner: boolean };
+
+const TOOLS: ToolData[] = [
   {
+    requiresOwner: false,
     tool: 'pencil',
     icon: (
       <svg
@@ -22,6 +26,7 @@ const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
     ),
   },
   {
+    requiresOwner: false,
     tool: 'eraser',
     icon: (
       <svg
@@ -40,6 +45,7 @@ const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
     ),
   },
   {
+    requiresOwner: true,
     tool: 'clear',
     icon: (
       <svg
@@ -63,14 +69,17 @@ const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
 ];
 
 const RoomTools: React.FC = () => {
+  const currentState = useSnapshot(state);
+
+  const isOwner = currentState.me && currentState.room && currentState.me.userId === currentState.room.ownerId;
+
+  // Only render the tools the user has acces to.
+  const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isOwner));
+
   return (
     <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-2 flex pointer-events-auto">
-      {TOOLS.map((tool, index) => {
-        return (
-          <div key={`tool-${tool.tool}`} className={cn(TOOLS.length - index > 1 && 'border-r pr-2')}>
-            <RoomTool {...tool} />
-          </div>
-        );
+      {filteredTools.map((tool) => {
+        return <RoomTool key={`tool-${tool.tool}`} {...tool} />;
       })}
     </div>
   );

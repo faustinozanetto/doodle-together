@@ -36,6 +36,7 @@ const RoomLeave: React.FC = () => {
         body: JSON.stringify({
           roomId: currentState.room?.roomId,
           userId: currentState.me?.userId,
+          removeUser: true,
         }),
       });
 

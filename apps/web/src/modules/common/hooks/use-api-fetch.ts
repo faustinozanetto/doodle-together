@@ -1,5 +1,4 @@
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
-import { ApiResponseData } from '../types/common.types';
 
 export const useApiFetch = <TData>(endpoint: string) => {
   const { toast } = useToast();

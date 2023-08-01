@@ -1,9 +1,8 @@
 import { Room, User } from '@doodle-together/types';
-import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { RoomDrawPointPayload } from '@modules/room/types/room.types';
 import { createSocketConnection } from '@modules/socket/lib/socket.lib';
 import { Socket } from 'socket.io-client';
-import { proxy, ref } from 'valtio';
+import { proxy, ref } from 'valtio/vanilla';
 
 export type AppState = {
   isLoading: boolean;
@@ -12,15 +11,10 @@ export type AppState = {
   me?: User;
 };
 
-export const state = proxy<AppState>({
-  isLoading: false,
-});
+export const state = proxy<AppState>({ isLoading: false });
 
 export const actions = {
   setRoom: (room?: Room): void => {
-    state.room = room;
-  },
-  updateRoom: (room: Room): void => {
     state.room = room;
   },
   setIsLoading: (isLoading: boolean) => {
@@ -36,11 +30,11 @@ export const actions = {
   },
   leaveRoom: () => {
     actions.reset();
-    localStorage.removeItem('accessToken');
   },
   reset: (): void => {
     state.socket?.disconnect();
     state.room = undefined;
+    state.me = undefined;
     state.isLoading = false;
     state.socket = undefined;
   },
