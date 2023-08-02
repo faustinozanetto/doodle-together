@@ -8,23 +8,28 @@ import RoomCustomization from './customization/room-customization';
 import RoomUsers from './users/room-users';
 import { actions, state } from '@modules/state/store';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
-import { LeaveRoomApiResponse, UserJoinedSocketPayload, UserLeftSocketPayload } from '@doodle-together/types';
+import { LeaveRoomApiResponse, User, UserJoinedSocketPayload, UserLeftSocketPayload } from '@doodle-together/types';
 import RoomLeave from './leave/room-leave';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { useRouter } from 'next/navigation';
 
 type RoomProps = {
   roomId: string;
+  user: User;
 };
 
 const Room: React.FC<RoomProps> = (props) => {
-  const { roomId } = props;
+  const { roomId, user } = props;
 
   const router = useRouter();
-
   const { toast } = useToast();
 
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
+
+  useEffect(() => {
+    actions.setMe(user);
+    actions.setupSocket();
+  }, []);
 
   useEffect(() => {
     state.socket?.on('user_joined', (data: UserJoinedSocketPayload) => {
@@ -33,7 +38,8 @@ const Room: React.FC<RoomProps> = (props) => {
       actions.setRoom(room);
 
       // Notify other users that user joined
-      if (state.me?.userId === user.userId) return;
+      if (state.me && state.me.userId === user.userId) return;
+
       toast({ variant: 'info', content: `User ${user.username} joined the room!` });
     });
 
@@ -89,7 +95,6 @@ const Room: React.FC<RoomProps> = (props) => {
         {/* Bottom  */}
         <div className="flex justify-between items-end">
           <RoomTools />
-
           <RoomLeave />
         </div>
       </div>

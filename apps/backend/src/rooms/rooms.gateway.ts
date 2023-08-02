@@ -6,14 +6,13 @@ import {
   WebSocketServer,
   SubscribeMessage,
   MessageBody,
-  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Namespace } from 'socket.io';
 import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { DrawPointDto } from './dto/draw-point.dto';
 import { SocketWithAuth } from './types';
-import { User } from '@doodle-together/types';
+import { CanvasClearedSocketPayload } from '@doodle-together/types';
 
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({
@@ -51,10 +50,10 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.debug(`userID: ${userId} joined roomId: ${roomId}`);
     this.logger.debug(`Total clients connected to roomId '${roomId}': ${connectedClients}`);
 
-    const user: User = { userId, username };
-
-    const { room } = await this.roomsService.findRoom({
+    const { room, user } = await this.roomsService.addUserToRoom({
       roomId,
+      userId,
+      username,
     });
 
     this.logger.log('User Joined room: ' + JSON.stringify(room) + ' user: ' + JSON.stringify(user));
@@ -77,10 +76,11 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.log(`Disconnected socket id: ${client.id}`);
     this.logger.debug(`Number of connected sockets: ${sockets.size}`);
     this.logger.debug(`Total clients connected to roomId '${roomId}': ${clientCount}`);
-    const { room } = await this.roomsService.findRoom({
-      roomId,
-    });
 
+    const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
+
+    this.io.to(roomId).emit('user_left', { room, user: { userId, username } });
+    /*
     // User that left was not the owner of the room
     if (userId !== room.ownerId) return this.io.to(roomId).emit('user_left', { room, user: { userId, username } });
 
@@ -92,26 +92,7 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     if (!deleted) return;
 
     this.io.to(roomId).emit('room_deleted', { room });
-  }
-
-  @SubscribeMessage('send_canvas_state')
-  async sendCanvasState(
-    @MessageBody() data: { canvasState: string; roomId: string },
-    @ConnectedSocket() client: SocketWithAuth
-  ): Promise<void> {
-    const { roomId } = client;
-
-    const room = await this.roomsService.findRoom({ roomId });
-
-    const users = [];
-    for (const userId in room.room.users) {
-      users.push({ userId, username: room.room.users[userId] });
-    }
-
-    const lastUser = users[users.length - 1];
-    if (!lastUser) return;
-
-    this.io.to(lastUser.userId).emit('canvas_state_from_server', data.canvasState);
+    */
   }
 
   @SubscribeMessage('draw_point')
@@ -119,5 +100,12 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const { roomId, point } = data;
 
     this.io.to(roomId).emit('update_canvas_state', { point });
+  }
+
+  @SubscribeMessage('canvas_cleared')
+  async canvasCleared(@MessageBody() data: CanvasClearedSocketPayload): Promise<void> {
+    const { roomId } = data;
+
+    this.io.to(roomId).emit('clear_canvas');
   }
 }

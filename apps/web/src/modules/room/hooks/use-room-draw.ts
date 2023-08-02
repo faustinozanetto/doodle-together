@@ -4,7 +4,12 @@ import { CanvasPoint } from '@doodle-together/types';
 import { drawPoint } from '../lib/room-draw.lib';
 import { RoomDrawPointPayload } from '../types/room.types';
 
-export const useRoomDraw = (onPointDraw: (data: RoomDrawPointPayload) => void) => {
+type UseRoomDrawProps = {
+  onPointDraw: (data: RoomDrawPointPayload) => void;
+  onCanvasCleared: () => void;
+};
+
+export const useRoomDraw = ({ onPointDraw, onCanvasCleared }: UseRoomDrawProps) => {
   const { state } = useRoomContext();
 
   const [mouseDown, setMouseDown] = useState<boolean>(false);
@@ -49,6 +54,15 @@ export const useRoomDraw = (onPointDraw: (data: RoomDrawPointPayload) => void) =
     context.stroke();
   };
 
+  const clearCanvas = () => {
+    if (!canvasRef.current) return;
+
+    const context = getCanvasContext();
+    if (!context) return;
+
+    context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+  };
+
   const handleCanvasDraw = (event: MouseEvent) => {
     if (!canvasRef.current) return;
 
@@ -65,7 +79,6 @@ export const useRoomDraw = (onPointDraw: (data: RoomDrawPointPayload) => void) =
       y: clientY - top,
     };
 
-    // Pencil draw logic
     if (tool === 'pencil') {
       const { toolCustomization } = state;
       const drawPointData: RoomDrawPointPayload = {
@@ -78,14 +91,14 @@ export const useRoomDraw = (onPointDraw: (data: RoomDrawPointPayload) => void) =
 
       drawPoint(drawPointData);
       onPointDraw(drawPointData);
-
-      previousPoint.current = currentPoint;
     } else if (tool === 'eraser') {
       drawEraser(currentPoint);
-      previousPoint.current = currentPoint;
     } else if (tool === 'clear') {
-      context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      clearCanvas();
+      onCanvasCleared();
     }
+
+    previousPoint.current = currentPoint;
   };
 
   const handleOnMouseMove = (event: MouseEvent) => {
@@ -112,20 +125,19 @@ export const useRoomDraw = (onPointDraw: (data: RoomDrawPointPayload) => void) =
   useLayoutEffect(() => {
     window.addEventListener('resize', handleCanvasResize);
 
-    // Cleanup
     return () => window.removeEventListener('resize', handleCanvasResize);
   }, []);
 
+  // Mouse handling events
   useEffect(() => {
     window.addEventListener('mousemove', handleOnMouseMove);
     window.addEventListener('mouseup', handleOnMouseRelease);
 
-    // Cleanup
     return () => {
       window.removeEventListener('mousemove', handleOnMouseMove);
       window.removeEventListener('mouseup', handleOnMouseRelease);
     };
   }, [mouseDown]);
 
-  return { wrapperRef, canvasRef, handleOnMouseDown, drawPoint };
+  return { wrapperRef, canvasRef, handleOnMouseDown, drawPoint, clearCanvas };
 };

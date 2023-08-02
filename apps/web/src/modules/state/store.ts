@@ -1,24 +1,20 @@
-import { Room, User } from '@doodle-together/types';
+import { CanvasClearedSocketPayload, Room, User } from '@doodle-together/types';
 import { RoomDrawPointPayload } from '@modules/room/types/room.types';
 import { createSocketConnection } from '@modules/socket/lib/socket.lib';
 import { Socket } from 'socket.io-client';
 import { proxy, ref } from 'valtio/vanilla';
 
 export type AppState = {
-  isLoading: boolean;
   room?: Room;
   socket?: Socket;
   me?: User;
 };
 
-export const state = proxy<AppState>({ isLoading: false });
+export const state = proxy<AppState>();
 
 export const actions = {
   setRoom: (room?: Room): void => {
     state.room = room;
-  },
-  setIsLoading: (isLoading: boolean) => {
-    state.isLoading = isLoading;
   },
   setMe: (me: User): void => {
     state.me = me;
@@ -28,6 +24,15 @@ export const actions = {
 
     state.socket?.emit('draw_point', { roomId: state.room.roomId, point: data });
   },
+  sendCanvasCleared: () => {
+    if (!state.room) return;
+
+    const payload: CanvasClearedSocketPayload = {
+      roomId: state.room.roomId,
+    };
+
+    state.socket?.emit('canvas_cleared', payload);
+  },
   leaveRoom: () => {
     actions.reset();
   },
@@ -35,7 +40,6 @@ export const actions = {
     state.socket?.disconnect();
     state.room = undefined;
     state.me = undefined;
-    state.isLoading = false;
     state.socket = undefined;
   },
   setupSocket: (): void => {
@@ -46,7 +50,6 @@ export const actions = {
           actions,
         })
       );
-
       return;
     }
 
@@ -54,8 +57,6 @@ export const actions = {
       state.socket.connect();
       return;
     }
-
-    actions.setIsLoading(false);
   },
 };
 

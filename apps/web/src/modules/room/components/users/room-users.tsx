@@ -7,7 +7,8 @@ import { state } from '@modules/state/store';
 const RoomUsers: React.FC = () => {
   const currentState = useSnapshot(state);
 
-  const sortedUsers = Object.entries(currentState.room?.users ?? {}).sort(([userId, username]) => {
+  // Sort users so that owner is on top
+  const sortedUsers = Object.entries(currentState.room?.users ?? {}).sort(([userId]) => {
     if (currentState.room && currentState.room.ownerId === userId) return -1;
     return 1;
   });

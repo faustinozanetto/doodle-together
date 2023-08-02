@@ -16,48 +16,34 @@ const RoomCanvas: React.FC = () => {
     },
     [currentState.room?.roomId]
   );
+  const onCanvasCleared = useCallback(() => {
+    actions.sendCanvasCleared();
+  }, [currentState.room?.roomId]);
 
-  const { wrapperRef, canvasRef, handleOnMouseDown, drawPoint } = useRoomDraw(onPointDraw);
+  const { wrapperRef, canvasRef, handleOnMouseDown, drawPoint, clearCanvas } = useRoomDraw({
+    onPointDraw,
+    onCanvasCleared,
+  });
 
   useEffect(() => {
     const canvasElement = canvasRef.current;
     const ctx = canvasElement?.getContext('2d');
 
-    // No owner users requrested canvas state so here we sent a socket with the canvas state back to the server
-    state.socket?.on('get_canvas_state', (data) => {
-      const { user } = data;
-
-      if (currentState.me?.userId === user.userId) return;
-
-      const canvasState = canvasRef.current?.toDataURL();
-      if (!canvasState) return;
-
-      state.socket?.emit('send_canvas_state', { canvasState, roomId: currentState.room?.roomId });
-    });
-
-    state.socket?.on('canvas_state_from_server', (data) => {
-      if (!ctx || !canvasElement) return;
-
-      const img = new Image();
-      img.src = data;
-      img.onload = () => {
-        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        ctx.drawImage(img, 0, 0);
-      };
-    });
-
     state.socket?.on('update_canvas_state', (data) => {
       if (!ctx) return;
 
       const { point } = data;
-
       drawPoint({ ...point, context: ctx });
     });
 
+    state.socket?.on('clear_canvas', () => {
+      if (!ctx) return;
+      clearCanvas();
+    });
+
     return () => {
-      state.socket?.off('get_canvas_state');
-      state.socket?.off('canvas_state_from_server');
       state.socket?.off('update_canvas_state');
+      state.socket?.off('clear_canvas');
     };
   }, [canvasRef, currentState.room?.roomId]);
 

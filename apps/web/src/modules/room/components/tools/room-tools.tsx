@@ -73,7 +73,7 @@ const RoomTools: React.FC = () => {
 
   const isOwner = currentState.me && currentState.room && currentState.me.userId === currentState.room.ownerId;
 
-  // Only render the tools the user has acces to.
+  // Only render the tools the user has access to.
   const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isOwner));
 
   return (

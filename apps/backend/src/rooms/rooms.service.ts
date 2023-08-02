@@ -17,6 +17,7 @@ import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.resp
 import { PasswordsService } from '../passwords/passwords.service';
 import { LeaveRoomDto } from './dto/leave-room.dto';
 import { LeaveRoomResponse } from './responses/leave-room.response';
+import { User } from '@doodle-together/types';
 
 @Injectable()
 export class RoomsService {
@@ -112,31 +113,30 @@ export class RoomsService {
 
     if (!isPasswordValid) throw new ForbiddenException('Invalid room password!');
 
-    const { room: updatedRoom, user } = await this.addUserToRoom({
-      roomId,
+    this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
+
+    const me: User = {
       userId,
       username,
-    });
-
-    this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
+    };
 
     const accessToken = this.jwtService.sign(
       {
         roomId: room.roomId,
-        username: user.username,
+        username: me.username,
       },
       {
-        subject: user.userId,
+        subject: me.userId,
       }
     );
 
-    return { room: updatedRoom, me: user, accessToken };
+    return { room, me, accessToken };
   }
 
   async leaveRoom(input: LeaveRoomDto): Promise<LeaveRoomResponse> {
-    const { roomId, userId, removeUser } = input;
+    const { roomId, userId } = input;
 
-    if (removeUser) await this.removeUserFromRoom({ roomId, userId });
+    await this.removeUserFromRoom({ roomId, userId });
 
     return { left: true };
   }
