@@ -39,6 +39,10 @@
     @apply border-border;
   }
 
+  body {
+    @apply text-neutral-900 dark:text-neutral-50;
+  }
+
   .color-input {
     -webkit-appearance: none;
     -moz-appearance: none;

@@ -72,12 +72,6 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
     }
 
-    // If user that left was the owner and room was empty after leave, delete it.
-    if (userId === room.ownerId && users.length === 0) {
-      this.io.to(roomId).emit('room_deleted');
-      return;
-    }
-
     this.io.to(roomId).emit('user_left', { room, user: { userId, username } });
   }
 
@@ -105,8 +99,10 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
     }
 
+    this.logger.verbose({ users }, 'Request canvas state users array');
+
     // If there are no more users than the user return
-    if (users.length <= 1) return;
+    if (users.length === 0) return;
 
     // Sort by owner priority
     const sortedUsers = users.sort((user) => {
@@ -125,6 +121,8 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const { room } = await this.roomsService.findRoom({
       roomId,
     });
+
+    this.logger.verbose({ users: room.users, userId }, 'Send canvas state');
 
     const userSocketId = room.users[userId].socketId;
 

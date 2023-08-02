@@ -11,7 +11,6 @@ import {
   GetCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
 } from '@doodle-together/types';
-import { stat } from 'fs';
 
 const RoomCanvas: React.FC = () => {
   const currentState = useSnapshot(state);

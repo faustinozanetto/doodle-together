@@ -77,7 +77,7 @@ const RoomTools: React.FC = () => {
   const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isOwner));
 
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-2 flex pointer-events-auto">
+    <div className="bg-foreground p-2 rounded-lg shadow-lg border space-x-2 flex pointer-events-auto">
       {filteredTools.map((tool) => {
         return <RoomTool key={`tool-${tool.tool}`} {...tool} />;
       })}

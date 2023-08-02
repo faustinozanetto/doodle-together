@@ -15,9 +15,9 @@ import {
   UserJoinedSocketPayload,
   UserLeftSocketPayload,
 } from '@doodle-together/types';
-import RoomLeave from './leave/room-leave';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { useRouter } from 'next/navigation';
+import RoomManagement from './management/room-management';
 
 type RoomProps = {
   roomId: string;
@@ -113,7 +113,7 @@ const Room: React.FC<RoomProps> = (props) => {
         {/* Bottom  */}
         <div className="flex justify-between items-end">
           <RoomTools />
-          <RoomLeave />
+          <RoomManagement />
         </div>
       </div>
     </div>
