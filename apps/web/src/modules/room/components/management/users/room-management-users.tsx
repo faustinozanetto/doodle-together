@@ -10,8 +10,14 @@ import {
   DialogTrigger,
 } from '@modules/ui/components/dialog';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
+import RoomManagementUser from './room-management-user';
+import { useRoomUsers } from '@modules/room/hooks/use-room-users';
+import { useRoomOwner } from '@modules/room/hooks/use-room-owner';
 
 const RoomManagementUsers: React.FC = () => {
+  const owner = useRoomOwner();
+  const { users } = useRoomUsers({ sortUsers: true });
+
   return (
     <div
       style={{
@@ -36,14 +42,16 @@ const RoomManagementUsers: React.FC = () => {
             <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
           </svg>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Manage Room Users</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your account and remove your data from our
-              servers.
-            </DialogDescription>
+            <DialogDescription>Here you can view the currently connected users and manage them.</DialogDescription>
           </DialogHeader>
+          {users.map((user) => {
+            const isOwner = (owner && owner.userId === user.userId) ?? false;
+
+            return <RoomManagementUser key={`users-management-${user.userId}`} user={user} isOwner={isOwner} />;
+          })}
         </DialogContent>
       </Dialog>
     </div>

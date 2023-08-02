@@ -32,3 +32,8 @@ export type SendCanvasStateSocketPayload = {
 export type DispatchCanvasStateSocketPayload = {
   canvasState: string;
 };
+
+export type KickUserSocketPayload = {
+  userId: string;
+  roomId: string;
+};

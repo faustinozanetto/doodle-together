@@ -2,7 +2,7 @@ import React from 'react';
 import { useSnapshot } from 'valtio';
 import { state } from '@modules/state/store';
 import RoomManagementLeave from './room-management-leave';
-import RoomManagementUsers from './room-management-users';
+import RoomManagementUsers from './users/room-management-users';
 
 const RoomManagement: React.FC = () => {
   const currentState = useSnapshot(state);
