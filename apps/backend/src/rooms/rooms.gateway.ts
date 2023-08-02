@@ -16,6 +16,7 @@ import {
   CanvasClearedSocketPayload,
   DispatchCanvasStateSocketPayload,
   GetCanvasStateSocketPayload,
+  KickUserSocketPayload,
   RequestCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
   UserWithSocketId,
@@ -73,6 +74,26 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
 
     this.io.to(roomId).emit('user_left', { room, user: { userId, username } });
+  }
+
+  @SubscribeMessage('kick_user')
+  async kickUser(@MessageBody() data: KickUserSocketPayload): Promise<void> {
+    const { roomId, userId } = data;
+
+    const { room } = await this.roomsService.findRoom({
+      roomId,
+    });
+
+    const users: UserWithSocketId[] = [];
+    for (const user in room.users) {
+      users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
+    }
+
+    const targetUser = room.users[userId];
+    if (!targetUser) return;
+
+    const targetUserSocketId = targetUser.socketId;
+    this.io.to(targetUserSocketId).emit('kick_request');
   }
 
   @SubscribeMessage('draw_point')

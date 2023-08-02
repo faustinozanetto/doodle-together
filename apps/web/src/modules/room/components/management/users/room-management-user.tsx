@@ -2,7 +2,7 @@ import React from 'react';
 
 import { User } from '@doodle-together/types';
 import { cn } from '@modules/ui/lib/ui.lib';
-import { IconButton } from '@modules/ui/components/icon-button/icon-button';
+
 import RoomManagementUserKick from './room-management-user-kick';
 
 type RoomManagementUserProps = {

@@ -69,6 +69,24 @@ const Room: React.FC<RoomProps> = (props) => {
       toast({ variant: 'info', content: `User ${user.username} left the room!` });
     });
 
+    state.socket?.on('kick_request', async () => {
+      if (state.room === undefined || state.me === undefined) return;
+
+      const response = await fetchData({
+        method: 'POST',
+        body: JSON.stringify({
+          roomId: state.room.roomId,
+          userId: state.me.userId,
+        }),
+      });
+
+      if (!response) return;
+
+      actions.leaveRoom();
+      toast({ variant: 'info', content: 'You have been kicked from the room!' });
+      router.push('/');
+    });
+
     state.socket?.on('room_deleted', async () => {
       console.log('delete room');
 
@@ -95,6 +113,7 @@ const Room: React.FC<RoomProps> = (props) => {
       state.socket?.off('user_joined');
       state.socket?.off('user_left');
       state.socket?.off('room_deleted');
+      state.socket?.off('kick_request');
     };
   }, []);
 
