@@ -8,7 +8,13 @@ import RoomCustomization from './customization/room-customization';
 import RoomUsers from './users/room-users';
 import { actions, state } from '@modules/state/store';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
-import { LeaveRoomApiResponse, User, UserJoinedSocketPayload, UserLeftSocketPayload } from '@doodle-together/types';
+import {
+  LeaveRoomApiResponse,
+  RequestCanvasStateSocketPayload,
+  User,
+  UserJoinedSocketPayload,
+  UserLeftSocketPayload,
+} from '@doodle-together/types';
 import RoomLeave from './leave/room-leave';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { useRouter } from 'next/navigation';
@@ -27,11 +33,20 @@ const Room: React.FC<RoomProps> = (props) => {
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
 
   useEffect(() => {
+    actions.setIsLoading(true);
     actions.setMe(user);
     actions.setupSocket();
-  }, []);
+    actions.setIsLoading(false);
 
-  useEffect(() => {
+    // Send a socket to request the current canvas state.
+    const payload: RequestCanvasStateSocketPayload = {
+      roomId: roomId,
+      userId: user.userId,
+    };
+
+    state.socket?.emit('request_canvas_state', payload);
+
+    // User joined socket listenting
     state.socket?.on('user_joined', (data: UserJoinedSocketPayload) => {
       const { user, room } = data;
 
@@ -43,6 +58,7 @@ const Room: React.FC<RoomProps> = (props) => {
       toast({ variant: 'info', content: `User ${user.username} joined the room!` });
     });
 
+    // User left sockeet listening
     state.socket?.on('user_left', (data: UserLeftSocketPayload) => {
       const { user, room } = data;
 
@@ -53,15 +69,16 @@ const Room: React.FC<RoomProps> = (props) => {
       toast({ variant: 'info', content: `User ${user.username} left the room!` });
     });
 
-    state.socket?.on('room_deleted', async (data) => {
-      const { room } = data;
+    state.socket?.on('room_deleted', async () => {
+      console.log('delete room');
+
+      if (state.room === undefined || state.me === undefined) return;
 
       const response = await fetchData({
         method: 'POST',
         body: JSON.stringify({
-          roomId: room.roomId,
-          userId: state.me?.userId,
-          removeUser: false,
+          roomId: state.room.roomId,
+          userId: state.me.userId,
         }),
       });
 
@@ -74,11 +91,12 @@ const Room: React.FC<RoomProps> = (props) => {
     });
 
     return () => {
+      state.socket?.off('request_canvas_state');
       state.socket?.off('user_joined');
       state.socket?.off('user_left');
       state.socket?.off('room_deleted');
     };
-  }, [roomId]);
+  }, []);
 
   return (
     <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">

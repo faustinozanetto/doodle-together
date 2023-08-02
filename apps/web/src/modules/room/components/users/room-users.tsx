@@ -3,6 +3,7 @@ import RoomUserEntry from './room-user-entry';
 import { Separator } from '@modules/ui/components/separator/separator';
 import { useSnapshot } from 'valtio';
 import { state } from '@modules/state/store';
+import Skeleton from '@modules/ui/components/skeleton/skeleton';
 
 const RoomUsers: React.FC = () => {
   const currentState = useSnapshot(state);
@@ -18,20 +19,24 @@ const RoomUsers: React.FC = () => {
       <span className="font-bold">Users</span>
       <Separator />
       <ul className="gap-2 mt-2">
-        {sortedUsers.map(([userId, username]) => {
-          const isRoomOwner = (currentState.room && currentState.room.ownerId === userId) ?? false;
+        {currentState.isLoading
+          ? Array.from({ length: 3 }).map((placeholder, index) => {
+              return <Skeleton className="h-4 mb-1" />;
+            })
+          : sortedUsers.map(([userId, { username }]) => {
+              const isRoomOwner = (currentState.room && currentState.room.ownerId === userId) ?? false;
 
-          const isCurrentUser = (currentState.me && currentState.me.userId === userId) ?? false;
+              const isCurrentUser = (currentState.me && currentState.me.userId === userId) ?? false;
 
-          return (
-            <RoomUserEntry
-              key={userId}
-              user={{ userId, username }}
-              isOwner={isRoomOwner}
-              isCurrentUser={isCurrentUser}
-            />
-          );
-        })}
+              return (
+                <RoomUserEntry
+                  key={userId}
+                  user={{ userId, username }}
+                  isOwner={isRoomOwner}
+                  isCurrentUser={isCurrentUser}
+                />
+              );
+            })}
       </ul>
     </div>
   );

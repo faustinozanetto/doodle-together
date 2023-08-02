@@ -13,3 +13,22 @@ export type UserLeftSocketPayload = {
 export type CanvasClearedSocketPayload = {
   roomId: Room['roomId'];
 };
+
+export type RequestCanvasStateSocketPayload = {
+  roomId: Room['roomId'];
+  userId: User['userId'];
+};
+
+export type GetCanvasStateSocketPayload = {
+  userId: User['userId'];
+};
+
+export type SendCanvasStateSocketPayload = {
+  roomId: Room['roomId'];
+  userId: User['userId'];
+  canvasState: string;
+};
+
+export type DispatchCanvasStateSocketPayload = {
+  canvasState: string;
+};

@@ -50,13 +50,10 @@ export class RoomsService {
       password: hashedPassword,
     });
 
-    const { room: updatedRoom, user } = await this.addUserToRoom({
-      roomId,
+    const me: User = {
       userId,
       username,
-    });
-
-    this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
+    };
 
     const accessToken = this.jwtService.sign(
       {
@@ -68,7 +65,7 @@ export class RoomsService {
       }
     );
 
-    return { room: updatedRoom, accessToken, me: user };
+    return { room, accessToken, me };
   }
 
   /**
@@ -101,8 +98,6 @@ export class RoomsService {
 
     const userId = generateUserId();
 
-    this.logger.debug(`Fetching poll with roomId: ${roomId} for userId: ${userId}`);
-
     const { room } = await this.roomsRepository.findRoom({ roomId });
 
     // Validate password
@@ -112,8 +107,6 @@ export class RoomsService {
     });
 
     if (!isPasswordValid) throw new ForbiddenException('Invalid room password!');
-
-    this.logger.debug(`Creating token string for roomId: ${room.roomId} and userId: ${userId}`);
 
     const me: User = {
       userId,
@@ -147,9 +140,9 @@ export class RoomsService {
    * @returns Add user to room response : room
    */
   async addUserToRoom(input: AddUserToRoomDto): Promise<AddUserToRoomResponse> {
-    const { roomId, username, userId } = input;
+    const { roomId, username, userId, socketId } = input;
 
-    const { room, user } = await this.roomsRepository.addUserToRoom({ roomId, userId, username });
+    const { room, user } = await this.roomsRepository.addUserToRoom({ roomId, userId, username, socketId });
     return { room, user };
   }
 

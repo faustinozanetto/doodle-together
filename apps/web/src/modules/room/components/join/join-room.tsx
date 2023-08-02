@@ -31,6 +31,7 @@ const JoinRoom: React.FC = () => {
 
       actions.setRoom(room);
       actions.setMe(me);
+      actions.setIsLoading(true);
       actions.setupSocket();
 
       toast({ variant: 'success', content: 'Room joined successfully!' });

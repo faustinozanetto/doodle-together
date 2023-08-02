@@ -38,8 +38,6 @@ export class RoomsRepository {
       users: {},
     };
 
-    this.logger.log(`Creating new room: ${JSON.stringify(room, null, 2)}`);
-
     const key = `rooms:${roomId}`;
     const roomExpireDate = this.configService.get('app', { infer: true }).roomExpires;
 
@@ -73,8 +71,6 @@ export class RoomsRepository {
 
     const key = `rooms:${roomId}`;
 
-    this.logger.log(`Deleting room: ${key}`);
-
     try {
       await this.redis.del(key);
       return { deleted: true };
@@ -91,9 +87,8 @@ export class RoomsRepository {
    */
   async findRoom(input: FindRoomInput): Promise<RoomResponse> {
     const { roomId } = input;
-    const key = `rooms:${roomId}`;
 
-    this.logger.log(`Trying to find room with id: ${key}`);
+    const key = `rooms:${roomId}`;
 
     try {
       const redisRoom = await this.redis.hgetall(key);
@@ -118,9 +113,7 @@ export class RoomsRepository {
    * @returns Room response : room
    */
   async addUserToRoom(input: AddUserToRoomInput): Promise<AddUserToRoomResponse> {
-    const { roomId, userId, username } = input;
-
-    this.logger.log(`Trying to add user with id: ${userId} to room with id: ${roomId}`);
+    const { roomId, userId, username, socketId } = input;
 
     const key = `rooms:${roomId}`;
 
@@ -133,19 +126,13 @@ export class RoomsRepository {
         password: redisRoom.password,
       };
 
-      this.logger.verbose({ prev: room });
-
       // Update users map
       const updatedUsers = JSON.parse(redisRoom.users);
-      updatedUsers[userId] = username;
+      updatedUsers[userId] = { username, socketId };
       room.users = updatedUsers;
-
-      this.logger.verbose({ after: room });
 
       // Update the room data in Redis
       await this.redis.hset(key, 'users', JSON.stringify(room.users));
-
-      this.logger.log('Room after user add: ' + JSON.stringify(room));
 
       const user: User = {
         userId,
@@ -168,8 +155,6 @@ export class RoomsRepository {
     const { roomId, userId } = input;
 
     const key = `rooms:${roomId}`;
-
-    this.logger.log(`Trying to remove user with id: ${userId} to room with id: ${roomId}`);
 
     try {
       const redisRoom = await this.redis.hgetall(key);

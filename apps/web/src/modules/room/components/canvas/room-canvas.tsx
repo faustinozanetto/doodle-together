@@ -6,6 +6,12 @@ import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 import { actions, state } from '@modules/state/store';
 import { useSnapshot } from 'valtio';
 import { RoomDrawPointPayload } from '@modules/room/types/room.types';
+import {
+  DispatchCanvasStateSocketPayload,
+  GetCanvasStateSocketPayload,
+  SendCanvasStateSocketPayload,
+} from '@doodle-together/types';
+import { stat } from 'fs';
 
 const RoomCanvas: React.FC = () => {
   const currentState = useSnapshot(state);
@@ -27,25 +33,59 @@ const RoomCanvas: React.FC = () => {
 
   useEffect(() => {
     const canvasElement = canvasRef.current;
-    const ctx = canvasElement?.getContext('2d');
+    const context = canvasElement?.getContext('2d');
 
-    state.socket?.on('update_canvas_state', (data) => {
-      if (!ctx) return;
+    // Clear canvas socket listening
+    state.socket?.on('clear_canvas', () => {
+      if (!context) return;
 
-      const { point } = data;
-      drawPoint({ ...point, context: ctx });
+      clearCanvas();
     });
 
-    state.socket?.on('clear_canvas', () => {
-      if (!ctx) return;
-      clearCanvas();
+    // Update canvas state socket listening
+    state.socket?.on('update_canvas_state', (data) => {
+      if (!context) return;
+
+      const { point } = data;
+      drawPoint({ ...point, context });
+    });
+
+    // Get canvas state socket listening
+    state.socket?.on('get_canvas_state', (data: GetCanvasStateSocketPayload) => {
+      const { userId } = data;
+      if (!canvasElement || currentState.room === undefined || userId === state.me?.userId) return;
+
+      const canvasState = canvasElement.toDataURL();
+      const payload: SendCanvasStateSocketPayload = {
+        roomId: currentState.room.roomId,
+        canvasState,
+        userId,
+      };
+
+      state.socket?.emit('send_canvas_state', payload);
+    });
+
+    // Dispatch canvas state socket listening
+    state.socket?.on('dispatch_canvas_state', (data: DispatchCanvasStateSocketPayload) => {
+      const { canvasState } = data;
+
+      if (!canvasElement || !context) return;
+
+      const img = new Image();
+      img.src = canvasState;
+      img.onload = () => {
+        context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        context.drawImage(img, 0, 0);
+      };
     });
 
     return () => {
       state.socket?.off('update_canvas_state');
+      state.socket?.off('get_canvas_state');
       state.socket?.off('clear_canvas');
+      state.socket?.off('dispatch_canvas_state');
     };
-  }, [canvasRef, currentState.room?.roomId]);
+  }, [canvasRef, currentState.room]);
 
   return (
     <div ref={wrapperRef} className="h-full w-full">

@@ -6,12 +6,16 @@ export type Room = {
 };
 
 export type RoomUsers = {
-  [userId: string]: string;
+  [userId: string]: { username: string; socketId: string };
 };
 
 export type User = {
   userId: string;
   username: string;
+};
+
+export type UserWithSocketId = User & {
+  socketId: string;
 };
 
 export type CanvasPoint = {

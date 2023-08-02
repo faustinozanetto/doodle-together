@@ -5,14 +5,18 @@ import { Socket } from 'socket.io-client';
 import { proxy, ref } from 'valtio/vanilla';
 
 export type AppState = {
+  isLoading: boolean;
   room?: Room;
   socket?: Socket;
   me?: User;
 };
 
-export const state = proxy<AppState>();
+export const state = proxy<AppState>({ isLoading: false });
 
 export const actions = {
+  setIsLoading: (isLoading: boolean) => {
+    state.isLoading = isLoading;
+  },
   setRoom: (room?: Room): void => {
     state.room = room;
   },

@@ -1,4 +1,4 @@
-import { Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -6,16 +6,12 @@ import { JoinRoomDto } from './dto/join-room.dto';
 import { LeaveRoomDto } from './dto/leave-room.dto';
 import { AuthGuard } from './guards/auth-guard';
 import { CreateRoomApiResponse, JoinRoomApiResponse, LeaveRoomApiResponse } from '@doodle-together/types';
-import { Response, Request } from 'express';
-import { ConfigService } from '@nestjs/config';
-import { ConfigInterface } from 'src/config/config.module';
+import { Response } from 'express';
+
 @UsePipes(new ValidationPipe())
 @Controller('rooms')
 export class RoomsController {
-  constructor(
-    private configService: ConfigService<ConfigInterface>,
-    private roomsService: RoomsService
-  ) {}
+  constructor(private roomsService: RoomsService) {}
 
   @Post('/create')
   async create(
@@ -34,11 +30,7 @@ export class RoomsController {
   }
 
   @Post('/join')
-  async join(
-    @Body() body: JoinRoomDto,
-    @Req() request: Request,
-    @Res({ passthrough: true }) response: Response
-  ): Promise<JoinRoomApiResponse> {
+  async join(@Body() body: JoinRoomDto, @Res({ passthrough: true }) response: Response): Promise<JoinRoomApiResponse> {
     const { room, accessToken, me } = await this.roomsService.joinRoom(body);
 
     response.cookie('accessToken', accessToken, {
