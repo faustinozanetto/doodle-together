@@ -18,6 +18,7 @@ import {
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { useRouter } from 'next/navigation';
 import RoomManagement from './management/room-management';
+import { useRoomNotifications } from '../hooks/use-room-notifications';
 
 type RoomProps = {
   roomId: string;
@@ -30,13 +31,13 @@ const Room: React.FC<RoomProps> = (props) => {
   const router = useRouter();
   const { toast } = useToast();
 
+  useRoomNotifications();
+
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
 
   useEffect(() => {
-    actions.setIsLoading(true);
-    actions.setMe(user);
     actions.setupSocket();
-    actions.setIsLoading(false);
+    actions.setMe(user);
 
     // Send a socket to request the current canvas state.
     const payload: RequestCanvasStateSocketPayload = {
@@ -51,22 +52,6 @@ const Room: React.FC<RoomProps> = (props) => {
       const { user, room } = data;
 
       actions.setRoom(room);
-
-      // Notify other users that user joined
-      if (state.me && state.me.userId === user.userId) return;
-
-      toast({ variant: 'info', content: `User ${user.username} joined the room!` });
-    });
-
-    // User left sockeet listening
-    state.socket?.on('user_left', (data: UserLeftSocketPayload) => {
-      const { user, room } = data;
-
-      actions.setRoom(room);
-
-      // Notify other users that user left
-      if (state.me?.userId === user.userId) return;
-      toast({ variant: 'info', content: `User ${user.username} left the room!` });
     });
 
     state.socket?.on('kick_request', async () => {

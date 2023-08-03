@@ -4,7 +4,6 @@ import React, { useCallback, useEffect } from 'react';
 import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
 import { actions, state } from '@modules/state/store';
-import { useSnapshot } from 'valtio';
 import { RoomDrawPointPayload } from '@modules/room/types/room.types';
 import {
   DispatchCanvasStateSocketPayload,
@@ -13,17 +12,16 @@ import {
 } from '@doodle-together/types';
 
 const RoomCanvas: React.FC = () => {
-  const currentState = useSnapshot(state);
-
   const onPointDraw = useCallback(
     (data: RoomDrawPointPayload) => {
       actions.sendDrawPoint(data);
     },
-    [currentState.room?.roomId]
+    [state.room?.roomId]
   );
+
   const onCanvasCleared = useCallback(() => {
     actions.sendCanvasCleared();
-  }, [currentState.room?.roomId]);
+  }, [state.room?.roomId]);
 
   const { wrapperRef, canvasRef, handleOnMouseDown, drawPoint, clearCanvas } = useRoomDraw({
     onPointDraw,
@@ -52,11 +50,11 @@ const RoomCanvas: React.FC = () => {
     // Get canvas state socket listening
     state.socket?.on('get_canvas_state', (data: GetCanvasStateSocketPayload) => {
       const { userId } = data;
-      if (!canvasElement || currentState.room === undefined || userId === state.me?.userId) return;
+      if (!canvasElement || state.room === undefined || userId === state.me?.userId) return;
 
       const canvasState = canvasElement.toDataURL();
       const payload: SendCanvasStateSocketPayload = {
-        roomId: currentState.room.roomId,
+        roomId: state.room.roomId,
         canvasState,
         userId,
       };
@@ -84,7 +82,7 @@ const RoomCanvas: React.FC = () => {
       state.socket?.off('clear_canvas');
       state.socket?.off('dispatch_canvas_state');
     };
-  }, [canvasRef, currentState.room]);
+  }, [canvasRef, state.room]);
 
   return (
     <div ref={wrapperRef} className="h-full w-full">

@@ -1,14 +1,14 @@
 import { User } from '@doodle-together/types';
 import { state } from '@modules/state/store';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 export const useRoomMe = () => {
   const currentState = useSnapshot(state);
+  const [me, setMe] = useState<User | null>(null);
 
-  const me = useMemo(() => {
-    const me: User | null = currentState.me ?? null;
-    return me;
+  useEffect(() => {
+    setMe(currentState.me ?? null);
   }, [currentState.me]);
 
   return me;

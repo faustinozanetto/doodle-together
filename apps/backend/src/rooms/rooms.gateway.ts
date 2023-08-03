@@ -19,6 +19,7 @@ import {
   KickUserSocketPayload,
   RequestCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
+  SendNotificationSocketPayload,
   UserWithSocketId,
 } from '@doodle-together/types';
 
@@ -54,6 +55,14 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       socketId,
     });
 
+    const notificationPayload: SendNotificationSocketPayload = {
+      type: 'user-joined',
+      content: `User ${username} joined the room!`,
+      userId,
+      broadcast: 'except',
+    };
+
+    this.io.to(roomId).emit('send_notification', notificationPayload);
     this.io.to(roomId).emit('user_joined', { room, user });
   }
 
@@ -73,7 +82,15 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
     }
 
-    this.io.to(roomId).emit('user_left', { room, user: { userId, username } });
+    const notificationPayload: SendNotificationSocketPayload = {
+      type: 'user-left',
+      content: `User ${username} left the room!`,
+      userId,
+
+      broadcast: 'except',
+    };
+
+    this.io.to(roomId).emit('send_notification', notificationPayload);
   }
 
   @SubscribeMessage('kick_user')
@@ -93,6 +110,25 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     if (!targetUser) return;
 
     const targetUserSocketId = targetUser.socketId;
+
+    const exceptNotificationPayload: SendNotificationSocketPayload = {
+      type: 'user-kicked-except',
+      content: `User ${targetUser.username} has been kicked!`,
+      userId,
+      broadcast: 'except',
+    };
+
+    this.io.to(roomId).emit('send_notification', exceptNotificationPayload);
+
+    const selfNotificationPayload: SendNotificationSocketPayload = {
+      type: 'user-kicked-self',
+      content: `You have been kicked from the room!`,
+      userId,
+      broadcast: 'self',
+    };
+
+    this.io.to(targetUserSocketId).emit('send_notification', selfNotificationPayload);
+
     this.io.to(targetUserSocketId).emit('kick_request');
   }
 

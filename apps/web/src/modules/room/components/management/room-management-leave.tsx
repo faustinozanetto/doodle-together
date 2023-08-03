@@ -15,7 +15,6 @@ import {
 } from '@modules/ui/components/alert-dialog/alert-dialog';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useSnapshot } from 'valtio';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { LeaveRoomApiResponse } from '@doodle-together/types';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
@@ -23,7 +22,6 @@ import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-butt
 const RoomManagementLeave: React.FC = () => {
   const router = useRouter();
 
-  const currentState = useSnapshot(state);
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
 
   const { toast } = useToast();
@@ -32,8 +30,8 @@ const RoomManagementLeave: React.FC = () => {
     await fetchData({
       method: 'POST',
       body: JSON.stringify({
-        roomId: currentState.room?.roomId,
-        userId: currentState.me?.userId,
+        roomId: state.room?.roomId,
+        userId: state.me?.userId,
       }),
     });
 

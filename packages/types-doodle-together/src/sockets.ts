@@ -37,3 +37,14 @@ export type KickUserSocketPayload = {
   userId: string;
   roomId: string;
 };
+
+export type SocketNotificationType = 'user-joined' | 'user-left' | 'user-kicked-self' | 'user-kicked-except';
+
+export type SocketNotifcationBroadcastType = 'self' | 'all' | 'except';
+
+export type SendNotificationSocketPayload = {
+  type: SocketNotificationType;
+  broadcast: SocketNotifcationBroadcastType;
+  userId: string;
+  content: string;
+};
