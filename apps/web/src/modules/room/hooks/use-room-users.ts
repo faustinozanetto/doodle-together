@@ -1,29 +1,30 @@
 import { User } from '@doodle-together/types';
-import { useRoomStore } from '@modules/state/room.slice';
+import { roomState } from '@modules/state/room.slice';
 import { useMemo } from 'react';
+import { useSnapshot } from 'valtio';
 
 type UseRoomUsersProps = {
   sortUsers?: boolean;
 };
 
 export const useRoomUsers = ({ sortUsers = false }: UseRoomUsersProps) => {
-  const { room } = useRoomStore();
+  const roomSnapshot = useSnapshot(roomState);
 
   const users = useMemo(() => {
-    if (!room) return [];
+    if (!roomSnapshot.room) return [];
 
-    const users: User[] = Object.entries(room.users ?? {}).map(([userId, { username }]) => {
+    const users: User[] = Object.entries(roomSnapshot.room.users ?? {}).map(([userId, { username }]) => {
       return { userId, username };
     });
 
     if (sortUsers)
       users.sort((a) => {
-        if (a.userId === room.ownerId) return -1;
+        if (a.userId === roomSnapshot.room?.ownerId) return -1;
         return 1;
       });
 
     return users;
-  }, [room]);
+  }, [roomSnapshot]);
 
   return { users };
 };

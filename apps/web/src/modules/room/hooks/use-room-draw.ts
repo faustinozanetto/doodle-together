@@ -7,9 +7,10 @@ import { RoomDrawPointPayload } from '../types/room.types';
 type UseRoomDrawProps = {
   onPointDraw: (data: RoomDrawPointPayload) => void;
   onCanvasCleared: () => void;
+  onCanvasResized: (width: number, height: number) => void;
 };
 
-export const useRoomDraw = ({ onPointDraw, onCanvasCleared }: UseRoomDrawProps) => {
+export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: UseRoomDrawProps) => {
   const { state } = useRoomContext();
 
   const [mouseDown, setMouseDown] = useState<boolean>(false);
@@ -24,6 +25,8 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared }: UseRoomDrawProps) 
     const { width, height } = wrapperRef.current.getBoundingClientRect();
     canvasRef.current.width = width;
     canvasRef.current.height = height;
+
+    onCanvasResized(width, height);
   };
 
   const getCanvasContext = (): CanvasRenderingContext2D | null => {
@@ -54,14 +57,14 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared }: UseRoomDrawProps) 
     context.stroke();
   };
 
-  const clearCanvas = () => {
+  const clearCanvas = useCallback(() => {
     if (!canvasRef.current) return;
 
     const context = getCanvasContext();
     if (!context) return;
 
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-  };
+  }, []);
 
   const handleCanvasDraw = (event: MouseEvent) => {
     if (!canvasRef.current) return;

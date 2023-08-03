@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { KickUserSocketPayload, User } from '@doodle-together/types';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
-
-import { useRoomStore } from '@modules/state/room.slice';
-import { useSocketStore } from '@modules/state/socket.slice';
+import { roomState } from '@modules/state/room.slice';
+import { socketState } from '@modules/state/socket.slice';
 
 type RoomManagementUserKickProps = {
   user: User;
@@ -15,12 +14,10 @@ const RoomManagementUserKick: React.FC<RoomManagementUserKickProps> = (props) =>
   const { user } = props;
   const { username, userId } = user;
 
-  const { room } = useRoomStore();
-  const { socket } = useSocketStore();
-
   const label = `Kick ${username}`;
 
-  const handleUserKick = () => {
+  const handleUserKick = useCallback(() => {
+    const { room } = roomState;
     if (!room) return;
 
     const payload: KickUserSocketPayload = {
@@ -28,8 +25,8 @@ const RoomManagementUserKick: React.FC<RoomManagementUserKickProps> = (props) =>
       roomId: room.roomId,
     };
 
-    socket?.emit('kick_user', payload);
-  };
+    socketState.socket?.emit('kick_user', payload);
+  }, [roomState.room]);
 
   return (
     <TooltipProvider delayDuration={100}>

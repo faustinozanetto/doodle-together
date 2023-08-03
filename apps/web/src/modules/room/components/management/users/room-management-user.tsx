@@ -12,7 +12,7 @@ type RoomManagementUserProps = {
 
 const RoomManagementUser: React.FC<RoomManagementUserProps> = (props) => {
   const { user, isOwner } = props;
-  const { username, userId } = user;
+  const { username } = user;
 
   return (
     <div

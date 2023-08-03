@@ -3,12 +3,14 @@ import RoomUserEntry from './room-user-entry';
 import { Separator } from '@modules/ui/components/separator/separator';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRoomUsers } from '@modules/room/hooks/use-room-users';
-import { useMeStore } from '@modules/state/me.slice';
-import { useRoomStore } from '@modules/state/room.slice';
+import { useSnapshot } from 'valtio';
+import { meState } from '@modules/state/me.slice';
+import { roomState } from '@modules/state/room.slice';
 
 const RoomUsers: React.FC = () => {
-  const { me } = useMeStore();
-  const { room } = useRoomStore();
+  const meSnapshot = useSnapshot(meState);
+  const roomSnapshot = useSnapshot(roomState);
+
   const { users } = useRoomUsers({ sortUsers: true });
 
   return (
@@ -18,9 +20,10 @@ const RoomUsers: React.FC = () => {
       <ul className="gap-2 mt-2">
         <AnimatePresence>
           {users.map((user, index) => {
-            const isRoomOwner = (room && room.ownerId === user.userId) ?? false;
+            const isRoomOwner =
+              (roomSnapshot && roomSnapshot.room && user.userId === roomSnapshot.room.ownerId) ?? false;
 
-            const isCurrentUser = (me && me.userId === user.userId) ?? false;
+            const isCurrentUser = (meSnapshot && meSnapshot.me && meSnapshot.me.userId === user.userId) ?? false;
 
             return (
               <motion.li

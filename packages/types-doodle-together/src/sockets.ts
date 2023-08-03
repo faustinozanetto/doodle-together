@@ -1,13 +1,5 @@
 import { Room, User } from '.';
 
-export type UserJoinedSocketPayload = {
-  room: Room;
-};
-
-export type UserLeftSocketPayload = {
-  room: Room;
-};
-
 export type CanvasClearedSocketPayload = {
   roomId: Room['roomId'];
 };
@@ -29,6 +21,10 @@ export type SendCanvasStateSocketPayload = {
 
 export type DispatchCanvasStateSocketPayload = {
   canvasState: string;
+};
+
+export type UpdateRoomSocketPayload = {
+  room: Room;
 };
 
 export type KickUserSocketPayload = {

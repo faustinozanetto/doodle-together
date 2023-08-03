@@ -8,39 +8,55 @@ import {
   CanvasClearedSocketPayload,
   DispatchCanvasStateSocketPayload,
   GetCanvasStateSocketPayload,
+  RequestCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
 } from '@doodle-together/types';
-import { useMeStore } from '@modules/state/me.slice';
-import { useRoomStore } from '@modules/state/room.slice';
-import { useSocketStore } from '@modules/state/socket.slice';
+import { roomState } from '@modules/state/room.slice';
+import { socketState } from '@modules/state/socket.slice';
+import { meState } from '@modules/state/me.slice';
 
 const RoomCanvas: React.FC = () => {
-  const { me } = useMeStore();
-  const { room } = useRoomStore();
-  const { socket } = useSocketStore();
-
   const onPointDraw = useCallback(
     (data: RoomDrawPointPayload) => {
+      const { room } = roomState;
       if (!room) return;
 
-      socket?.emit('draw_point', { roomId: room.roomId, point: data });
+      socketState.socket?.emit('draw_point', { roomId: room.roomId, point: data });
     },
-    [room?.roomId]
+    [roomState.room]
   );
 
   const onCanvasCleared = useCallback(() => {
+    const { room } = roomState;
     if (!room) return;
 
     const payload: CanvasClearedSocketPayload = {
       roomId: room.roomId,
     };
 
-    socket?.emit('canvas_cleared', payload);
-  }, [room?.roomId]);
+    socketState.socket?.emit('canvas_cleared', payload);
+  }, [roomState.room]);
+
+  const onCanvasResized = useCallback(
+    (width, height) => {
+      const { room } = roomState;
+      const { me } = meState;
+      if (!room || !me) return;
+
+      const payload: RequestCanvasStateSocketPayload = {
+        roomId: room.roomId,
+        userId: me.userId,
+      };
+
+      socketState.socket?.emit('request_canvas_state', payload);
+    },
+    [roomState, meState]
+  );
 
   const { wrapperRef, canvasRef, handleOnMouseDown, drawPoint, clearCanvas } = useRoomDraw({
     onPointDraw,
     onCanvasCleared,
+    onCanvasResized,
   });
 
   useEffect(() => {
@@ -48,14 +64,14 @@ const RoomCanvas: React.FC = () => {
     const context = canvasElement?.getContext('2d');
 
     // Clear canvas socket listening
-    socket?.on('clear_canvas', () => {
+    socketState.socket?.on('clear_canvas', () => {
       if (!context) return;
 
       clearCanvas();
     });
 
     // Update canvas state socket listening
-    socket?.on('update_canvas_state', (data) => {
+    socketState.socket?.on('update_canvas_state', (data) => {
       if (!context) return;
 
       const { point } = data;
@@ -63,8 +79,12 @@ const RoomCanvas: React.FC = () => {
     });
 
     // Get canvas state socket listening
-    socket?.on('get_canvas_state', (data: GetCanvasStateSocketPayload) => {
+    socketState.socket?.on('get_canvas_state', (data: GetCanvasStateSocketPayload) => {
       const { userId } = data;
+
+      const { room } = roomState;
+      const { me } = meState;
+
       if (!canvasElement || !room || !me || userId === me.userId) return;
 
       const canvasState = canvasElement.toDataURL();
@@ -74,11 +94,11 @@ const RoomCanvas: React.FC = () => {
         userId,
       };
 
-      socket?.emit('send_canvas_state', payload);
+      socketState.socket?.emit('send_canvas_state', payload);
     });
 
     // Dispatch canvas state socket listening
-    socket?.on('dispatch_canvas_state', (data: DispatchCanvasStateSocketPayload) => {
+    socketState.socket?.on('dispatch_canvas_state', (data: DispatchCanvasStateSocketPayload) => {
       const { canvasState } = data;
 
       if (!canvasElement || !context) return;
@@ -92,12 +112,12 @@ const RoomCanvas: React.FC = () => {
     });
 
     return () => {
-      socket?.off('update_canvas_state');
-      socket?.off('get_canvas_state');
-      socket?.off('clear_canvas');
-      socket?.off('dispatch_canvas_state');
+      socketState.socket?.off('update_canvas_state');
+      socketState.socket?.off('get_canvas_state');
+      socketState.socket?.off('clear_canvas');
+      socketState.socket?.off('dispatch_canvas_state');
     };
-  }, [canvasRef, room]);
+  }, [canvasRef, roomState.room]);
 
   return (
     <div ref={wrapperRef} className="h-full w-full">

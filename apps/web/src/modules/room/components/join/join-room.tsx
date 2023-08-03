@@ -9,16 +9,14 @@ import { useRouter } from 'next/navigation';
 
 import { JoinRoomApiResponse } from '@doodle-together/types';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
-import { useRoomStore } from '@modules/state/room.slice';
-import { useMeStore } from '@modules/state/me.slice';
+import { roomActions } from '@modules/state/room.slice';
+import { meActions } from '@modules/state/me.slice';
 
 const JoinRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
   const { fetchData } = useApiFetch<JoinRoomApiResponse>('/rooms/join');
-  const { setMe } = useMeStore();
-  const { setRoom } = useRoomStore();
 
   const [isPending, startTransition] = useTransition();
 
@@ -33,11 +31,11 @@ const JoinRoom: React.FC = () => {
 
       const { room, me } = response;
 
-      setRoom(room);
-      setMe(me);
+      roomActions.setRoom(room);
+      meActions.setMe(me);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
-      router.replace(`/room/${room.roomId}`);
+      router.push(`/room/${room.roomId}`);
     });
   };
 

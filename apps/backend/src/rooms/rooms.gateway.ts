@@ -20,7 +20,7 @@ import {
   RequestCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
   SendNotificationSocketPayload,
-  UserLeftSocketPayload,
+  UpdateRoomSocketPayload,
   UserWithSocketId,
 } from '@doodle-together/types';
 
@@ -49,7 +49,7 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     await client.join(roomId);
     const socketId = client.id;
 
-    const { room, user } = await this.roomsService.addUserToRoom({
+    const { room } = await this.roomsService.addUserToRoom({
       roomId,
       userId,
       username,
@@ -64,7 +64,12 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     };
 
     this.io.to(roomId).emit('send_notification', notificationPayload);
-    this.io.to(roomId).emit('user_joined', { room, user });
+
+    const updateRoomPayload: UpdateRoomSocketPayload = {
+      room,
+    };
+
+    this.io.to(roomId).emit('update_room', updateRoomPayload);
   }
 
   /**
@@ -93,11 +98,11 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
     this.io.to(roomId).emit('send_notification', notificationPayload);
 
-    const userLeftPayload: UserLeftSocketPayload = {
+    const updateRoomPayload: UpdateRoomSocketPayload = {
       room,
     };
 
-    this.io.to(roomId).emit('user_left', userLeftPayload);
+    this.io.to(roomId).emit('update_room', updateRoomPayload);
   }
 
   @SubscribeMessage('kick_user')
@@ -163,9 +168,6 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
     }
 
-    this.logger.verbose({ users }, 'Request canvas state users array');
-
-    // If there are no more users than the user return
     if (users.length === 0) return;
 
     // Sort by owner priority
@@ -189,7 +191,7 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.verbose({ users: room.users, userId }, 'Send canvas state');
 
     const userSocketId = room.users[userId].socketId;
-
+    this.logger.verbose({ userSocketId, userId });
     const payload: DispatchCanvasStateSocketPayload = {
       canvasState,
     };

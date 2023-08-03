@@ -5,16 +5,7 @@ import { cookies } from 'next/headers';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { User } from '@doodle-together/types';
 
-type RoomPageProps = {
-  params: {
-    roomId: string;
-  };
-};
-
-const RoomPage: React.FC<RoomPageProps> = async (props) => {
-  const { params } = props;
-  const { roomId } = params;
-
+const RoomPage: React.FC = async () => {
   const cookieStore = cookies();
   const accessToken = cookieStore.get('accessToken');
 
@@ -31,7 +22,7 @@ const RoomPage: React.FC<RoomPageProps> = async (props) => {
 
   return (
     <RoomProvider>
-      <Room roomId={roomId} user={user} />
+      <Room user={user} />
     </RoomProvider>
   );
 };

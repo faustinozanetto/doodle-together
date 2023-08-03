@@ -1,13 +1,25 @@
 import { initializeSocketConnection } from '@modules/socket/lib/socket.lib';
 import { Socket } from 'socket.io-client';
-import { create } from 'zustand';
+import { proxy, ref } from 'valtio';
 
-export interface SocketSliceState {
+export type SocketSliceState = {
   socket: Socket | null;
-  resetSocket: () => void;
-}
+};
 
-export const useSocketStore = create<SocketSliceState>((set) => ({
-  socket: initializeSocketConnection().connect(),
-  resetSocket: () => set((state) => ({ socket: null, resetSocket: state.resetSocket })),
-}));
+export const socketState = proxy<SocketSliceState>({ socket: null });
+
+export const socketActions = {
+  initializeSocket: (): void => {
+    if (!socketState.socket) {
+      socketState.socket = ref(initializeSocketConnection());
+      return;
+    }
+
+    if (!socketState.socket.connected) {
+      socketState.socket.connect();
+      return;
+    }
+  },
+};
+
+export type SocketActions = typeof socketActions;

@@ -1,14 +1,16 @@
 import { User } from '@doodle-together/types';
-import { create } from 'zustand';
+import { proxy } from 'valtio';
 
-export interface MeSliceState {
+export type MeSliceState = {
   me: User | null;
-  setMe: (me: User) => void;
-  resetMe: () => void;
-}
+};
 
-export const useMeStore = create<MeSliceState>((set) => ({
-  me: null,
-  setMe: (me: User) => set((state) => ({ me, resetMe: state.resetMe, setMe: state.setMe })),
-  resetMe: () => set((state) => ({ me: null, resetMe: state.resetMe, setMe: state.setMe })),
-}));
+export const meState = proxy<MeSliceState>({ me: null });
+
+export const meActions = {
+  setMe: (me: User): void => {
+    meState.me = me;
+  },
+};
+
+export type MeActions = typeof meActions;
