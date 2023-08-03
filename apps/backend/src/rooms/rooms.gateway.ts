@@ -56,6 +56,8 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       socketId,
     });
 
+    this.logger.log(`USER CONNECTED ${userId}, ${username}`);
+
     const notificationPayload: SendNotificationSocketPayload = {
       type: 'user-joined',
       content: `User ${username} joined the room!`,
@@ -82,6 +84,8 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     await client.leave(roomId);
 
     const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
+
+    this.logger.log(`USER DISCONNECTED ${userId}, ${username}`);
 
     const users: UserWithSocketId[] = [];
     for (const user in room.users) {
@@ -168,6 +172,7 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
     }
 
+    this.logger.log({ users });
     if (users.length === 0) return;
 
     // Sort by owner priority
@@ -188,14 +193,11 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       roomId,
     });
 
-    this.logger.verbose({ users: room.users, userId }, 'Send canvas state');
-
-    const userSocketId = room.users[userId].socketId;
-    this.logger.verbose({ userSocketId, userId });
     const payload: DispatchCanvasStateSocketPayload = {
       canvasState,
     };
 
+    const userSocketId = room.users[userId].socketId;
     this.io.to(userSocketId).emit('dispatch_canvas_state', payload);
   }
 

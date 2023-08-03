@@ -38,15 +38,18 @@ const Room: React.FC<RoomProps> = (props) => {
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
 
   useEffect(() => {
-    socketActions.initializeSocket();
     meActions.setMe(user);
-    // Send a socket to request the current canvas state.
-    const payload: RequestCanvasStateSocketPayload = {
-      roomId: roomId as string,
-      userId: user.userId,
-    };
+    socketActions.initializeSocket();
 
-    socketState.socket?.emit('request_canvas_state', payload);
+    socketState.socket?.on('connect', () => {
+      // Send a socket to request the current canvas state.
+      const payload: RequestCanvasStateSocketPayload = {
+        roomId: roomId as string,
+        userId: user.userId,
+      };
+
+      socketState.socket?.emit('request_canvas_state', payload);
+    });
 
     socketState.socket?.on('update_room', (data: UpdateRoomSocketPayload) => {
       const { room } = data;
@@ -74,32 +77,10 @@ const Room: React.FC<RoomProps> = (props) => {
       router.push('/');
     });
 
-    socketState.socket?.on('room_deleted', async () => {
-      const { room } = roomState;
-      const { me } = meState;
-      if (!room || !me) return;
-
-      const response = await fetchData({
-        method: 'POST',
-        body: JSON.stringify({
-          roomId: room.roomId,
-          userId: me.userId,
-        }),
-      });
-
-      if (!response) return;
-
-      socketState.socket?.disconnect();
-
-      toast({ variant: 'info', content: 'Room has been deleted!' });
-      router.push('/');
-    });
-
     return () => {
-      socketState.socket?.off('request_canvas_state');
       socketState.socket?.off('update_room');
-      socketState.socket?.off('room_deleted');
       socketState.socket?.off('kick_request');
+      socketState.socket?.off('request_canvas_state');
     };
   }, [user, roomId]);
 

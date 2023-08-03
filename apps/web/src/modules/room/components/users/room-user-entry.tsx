@@ -2,15 +2,17 @@ import React from 'react';
 import { User } from '@doodle-together/types';
 import { cn } from '@modules/ui/lib/ui.lib';
 import RoomUserOwnerDecor from './room-user-owner-decor';
+import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 
 type RoomUserEntryProps = {
   user: User;
   isCurrentUser: boolean;
-  isOwner: boolean;
 };
 
 const RoomUserEntry: React.FC<RoomUserEntryProps> = (props) => {
-  const { user, isCurrentUser, isOwner } = props;
+  const { user, isCurrentUser } = props;
+
+  const { isRoomOwner } = useIsRoomOwner(user);
 
   return (
     <div className="flex gap-1 items-center justify-between">
@@ -23,7 +25,7 @@ const RoomUserEntry: React.FC<RoomUserEntryProps> = (props) => {
       >
         {user.username}
       </span>
-      {isOwner && <RoomUserOwnerDecor />}
+      {isRoomOwner && <RoomUserOwnerDecor />}
     </div>
   );
 };

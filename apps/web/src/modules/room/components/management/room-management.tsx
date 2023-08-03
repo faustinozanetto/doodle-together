@@ -4,22 +4,16 @@ import RoomManagementLeave from './room-management-leave';
 import RoomManagementUsers from './users/room-management-users';
 import { meState } from '@modules/state/me.slice';
 import { useSnapshot } from 'valtio';
-import { roomState } from '@modules/state/room.slice';
+import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 
 const RoomManagement: React.FC = () => {
   const meSnapshot = useSnapshot(meState);
-  const roomSnapshot = useSnapshot(roomState);
 
-  const isOwner =
-    meSnapshot &&
-    meSnapshot.me &&
-    roomSnapshot &&
-    roomSnapshot.room &&
-    meSnapshot.me.userId === roomSnapshot.room.ownerId;
+  const { isRoomOwner } = useIsRoomOwner(meSnapshot.me);
 
   return (
     <div className="bg-foreground p-2 rounded-lg shadow-lg border space-x-2 flex pointer-events-auto">
-      {isOwner && <RoomManagementUsers />}
+      {isRoomOwner && <RoomManagementUsers />}
       <RoomManagementLeave />
     </div>
   );

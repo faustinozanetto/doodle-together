@@ -9,18 +9,14 @@ import { useRouter } from 'next/navigation';
 
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { CreateRoomApiResponse } from '@doodle-together/types';
-
-import { useMeStore } from '@modules/state/me.slice';
-import { useRoomStore } from '@modules/state/room.slice';
+import { roomActions } from '@modules/state/room.slice';
+import { meActions } from '@modules/state/me.slice';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
   const { fetchData } = useApiFetch<CreateRoomApiResponse>('/rooms/create');
-
-  const { setMe } = useMeStore();
-  const { setRoom } = useRoomStore();
 
   const [isPending, startTransition] = useTransition();
 
@@ -35,8 +31,8 @@ const CreateRoom: React.FC = () => {
 
       const { room, me } = response;
 
-      setRoom(room);
-      setMe(me);
+      roomActions.setRoom(room);
+      meActions.setMe(me);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
       router.push(`/room/${room.roomId}`);

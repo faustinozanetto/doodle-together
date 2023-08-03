@@ -4,21 +4,23 @@ import { User } from '@doodle-together/types';
 import { cn } from '@modules/ui/lib/ui.lib';
 
 import RoomManagementUserKick from './room-management-user-kick';
+import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 
 type RoomManagementUserProps = {
   user: User;
-  isOwner: boolean;
 };
 
 const RoomManagementUser: React.FC<RoomManagementUserProps> = (props) => {
-  const { user, isOwner } = props;
+  const { user } = props;
   const { username } = user;
+
+  const { isRoomOwner } = useIsRoomOwner(user);
 
   return (
     <div
       className={cn(
         'flex gap-2 items-center bg-background shadow-lg rounded-lg border p-2',
-        isOwner && 'border-primary-400 dark:border-primary-500 border-2'
+        isRoomOwner && 'border-primary-400 dark:border-primary-500 border-2'
       )}
     >
       <div className="bg-foreground rounded-full shadow-lg border p-2">
@@ -37,7 +39,7 @@ const RoomManagementUser: React.FC<RoomManagementUserProps> = (props) => {
         </svg>
       </div>
       <span className="font-semibold mr-auto">{username}</span>
-      {!isOwner && <RoomManagementUserKick user={user} />}
+      {!isRoomOwner && <RoomManagementUserKick user={user} />}
     </div>
   );
 };
