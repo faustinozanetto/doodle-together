@@ -3,7 +3,9 @@ import React from 'react';
 import { KickUserSocketPayload, User } from '@doodle-together/types';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
-import { state } from '@modules/state/store';
+
+import { useRoomStore } from '@modules/state/room.slice';
+import { useSocketStore } from '@modules/state/socket.slice';
 
 type RoomManagementUserKickProps = {
   user: User;
@@ -13,17 +15,20 @@ const RoomManagementUserKick: React.FC<RoomManagementUserKickProps> = (props) =>
   const { user } = props;
   const { username, userId } = user;
 
+  const { room } = useRoomStore();
+  const { socket } = useSocketStore();
+
   const label = `Kick ${username}`;
 
   const handleUserKick = () => {
-    if (state.room === undefined) return;
+    if (!room) return;
 
     const payload: KickUserSocketPayload = {
       userId,
-      roomId: state.room.roomId,
+      roomId: room.roomId,
     };
 
-    state.socket?.emit('kick_user', payload);
+    socket?.emit('kick_user', payload);
   };
 
   return (

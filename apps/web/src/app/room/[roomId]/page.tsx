@@ -3,7 +3,6 @@ import { RoomProvider } from '@modules/room/context/room-context';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
-import { actions, state } from '@modules/state/store';
 import { User } from '@doodle-together/types';
 
 type RoomPageProps = {

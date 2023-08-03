@@ -1,7 +1,7 @@
 import React from 'react';
 import RoomTool, { RoomToolProps } from './room-tool';
-import { useRoomMe } from '@modules/room/hooks/use-room-me';
-import { useRoomOwner } from '@modules/room/hooks/use-room-owner';
+import { useRoomStore } from '@modules/state/room.slice';
+import { useMeStore } from '@modules/state/me.slice';
 
 type ToolData = RoomToolProps & { requiresOwner: boolean };
 
@@ -69,10 +69,10 @@ const TOOLS: ToolData[] = [
 ];
 
 const RoomTools: React.FC = () => {
-  const me = useRoomMe();
-  const owner = useRoomOwner();
+  const { room } = useRoomStore();
+  const { me } = useMeStore();
 
-  const isOwner = me && owner && me.userId === owner.userId;
+  const isOwner = me && room && me.userId === room.ownerId;
 
   // Only render the tools the user has access to.
   const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isOwner));

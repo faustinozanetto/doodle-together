@@ -6,15 +6,21 @@ import { buttonVariants } from '@modules/ui/components/button/button';
 import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { actions } from '@modules/state/store';
+
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { CreateRoomApiResponse } from '@doodle-together/types';
+
+import { useMeStore } from '@modules/state/me.slice';
+import { useRoomStore } from '@modules/state/room.slice';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
   const { fetchData } = useApiFetch<CreateRoomApiResponse>('/rooms/create');
+
+  const { setMe } = useMeStore();
+  const { setRoom } = useRoomStore();
 
   const [isPending, startTransition] = useTransition();
 
@@ -29,10 +35,8 @@ const CreateRoom: React.FC = () => {
 
       const { room, me } = response;
 
-      actions.setRoom(room);
-      actions.setMe(me);
-      actions.setIsLoading(true);
-      actions.setupSocket();
+      setRoom(room);
+      setMe(me);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
       router.push(`/room/${room.roomId}`);

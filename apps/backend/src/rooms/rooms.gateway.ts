@@ -20,6 +20,7 @@ import {
   RequestCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
   SendNotificationSocketPayload,
+  UserLeftSocketPayload,
   UserWithSocketId,
 } from '@doodle-together/types';
 
@@ -91,6 +92,12 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     };
 
     this.io.to(roomId).emit('send_notification', notificationPayload);
+
+    const userLeftPayload: UserLeftSocketPayload = {
+      room,
+    };
+
+    this.io.to(roomId).emit('user_left', userLeftPayload);
   }
 
   @SubscribeMessage('kick_user')

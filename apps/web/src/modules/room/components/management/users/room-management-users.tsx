@@ -12,10 +12,12 @@ import {
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
 import RoomManagementUser from './room-management-user';
 import { useRoomUsers } from '@modules/room/hooks/use-room-users';
-import { useRoomOwner } from '@modules/room/hooks/use-room-owner';
+
+import { useRoomStore } from '@modules/state/room.slice';
 
 const RoomManagementUsers: React.FC = () => {
-  const owner = useRoomOwner();
+  const { room } = useRoomStore();
+
   const { users } = useRoomUsers({ sortUsers: true });
 
   return (
@@ -48,7 +50,7 @@ const RoomManagementUsers: React.FC = () => {
             <DialogDescription>Here you can view the currently connected users and manage them.</DialogDescription>
           </DialogHeader>
           {users.map((user) => {
-            const isOwner = (owner && owner.userId === user.userId) ?? false;
+            const isOwner = (room && room.ownerId === user.userId) ?? false;
 
             return <RoomManagementUser key={`users-management-${user.userId}`} user={user} isOwner={isOwner} />;
           })}

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { actions, state } from '@modules/state/store';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,8 +18,16 @@ import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { LeaveRoomApiResponse } from '@doodle-together/types';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
 
+import { useSocketStore } from '@modules/state/socket.slice';
+import { useMeStore } from '@modules/state/me.slice';
+import { useRoomStore } from '@modules/state/room.slice';
+
 const RoomManagementLeave: React.FC = () => {
   const router = useRouter();
+
+  const { me, resetMe } = useMeStore();
+  const { room, resetRoom } = useRoomStore();
+  const { socket, resetSocket } = useSocketStore();
 
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
 
@@ -30,12 +37,15 @@ const RoomManagementLeave: React.FC = () => {
     await fetchData({
       method: 'POST',
       body: JSON.stringify({
-        roomId: state.room?.roomId,
-        userId: state.me?.userId,
+        roomId: room?.roomId,
+        userId: me?.userId,
       }),
     });
 
-    actions.leaveRoom();
+    socket?.disconnect();
+    resetMe();
+    resetRoom();
+    resetSocket();
 
     toast({ variant: 'success', content: 'Room left successfully!' });
     router.replace('/');

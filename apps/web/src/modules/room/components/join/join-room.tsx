@@ -6,15 +6,19 @@ import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { actions } from '@modules/state/store';
+
 import { JoinRoomApiResponse } from '@doodle-together/types';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
+import { useRoomStore } from '@modules/state/room.slice';
+import { useMeStore } from '@modules/state/me.slice';
 
 const JoinRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
   const { fetchData } = useApiFetch<JoinRoomApiResponse>('/rooms/join');
+  const { setMe } = useMeStore();
+  const { setRoom } = useRoomStore();
 
   const [isPending, startTransition] = useTransition();
 
@@ -29,10 +33,8 @@ const JoinRoom: React.FC = () => {
 
       const { room, me } = response;
 
-      actions.setRoom(room);
-      actions.setMe(me);
-      actions.setIsLoading(true);
-      actions.setupSocket();
+      setRoom(room);
+      setMe(me);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
       router.replace(`/room/${room.roomId}`);

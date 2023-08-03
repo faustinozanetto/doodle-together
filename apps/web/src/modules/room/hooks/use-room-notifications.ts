@@ -1,9 +1,10 @@
 import { SendNotificationSocketPayload, SocketNotificationType } from '@doodle-together/types';
-import { state } from '@modules/state/store';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { Toast } from '@modules/ui/components/toasts/types/toasts.types';
 import { useEffect } from 'react';
-import { useRoomMe } from './use-room-me';
+import { useMeStore } from '@modules/state/me.slice';
+import { useSocketStore } from '@modules/state/socket.slice';
+import { useRoomStore } from '@modules/state/room.slice';
 
 const getNotificationLevel = (notificationType: SocketNotificationType): Toast['variant'] => {
   switch (notificationType) {
@@ -17,11 +18,13 @@ const getNotificationLevel = (notificationType: SocketNotificationType): Toast['
 };
 
 export const useRoomNotifications = () => {
-  const me = useRoomMe();
+  const { me } = useMeStore();
+  const { room } = useRoomStore();
+  const { socket } = useSocketStore();
   const { toast } = useToast();
 
   useEffect(() => {
-    state.socket?.on('send_notification', (data: SendNotificationSocketPayload) => {
+    socket?.on('send_notification', (data: SendNotificationSocketPayload) => {
       const { type, broadcast, userId, content } = data;
 
       const level = getNotificationLevel(type);
@@ -39,7 +42,7 @@ export const useRoomNotifications = () => {
     });
 
     return () => {
-      state.socket?.off('send_notification');
+      socket?.off('send_notification');
     };
-  }, [state.room]);
+  }, [room]);
 };

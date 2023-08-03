@@ -1,9 +1,4 @@
-import { CanvasClearedSocketPayload, Room, User } from '@doodle-together/types';
-import { RoomDrawPointPayload } from '@modules/room/types/room.types';
-import { createSocketConnection } from '@modules/socket/lib/socket.lib';
-import { Socket } from 'socket.io-client';
-import { proxy, ref } from 'valtio/vanilla';
-
+/*
 export type AppState = {
   isLoading: boolean;
   room?: Room;
@@ -65,3 +60,4 @@ export const actions = {
 };
 
 export type AppActions = typeof actions;
+*/
