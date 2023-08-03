@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
 import { SocketWithAuth } from '../rooms/types';
+import { ConfigService } from '@nestjs/config';
+import { ConfigInterface } from 'src/config/config.module';
 
 export class SocketAdapter extends IoAdapter {
   private readonly logger = new Logger(SocketAdapter.name);
@@ -11,10 +13,14 @@ export class SocketAdapter extends IoAdapter {
   }
 
   createIOServer(port: number, options?: ServerOptions) {
+    const configService = this.app.get(ConfigService);
+    const { frontendEndpoint }: ConfigInterface['app'] = configService.get('app');
+
     const optionsWithCORS: ServerOptions = {
       ...options,
       cors: {
-        origin: ['https://doodletogether.vercel.app'],
+        credentials: true,
+        origin: [frontendEndpoint],
       },
     };
 
@@ -28,12 +34,10 @@ export class SocketAdapter extends IoAdapter {
 }
 
 const createTokenMiddleware = (jwtService: JwtService, logger: Logger) => (socket: SocketWithAuth, next) => {
-  const token = socket.handshake.auth.token;
-
-  logger.debug(`Validating auth token before connection: ${token}`);
+  const accessToken = socket.handshake.headers.cookie?.replace('accessToken=', '');
 
   try {
-    const payload = jwtService.verify(token);
+    const payload = jwtService.verify(accessToken);
     socket.userId = payload.sub;
     socket.roomId = payload.roomId;
     socket.username = payload.username;

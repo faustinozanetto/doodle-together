@@ -1,4 +1,5 @@
 import { Socket } from 'socket.io';
+import { Request } from 'express';
 
 export type AuthData = {
   userId: string;
@@ -7,3 +8,4 @@ export type AuthData = {
 };
 
 export type SocketWithAuth = Socket & AuthData;
+export type RequestWithAuth = Request & AuthData;

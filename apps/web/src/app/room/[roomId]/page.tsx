@@ -1,19 +1,28 @@
 import Room from '@modules/room/components/room';
 import { RoomProvider } from '@modules/room/context/room-context';
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { getDataFromToken } from '@modules/common/lib/common.lib';
+import { User } from '@doodle-together/types';
 
-type RoomPageProps = {
-  params: {
-    roomId: string;
+const RoomPage: React.FC = async () => {
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get('accessToken');
+
+  if (accessToken === undefined) {
+    return redirect('/room/join');
+  }
+
+  // Decode JWT token and set me user.
+  const { sub, username } = getDataFromToken(accessToken.value);
+  const user: User = {
+    userId: sub,
+    username,
   };
-};
-
-const RoomPage: React.FC<RoomPageProps> = async (props) => {
-  const { params } = props;
-  const { roomId } = params;
 
   return (
     <RoomProvider>
-      <Room roomId={roomId} />
+      <Room user={user} />
     </RoomProvider>
   );
 };

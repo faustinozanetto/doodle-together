@@ -2,13 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RoomModule } from './rooms/rooms.module';
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
+import { GlobalConfigModule } from './config/config.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
+    GlobalConfigModule,
     RedisModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

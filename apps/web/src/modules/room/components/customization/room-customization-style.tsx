@@ -97,7 +97,7 @@ const ToolStyleOption: React.FC<ToolStyleOptionProps> = (props) => {
   return (
     <IconButton
       aria-label={`${style} Style`}
-      variant={style === state.toolCustomization.style ? 'base' : 'ghost'}
+      variant={style === state.toolCustomization.style ? 'primary' : 'ghost'}
       onClick={handleSelectStyle}
       icon={icon}
     />

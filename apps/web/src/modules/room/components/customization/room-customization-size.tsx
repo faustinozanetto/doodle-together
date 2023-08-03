@@ -97,7 +97,7 @@ const ToolSizeOption: React.FC<ToolSizeOptionProps> = (props) => {
   return (
     <IconButton
       aria-label={`${size} Size`}
-      variant={size === state.toolCustomization.size ? 'base' : 'ghost'}
+      variant={size === state.toolCustomization.size ? 'primary' : 'ghost'}
       onClick={handleSelectSize}
       icon={icon}
     />

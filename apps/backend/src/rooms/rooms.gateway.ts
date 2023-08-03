@@ -6,13 +6,23 @@ import {
   WebSocketServer,
   SubscribeMessage,
   MessageBody,
-  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Namespace } from 'socket.io';
 import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { DrawPointDto } from './dto/draw-point.dto';
 import { SocketWithAuth } from './types';
+import {
+  CanvasClearedSocketPayload,
+  DispatchCanvasStateSocketPayload,
+  GetCanvasStateSocketPayload,
+  KickUserSocketPayload,
+  RequestCanvasStateSocketPayload,
+  SendCanvasStateSocketPayload,
+  SendNotificationSocketPayload,
+  UpdateRoomSocketPayload,
+  UserWithSocketId,
+} from '@doodle-together/types';
 
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({
@@ -20,6 +30,7 @@ import { SocketWithAuth } from './types';
 })
 export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(RoomsGateway.name);
+
   constructor(private readonly roomsService: RoomsService) {}
 
   @WebSocketServer() io: Namespace;
@@ -35,23 +46,32 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   async handleConnection(client: SocketWithAuth) {
     const { roomId, userId, username } = client;
 
-    const sockets = this.io.sockets;
-
-    this.logger.debug(`Socket connected with userId: ${userId}, roomId: ${roomId}, and username: "${username}"`);
-
-    this.logger.log(`WS Client with id: ${client.id} connected!`);
-    this.logger.debug(`Number of connected sockets: ${sockets.size}`);
-
     await client.join(roomId);
+    const socketId = client.id;
 
-    const connectedClients = this.io.adapter.rooms?.get(roomId)?.size ?? 0;
+    const { room } = await this.roomsService.addUserToRoom({
+      roomId,
+      userId,
+      username,
+      socketId,
+    });
 
-    this.logger.debug(`userID: ${userId} joined roomId: ${roomId}`);
-    this.logger.debug(`Total clients connected to roomId '${roomId}': ${connectedClients}`);
+    this.logger.log(`USER CONNECTED ${userId}, ${username}`);
 
-    const { room } = await this.roomsService.addUserToRoom({ roomId, userId, username });
+    const notificationPayload: SendNotificationSocketPayload = {
+      type: 'user-joined',
+      content: `User ${username} joined the room!`,
+      userId,
+      broadcast: 'except',
+    };
 
-    this.io.to(roomId).emit('room_updated', { room });
+    this.io.to(roomId).emit('send_notification', notificationPayload);
+
+    const updateRoomPayload: UpdateRoomSocketPayload = {
+      room,
+    };
+
+    this.io.to(roomId).emit('update_room', updateRoomPayload);
   }
 
   /**
@@ -59,50 +79,73 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
    * @param client Socket data with auth details
    */
   async handleDisconnect(client: SocketWithAuth) {
-    const { roomId, userId } = client;
-    const sockets = this.io.sockets;
+    const { roomId, userId, username } = client;
+
+    await client.leave(roomId);
 
     const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
 
-    const clientCount = this.io.adapter.rooms?.get(roomId)?.size ?? 0;
+    this.logger.log(`USER DISCONNECTED ${userId}, ${username}`);
 
-    this.logger.log(`Disconnected socket id: ${client.id}`);
-    this.logger.debug(`Number of connected sockets: ${sockets.size}`);
-    this.logger.debug(`Total clients connected to roomId '${roomId}': ${clientCount}`);
-
-    if (room) {
-      this.io.to(roomId).emit('room_updated', { room });
-    }
-  }
-
-  @SubscribeMessage('client_ready')
-  async clientReady(@ConnectedSocket() client: SocketWithAuth): Promise<void> {
-    const { roomId } = client;
-
-    // The non owner users need to emit a socket to the owner to request the canvas state to be sent
-    const room = await this.roomsService.findRoom({ roomId });
-
-    this.io.to(room.room.ownerId).emit('get_canvas_state');
-  }
-
-  @SubscribeMessage('send_canvas_state')
-  async sendCanvasState(
-    @MessageBody() data: { canvasState: string; roomId: string },
-    @ConnectedSocket() client: SocketWithAuth
-  ): Promise<void> {
-    const { roomId } = client;
-
-    const room = await this.roomsService.findRoom({ roomId });
-
-    const users = [];
-    for (const userId in room.room.users) {
-      users.push({ userId, username: room.room.users[userId] });
+    const users: UserWithSocketId[] = [];
+    for (const user in room.users) {
+      users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
     }
 
-    const lastUser = users[users.length - 1];
-    if (!lastUser) return;
+    const notificationPayload: SendNotificationSocketPayload = {
+      type: 'user-left',
+      content: `User ${username} left the room!`,
+      userId,
 
-    this.io.to(lastUser.userId).emit('canvas_state_from_server', data.canvasState);
+      broadcast: 'except',
+    };
+
+    this.io.to(roomId).emit('send_notification', notificationPayload);
+
+    const updateRoomPayload: UpdateRoomSocketPayload = {
+      room,
+    };
+
+    this.io.to(roomId).emit('update_room', updateRoomPayload);
+  }
+
+  @SubscribeMessage('kick_user')
+  async kickUser(@MessageBody() data: KickUserSocketPayload): Promise<void> {
+    const { roomId, userId } = data;
+
+    const { room } = await this.roomsService.findRoom({
+      roomId,
+    });
+
+    const users: UserWithSocketId[] = [];
+    for (const user in room.users) {
+      users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
+    }
+
+    const targetUser = room.users[userId];
+    if (!targetUser) return;
+
+    const targetUserSocketId = targetUser.socketId;
+
+    const exceptNotificationPayload: SendNotificationSocketPayload = {
+      type: 'user-kicked-except',
+      content: `User ${targetUser.username} has been kicked!`,
+      userId,
+      broadcast: 'except',
+    };
+
+    this.io.to(roomId).emit('send_notification', exceptNotificationPayload);
+
+    const selfNotificationPayload: SendNotificationSocketPayload = {
+      type: 'user-kicked-self',
+      content: `You have been kicked from the room!`,
+      userId,
+      broadcast: 'self',
+    };
+
+    this.io.to(targetUserSocketId).emit('send_notification', selfNotificationPayload);
+
+    this.io.to(targetUserSocketId).emit('kick_request');
   }
 
   @SubscribeMessage('draw_point')
@@ -110,5 +153,58 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const { roomId, point } = data;
 
     this.io.to(roomId).emit('update_canvas_state', { point });
+  }
+
+  @SubscribeMessage('request_canvas_state')
+  async requestCanvasState(@MessageBody() data: RequestCanvasStateSocketPayload): Promise<void> {
+    const { roomId, userId } = data;
+
+    const payload: GetCanvasStateSocketPayload = {
+      userId,
+    };
+
+    const { room } = await this.roomsService.findRoom({
+      roomId,
+    });
+
+    const users: UserWithSocketId[] = [];
+    for (const user in room.users) {
+      users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
+    }
+
+    this.logger.log({ users });
+    if (users.length === 0) return;
+
+    // Sort by owner priority
+    const sortedUsers = users.sort((user) => {
+      if (user.userId === room.ownerId) return -1;
+      return 1;
+    });
+
+    const targetUserSocketId = sortedUsers[0].socketId;
+    this.io.to(targetUserSocketId).emit('get_canvas_state', payload);
+  }
+
+  @SubscribeMessage('send_canvas_state')
+  async sendCanvasState(@MessageBody() data: SendCanvasStateSocketPayload): Promise<void> {
+    const { canvasState, userId, roomId } = data;
+
+    const { room } = await this.roomsService.findRoom({
+      roomId,
+    });
+
+    const payload: DispatchCanvasStateSocketPayload = {
+      canvasState,
+    };
+
+    const userSocketId = room.users[userId].socketId;
+    this.io.to(userSocketId).emit('dispatch_canvas_state', payload);
+  }
+
+  @SubscribeMessage('canvas_cleared')
+  async canvasCleared(@MessageBody() data: CanvasClearedSocketPayload): Promise<void> {
+    const { roomId } = data;
+
+    this.io.to(roomId).emit('clear_canvas');
   }
 }

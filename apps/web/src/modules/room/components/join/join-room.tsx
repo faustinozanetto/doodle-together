@@ -5,39 +5,37 @@ import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
-import { ApiResponseData } from '@modules/common/types/common.types';
 import { useRouter } from 'next/navigation';
-import { JoinRoomApiResponse } from '@modules/room/types/room.types';
-import { actions } from '@modules/state/store';
+
+import { JoinRoomApiResponse } from '@doodle-together/types';
+import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
+import { roomActions } from '@modules/state/room.slice';
+import { meActions } from '@modules/state/me.slice';
 
 const JoinRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
+  const { fetchData } = useApiFetch<JoinRoomApiResponse>('/rooms/join');
 
   const [isPending, startTransition] = useTransition();
 
   const handleRoomJoin = (formData: JoinRoomFormData) => {
     startTransition(async () => {
-      const response = await fetch('/api/room/join', { method: 'POST', body: JSON.stringify(formData) });
+      const response = await fetchData({
+        method: 'POST',
+        body: JSON.stringify(formData),
+      });
 
-      const data: ApiResponseData<JoinRoomApiResponse> = await response.json();
+      if (!response) return;
 
-      if (!response.ok || !('data' in data)) {
-        let content = 'Could not join room!';
-        if ('message' in data) content = data.message;
+      const { room, me } = response;
 
-        toast({ variant: 'danger', content });
-        return;
-      }
-
-      const { data: responseData } = data;
-      const { room, accessToken } = responseData;
-      actions.setAccessToken(accessToken);
-      actions.setRoom(room);
+      roomActions.setRoom(room);
+      meActions.setMe(me);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
-      router.push(`/room/${responseData.room.roomId}`);
+      router.push(`/room/${room.roomId}`);
     });
   };
 

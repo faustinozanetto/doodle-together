@@ -1,84 +1,62 @@
-import { CanvasPoint, Room, User } from '@doodle-together/types';
-import { getDataFromToken } from '@modules/common/lib/common.lib';
-import { RoomDrawPointPayload } from '@modules/room/types/room.types';
-import { createSocketConnection } from '@modules/socket/lib/socket.lib';
-import { Socket } from 'socket.io-client';
-import { proxy, ref } from 'valtio';
-import { subscribeKey } from 'valtio/utils';
+// import { CanvasClearedSocketPayload, Room, User } from '@doodle-together/types';
+// import { RoomDrawPointPayload } from '@modules/room/types/room.types';
+// import { initializeSocketConnection } from '@modules/socket/lib/socket.lib';
+// import { Socket } from 'socket.io-client';
+// import { proxy, ref } from 'valtio';
 
-export type AppState = {
-  isLoading: boolean;
-  room?: Room;
-  accessToken?: string;
-  socket?: Socket;
-  me?: User;
-};
+// export type AppState = {
+//   isLoading: boolean;
+//   room?: Room;
+//   socket?: Socket;
+//   me?: User;
+// };
 
-export const state = proxy<AppState>({
-  isLoading: false,
-  get me() {
-    const accessToken = this.accessToken;
-    if (!accessToken) return;
+// export const state = proxy<AppState>({ isLoading: false });
 
-    const data = getDataFromToken(accessToken);
+// export const actions = {
+//   setIsLoading: (isLoading: boolean) => {
+//     state.isLoading = isLoading;
+//   },
+//   setRoom: (room?: Room): void => {
+//     state.room = room;
+//   },
+//   setMe: (me: User): void => {
+//     state.me = me;
+//   },
+//   sendDrawPoint: (data: Omit<RoomDrawPointPayload, 'context'>) => {
+//     if (!state.room) return;
 
-    return {
-      userId: data.sub,
-      username: data.username,
-    };
-  },
-});
+//     state.socket?.emit('draw_point', { roomId: state.room.roomId, point: data });
+//   },
+//   sendCanvasCleared: () => {
+//     if (!state.room) return;
 
-export const actions = {
-  setAccessToken: (accessToken?: string): void => {
-    state.accessToken = accessToken;
-  },
-  setRoom: (room?: Room): void => {
-    state.room = room;
-  },
-  updateRoom: (room: Room): void => {
-    state.room = room;
-  },
-  setIsLoading: (isLoading: boolean) => {
-    state.isLoading = isLoading;
-  },
-  sendDrawPoint: (data: Omit<RoomDrawPointPayload, 'context'>) => {
-    if (!state.room) return;
+//     const payload: CanvasClearedSocketPayload = {
+//       roomId: state.room.roomId,
+//     };
 
-    state.socket?.emit('draw_point', { roomId: state.room.roomId, point: data });
-  },
-  reset: (): void => {
-    state.socket?.disconnect();
-    state.room = undefined;
-    state.accessToken = undefined;
-    state.isLoading = false;
-    state.socket = undefined;
-  },
-  setupSocket: (): void => {
-    if (!state.socket) {
-      state.socket = ref(
-        createSocketConnection({
-          state,
-          actions,
-        })
-      );
+//     state.socket?.emit('canvas_cleared', payload);
+//   },
+//   leaveRoom: () => {
+//     actions.reset();
+//   },
+//   reset: (): void => {
+//     state.socket?.disconnect();
+//     state.room = undefined;
+//     state.me = undefined;
+//     state.socket = undefined;
+//   },
+//   setupSocket: (): void => {
+//     if (!state.socket) {
+//       state.socket = ref(initializeSocketConnection());
+//       return;
+//     }
 
-      return;
-    }
+//     if (!state.socket.connected) {
+//       state.socket.connect();
+//       return;
+//     }
+//   },
+// };
 
-    if (!state.socket.connected) {
-      state.socket.connect();
-      return;
-    }
-
-    actions.setIsLoading(false);
-  },
-};
-
-subscribeKey(state, 'accessToken', () => {
-  if (state.accessToken) {
-    localStorage.setItem('accessToken', state.accessToken);
-  }
-});
-
-export type AppActions = typeof actions;
+// export type AppActions = typeof actions;

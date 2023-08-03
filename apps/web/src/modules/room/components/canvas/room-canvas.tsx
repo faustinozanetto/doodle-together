@@ -3,61 +3,123 @@
 import React, { useCallback, useEffect } from 'react';
 import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
-import { actions, state } from '@modules/state/store';
-import { useSnapshot } from 'valtio';
 import { RoomDrawPointPayload } from '@modules/room/types/room.types';
+import {
+  CanvasClearedSocketPayload,
+  DispatchCanvasStateSocketPayload,
+  GetCanvasStateSocketPayload,
+  RequestCanvasStateSocketPayload,
+  SendCanvasStateSocketPayload,
+} from '@doodle-together/types';
+import { roomState } from '@modules/state/room.slice';
+import { socketState } from '@modules/state/socket.slice';
+import { meState } from '@modules/state/me.slice';
 
 const RoomCanvas: React.FC = () => {
-  const currentState = useSnapshot(state);
-
   const onPointDraw = useCallback(
     (data: RoomDrawPointPayload) => {
-      actions.sendDrawPoint(data);
+      const { room } = roomState;
+      if (!room) return;
+
+      socketState.socket?.emit('draw_point', { roomId: room.roomId, point: data });
     },
-    [currentState.room?.roomId]
+    [roomState.room]
   );
 
-  const { wrapperRef, canvasRef, handleOnMouseDown, drawPoint } = useRoomDraw(onPointDraw);
+  const onCanvasCleared = useCallback(() => {
+    const { room } = roomState;
+    if (!room) return;
+
+    const payload: CanvasClearedSocketPayload = {
+      roomId: room.roomId,
+    };
+
+    socketState.socket?.emit('canvas_cleared', payload);
+  }, [roomState.room]);
+
+  const onCanvasResized = useCallback(
+    (width, height) => {
+      const { room } = roomState;
+      const { me } = meState;
+      if (!room || !me) return;
+
+      const payload: RequestCanvasStateSocketPayload = {
+        roomId: room.roomId,
+        userId: me.userId,
+      };
+
+      socketState.socket?.emit('request_canvas_state', payload);
+    },
+    [roomState, meState]
+  );
+
+  const { wrapperRef, canvasRef, handleOnMouseDown, drawPoint, clearCanvas } = useRoomDraw({
+    onPointDraw,
+    onCanvasCleared,
+    onCanvasResized,
+  });
 
   useEffect(() => {
     const canvasElement = canvasRef.current;
-    const ctx = canvasElement?.getContext('2d');
+    const context = canvasElement?.getContext('2d');
 
-    state.socket?.emit('client_ready');
+    // Clear canvas socket listening
+    socketState.socket?.on('clear_canvas', () => {
+      if (!context) return;
 
-    state.socket?.on('get_canvas_state', () => {
-      const canvasState = canvasRef.current?.toDataURL();
-      if (!canvasState) return;
-
-      state.socket?.emit('send_canvas_state', { canvasState, roomId: currentState.room?.roomId });
+      clearCanvas();
     });
 
-    state.socket?.on('canvas_state_from_server', (data) => {
-      if (!ctx || !canvasElement) return;
-      console.log({ data });
+    // Update canvas state socket listening
+    socketState.socket?.on('update_canvas_state', (data) => {
+      if (!context) return;
+
+      const { point } = data;
+      drawPoint({ ...point, context });
+    });
+
+    // Get canvas state socket listening
+    socketState.socket?.on('get_canvas_state', (data: GetCanvasStateSocketPayload) => {
+      const { userId } = data;
+
+      const { room } = roomState;
+      const { me } = meState;
+
+      if (!canvasElement || !room || !me || userId === me.userId) return;
+
+      const canvasState = canvasElement.toDataURL();
+      const payload: SendCanvasStateSocketPayload = {
+        roomId: room.roomId,
+        canvasState,
+        userId,
+      };
+
+      socketState.socket?.emit('send_canvas_state', payload);
+    });
+
+    // Dispatch canvas state socket listening
+    socketState.socket?.on('dispatch_canvas_state', (data: DispatchCanvasStateSocketPayload) => {
+      const { canvasState } = data;
+
+      console.log('dispatch canvas state', canvasState);
+
+      if (!canvasElement || !context) return;
 
       const img = new Image();
-      img.src = data;
+      img.src = canvasState;
       img.onload = () => {
-        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        ctx.drawImage(img, 0, 0);
+        context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        context.drawImage(img, 0, 0);
       };
     });
 
-    state.socket?.on('update_canvas_state', (data) => {
-      if (!ctx) return;
-
-      const { point } = data;
-
-      drawPoint({ ...point, context: ctx });
-    });
-
     return () => {
-      state.socket?.off('get_canvas_state');
-      state.socket?.off('canvas_state_from_server');
-      state.socket?.off('update_canvas_state');
+      socketState.socket?.off('update_canvas_state');
+      socketState.socket?.off('get_canvas_state');
+      socketState.socket?.off('clear_canvas');
+      socketState.socket?.off('dispatch_canvas_state');
     };
-  }, [canvasRef, currentState.room?.roomId]);
+  }, [canvasRef, roomState.room]);
 
   return (
     <div ref={wrapperRef} className="h-full w-full">

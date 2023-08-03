@@ -1,17 +1,32 @@
 import React from 'react';
 import { User } from '@doodle-together/types';
+import { cn } from '@modules/ui/lib/ui.lib';
+import RoomUserOwnerDecor from './room-user-owner-decor';
+import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 
 type RoomUserEntryProps = {
   user: User;
+  isCurrentUser: boolean;
 };
 
 const RoomUserEntry: React.FC<RoomUserEntryProps> = (props) => {
-  const { user } = props;
+  const { user, isCurrentUser } = props;
+
+  const { isRoomOwner } = useIsRoomOwner(user);
 
   return (
-    <li>
-      <span className="text-sm">{user.username}</span>
-    </li>
+    <div className="flex gap-1 items-center justify-between">
+      <span
+        className={cn(
+          'font-medium',
+          isCurrentUser &&
+            'underline decoration-2 decoration-primary-600 underline-offset-2 dark:decoration-primary-400'
+        )}
+      >
+        {user.username}
+      </span>
+      {isRoomOwner && <RoomUserOwnerDecor />}
+    </div>
   );
 };
 

@@ -1,12 +1,14 @@
-'use client';
-
 import React from 'react';
-import RoomTool from './room-tool';
-import { useRoomContext } from '@modules/room/hooks/use-room-context';
-import { RoomActionType } from '@modules/room/types/room.types';
+import RoomTool, { RoomToolProps } from './room-tool';
+import { meState } from '@modules/state/me.slice';
+import { roomState } from '@modules/state/room.slice';
+import { useSnapshot } from 'valtio';
 
-const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
+type ToolData = RoomToolProps & { requiresOwner: boolean };
+
+const TOOLS: ToolData[] = [
   {
+    requiresOwner: false,
     tool: 'pencil',
     icon: (
       <svg
@@ -25,6 +27,7 @@ const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
     ),
   },
   {
+    requiresOwner: false,
     tool: 'eraser',
     icon: (
       <svg
@@ -43,6 +46,7 @@ const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
     ),
   },
   {
+    requiresOwner: true,
     tool: 'clear',
     icon: (
       <svg
@@ -66,15 +70,23 @@ const TOOLS: React.ComponentPropsWithoutRef<typeof RoomTool>[] = [
 ];
 
 const RoomTools: React.FC = () => {
+  const meSnapshot = useSnapshot(meState);
+  const roomSnapshot = useSnapshot(roomState);
+
+  const isOwner =
+    meSnapshot &&
+    meSnapshot.me &&
+    roomSnapshot &&
+    roomSnapshot.room &&
+    meSnapshot.me.userId === roomSnapshot.room.ownerId;
+
+  // Only render the tools the user has access to.
+  const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isOwner));
+
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-2 flex pointer-events-auto">
-      {TOOLS.map((tool, index) => {
-        return (
-          <>
-            <RoomTool key={tool.tool} {...tool} />
-            {index < TOOLS.length - 1 && <div key={`separator-${tool.tool}`} className="border-r" />}
-          </>
-        );
+    <div className="bg-foreground p-2 rounded-lg shadow-lg border space-x-2 flex pointer-events-auto">
+      {filteredTools.map((tool) => {
+        return <RoomTool key={`tool-${tool.tool}`} {...tool} />;
       })}
     </div>
   );
