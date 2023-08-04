@@ -22,7 +22,7 @@ export class RoomsController {
 
     response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: true,
     });
 
@@ -35,7 +35,7 @@ export class RoomsController {
 
     response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: true,
     });
 
