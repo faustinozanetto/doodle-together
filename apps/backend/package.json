@@ -22,7 +22,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=15"
   },
   "dependencies": {
     "@doodle-together/types": "*",
