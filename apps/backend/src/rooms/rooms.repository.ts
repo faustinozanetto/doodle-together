@@ -1,8 +1,7 @@
 import Redis from 'ioredis';
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Inject, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Room, User } from '@doodle-together/types';
 import { RoomResponse } from './responses/room-response';
 import { CreateRoomInput } from './dto/inputs/create-room.input';
@@ -14,6 +13,7 @@ import { RemoveUserFromRoomInput } from './dto/inputs/remove-user-from-room.inpu
 import { ConfigInterface } from '../config/config.module';
 import { AddUserToRoomResponse } from './responses/add-user-to-room.response';
 import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.response';
+import { IORedisKey } from 'src/redis/redis.module';
 
 @Injectable()
 export class RoomsRepository {
@@ -21,7 +21,7 @@ export class RoomsRepository {
 
   constructor(
     private configService: ConfigService<ConfigInterface>,
-    @InjectRedis() private readonly redis: Redis
+    @Inject(IORedisKey) private readonly redis: Redis
   ) {}
 
   /**

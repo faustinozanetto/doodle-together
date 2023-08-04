@@ -30,7 +30,6 @@ export class RoomsController {
       sameSite: false,
       secure: true,
       path: '/',
-      maxAge: 60 * 60,
     });
 
     return { room, me };
@@ -45,7 +44,6 @@ export class RoomsController {
       sameSite: false,
       secure: true,
       path: '/',
-      maxAge: 60 * 60,
     });
 
     return { room, me };
