@@ -13,8 +13,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { meActions, meState } from '@modules/state/me.slice';
 import { socketActions, socketState } from '@modules/state/socket.slice';
 import { roomActions, roomState } from '@modules/state/room.slice';
-import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
-import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { useRoomNotifications } from '../hooks/use-room-notifications';
 import RoomManagement from './management/room-management';
 import RoomUsers from './users/room-users';
@@ -23,30 +21,20 @@ import RoomCanvas from './canvas/room-canvas';
 import RoomTools from './tools/room-tools';
 
 type RoomProps = {
-  accessToken: RequestCookie | undefined;
+  user: User;
 };
 
 const Room: React.FC<RoomProps> = (props) => {
-  const { accessToken } = props;
-
-  const { roomId } = useParams();
+  const { user } = props;
 
   const router = useRouter();
+  const { roomId } = useParams();
 
   useRoomNotifications();
 
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
 
   useEffect(() => {
-    if (!accessToken) {
-      router.push('/');
-      return;
-    }
-    const { sub, username } = getDataFromToken(accessToken.value);
-    const user: User = {
-      userId: sub,
-      username,
-    };
     meActions.setMe(user);
     socketActions.initializeSocket();
 
@@ -91,7 +79,7 @@ const Room: React.FC<RoomProps> = (props) => {
       socketState.socket?.off('kick_request');
       socketState.socket?.off('request_canvas_state');
     };
-  }, [accessToken, roomId]);
+  }, [user, roomId]);
 
   return (
     <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
