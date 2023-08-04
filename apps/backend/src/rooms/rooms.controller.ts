@@ -7,11 +7,16 @@ import { LeaveRoomDto } from './dto/leave-room.dto';
 import { AuthGuard } from './guards/auth-guard';
 import { CreateRoomApiResponse, JoinRoomApiResponse, LeaveRoomApiResponse } from '@doodle-together/types';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
+import { ConfigInterface } from 'src/config/config.module';
 
 @UsePipes(new ValidationPipe())
 @Controller('rooms')
 export class RoomsController {
-  constructor(private roomsService: RoomsService) {}
+  constructor(
+    private configService: ConfigService<ConfigInterface>,
+    private roomsService: RoomsService
+  ) {}
 
   @Post('/create')
   async create(
@@ -24,6 +29,8 @@ export class RoomsController {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
+      path: '/',
+      maxAge: this.configService.get('app', { infer: true }).roomExpires,
     });
 
     return { room, me };
@@ -37,6 +44,8 @@ export class RoomsController {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
+      path: '/',
+      maxAge: this.configService.get('app', { infer: true }).roomExpires,
     });
 
     return { room, me };
