@@ -1,10 +1,10 @@
 import React from 'react';
-import RoomUserEntry from './room-user-entry';
 import { Separator } from '@modules/ui/components/separator/separator';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRoomUsers } from '@modules/room/hooks/use-room-users';
 import { useSnapshot } from 'valtio';
 import { meState } from '@modules/state/me.slice';
+import RoomUserEntry from './room-user-entry';
 
 const RoomUsers: React.FC = () => {
   const meSnapshot = useSnapshot(meState);

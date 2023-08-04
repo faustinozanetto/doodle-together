@@ -79,8 +79,8 @@ const TOOL_SIZES: ToolSizeOptionProps[] = [
 ];
 
 type ToolSizeOptionProps = {
-  size: RoomToolSize;
   icon: React.ReactNode;
+  size: RoomToolSize;
 };
 
 const ToolSizeOption: React.FC<ToolSizeOptionProps> = (props) => {

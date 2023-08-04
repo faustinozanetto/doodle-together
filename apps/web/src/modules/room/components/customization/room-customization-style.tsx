@@ -79,8 +79,8 @@ const TOOL_STYLES: ToolStyleOptionProps[] = [
 ];
 
 type ToolStyleOptionProps = {
-  style: RoomToolStyle;
   icon: React.ReactNode;
+  style: RoomToolStyle;
 };
 
 const ToolStyleOption: React.FC<ToolStyleOptionProps> = (props) => {

@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@modules/ui/lib/ui.lib';
-import { useState } from 'react';
 
 export type PasswordInputProps = React.InputHTMLAttributes<HTMLInputElement> & {};
 
 export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, ...rest }, ref) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     const handleVisibilityChange = () => {
@@ -23,7 +22,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
           )}
           ref={ref}
           type={isVisible ? 'text' : 'password'}
-          {...props}
+          {...rest}
         />
         <button
           className="absolute inset-y-0 right-0 pr-3"

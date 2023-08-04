@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 
 import { VariantProps, cva } from 'class-variance-authority';
@@ -43,13 +44,11 @@ export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   };
 
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ className, type = 'button', icon, variant, size, ...props }, ref) => {
-    return (
-      <button ref={ref} className={cn(iconButtonVariants({ variant, size, className }))} type={type} {...props}>
-        {icon}
-      </button>
-    );
-  }
+  ({ className, type = 'button', icon, variant, size, ...props }, ref) => (
+    <button ref={ref} className={cn(iconButtonVariants({ variant, size, className }))} type={type} {...props}>
+      {icon}
+    </button>
+  )
 );
 
 IconButton.displayName = 'IconButton';

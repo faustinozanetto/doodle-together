@@ -26,7 +26,7 @@ Before you begin, ensure you have met the following requirements:
 
 - ✅ [Node.js](https://nodejs.org/) installed
 - ✅ [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) package manager installed
-- ✅ A [Redis](https://redis.io/) database is needed in order the project to work.
+- ✅ A [Redis](https://redis.io/) database is needed in order for the project to work.
 
 ## 📦 Installation
 

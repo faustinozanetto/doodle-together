@@ -17,7 +17,6 @@ export const socketActions = {
 
     if (!socketState.socket.connected) {
       socketState.socket.connect();
-      return;
     }
   },
 };

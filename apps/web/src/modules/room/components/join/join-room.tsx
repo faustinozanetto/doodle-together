@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useTransition } from 'react';
-import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
@@ -11,6 +10,7 @@ import { JoinRoomApiResponse } from '@doodle-together/types';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { roomActions } from '@modules/state/room.slice';
 import { meActions } from '@modules/state/me.slice';
+import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 
 const JoinRoom: React.FC = () => {
   const router = useRouter();

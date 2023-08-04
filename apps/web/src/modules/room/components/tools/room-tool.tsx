@@ -1,15 +1,15 @@
 'use client';
 
 import React from 'react';
-import { IconButton, iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
-import { RoomActionType, RoomTool } from '@modules/room/types/room.types';
+import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
+import { RoomActionType, RoomTool as RoomToolData } from '@modules/room/types/room.types';
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
 import { capitalize } from '@modules/common/lib/common.lib';
 
 export type RoomToolProps = {
-  tool: RoomTool;
   icon: React.ReactNode;
+  tool: RoomToolData;
 };
 
 const RoomTool: React.FC<RoomToolProps> = (props) => {

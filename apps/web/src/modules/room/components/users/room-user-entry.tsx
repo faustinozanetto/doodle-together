@@ -1,12 +1,12 @@
 import React from 'react';
 import { User } from '@doodle-together/types';
 import { cn } from '@modules/ui/lib/ui.lib';
-import RoomUserOwnerDecor from './room-user-owner-decor';
 import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
+import RoomUserOwnerDecor from './room-user-owner-decor';
 
 type RoomUserEntryProps = {
-  user: User;
   isCurrentUser: boolean;
+  user: User;
 };
 
 const RoomUserEntry: React.FC<RoomUserEntryProps> = (props) => {

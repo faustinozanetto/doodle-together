@@ -1,4 +1,5 @@
 'use client';
+
 import { cn } from '@modules/ui/lib/ui.lib';
 import { VariantProps, cva } from 'class-variance-authority';
 import * as React from 'react';

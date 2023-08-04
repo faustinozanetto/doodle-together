@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Form, FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { z } from 'zod';
@@ -23,8 +23,8 @@ import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
 export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
 
 type JoinRoomFormProps = {
-  onSubmit: (formData: JoinRoomFormData) => void;
   isPending: boolean;
+  onSubmit: (formData: JoinRoomFormData) => void;
 };
 
 const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {

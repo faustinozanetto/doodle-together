@@ -1,13 +1,13 @@
 import { ElementRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useRoomContext } from './use-room-context';
 import { CanvasPoint } from '@doodle-together/types';
+import { useRoomContext } from './use-room-context';
 import { drawPoint } from '../lib/room-draw.lib';
 import { RoomDrawPointPayload } from '../types/room.types';
 
 type UseRoomDrawProps = {
-  onPointDraw: (data: RoomDrawPointPayload) => void;
   onCanvasCleared: () => void;
   onCanvasResized: (width: number, height: number) => void;
+  onPointDraw: (data: RoomDrawPointPayload) => void;
 };
 
 export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: UseRoomDrawProps) => {

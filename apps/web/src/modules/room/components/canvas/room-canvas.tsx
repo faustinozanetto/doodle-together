@@ -101,8 +101,6 @@ const RoomCanvas: React.FC = () => {
     socketState.socket?.on('dispatch_canvas_state', (data: DispatchCanvasStateSocketPayload) => {
       const { canvasState } = data;
 
-      console.log('dispatch canvas state', canvasState);
-
       if (!canvasElement || !context) return;
 
       const img = new Image();

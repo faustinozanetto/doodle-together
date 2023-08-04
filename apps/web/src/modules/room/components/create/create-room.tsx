@@ -3,7 +3,6 @@
 import React, { useTransition } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
-import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -11,6 +10,7 @@ import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { CreateRoomApiResponse } from '@doodle-together/types';
 import { roomActions } from '@modules/state/room.slice';
 import { meActions } from '@modules/state/me.slice';
+import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();

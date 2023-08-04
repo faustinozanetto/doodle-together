@@ -1,6 +1,6 @@
 export type SiteConfig = {
-  name: string;
   description: string;
   keywords: string[];
+  name: string;
   url: string;
 };

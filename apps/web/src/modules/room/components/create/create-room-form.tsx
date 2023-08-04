@@ -23,8 +23,8 @@ import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
 export type CreateRoomFormData = z.infer<typeof createRoomValidationSchema>;
 
 type CreateRoomFormProps = {
-  onSubmit: (data: CreateRoomFormData) => void;
   isPending: boolean;
+  onSubmit: (data: CreateRoomFormData) => void;
 };
 
 const CreateRoomForm: React.FC<CreateRoomFormProps> = (props) => {

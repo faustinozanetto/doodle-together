@@ -1,21 +1,12 @@
-import { VariantProps } from 'class-variance-authority';
-import { toastVariants } from '../components/toast';
+import React from 'react';
+import { ActionMap } from '@modules/common/types/common.types';
 
-export type ToastsActionMap<M extends { [index: string]: unknown }> = {
-  [Key in keyof M]: M[Key] extends undefined
-    ? {
-        type: Key;
-      }
-    : {
-        type: Key;
-        payload: M[Key];
-      };
-};
+export type ToastVariant = 'success' | 'danger' | 'info';
 
 export type Toast = {
-  id: string;
-  variant: VariantProps<typeof toastVariants>['variant'];
   content: string;
+  id: string;
+  variant: ToastVariant;
 };
 
 export type ToastState = {
@@ -23,8 +14,8 @@ export type ToastState = {
 };
 
 export type ToastContextState = {
-  state: ToastState;
   dispatch: React.Dispatch<ToastActions>;
+  state: ToastState;
 };
 
 export enum ToastActionType {
@@ -43,4 +34,4 @@ type ToastPayload = {
   [ToastActionType.REMOVE_ALL_TOASTS]: {};
 };
 
-export type ToastActions = ToastsActionMap<ToastPayload>[keyof ToastsActionMap<ToastPayload>];
+export type ToastActions = ActionMap<ToastPayload>[keyof ActionMap<ToastPayload>];

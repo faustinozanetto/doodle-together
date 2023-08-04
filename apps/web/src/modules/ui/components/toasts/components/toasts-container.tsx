@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { cn } from '@modules/ui/lib/ui.lib';
+import { VariantProps, cva } from 'class-variance-authority';
 import { Toast } from './toast';
 import { useToastContext } from '../hooks/use-toast-context';
-import { VariantProps, cva } from 'class-variance-authority';
-import { cn } from '@modules/ui/lib/ui.lib';
 
 export const toastContainerVariants = cva('pointer-events-none fixed z-[999] flex flex-col', {
   variants: {
@@ -35,10 +35,7 @@ export const ToastsContainer: React.FC<ToastsContainerProps> = (props) => {
     <div className={cn(toastContainerVariants({ position }))}>
       <ul className="max-w-xl">
         <AnimatePresence initial={false}>
-          {state.toasts &&
-            state.toasts.map((toast) => {
-              return <Toast key={toast.id} toast={toast} />;
-            })}
+          {state.toasts && state.toasts.map((toast) => <Toast key={toast.id} toast={toast} />)}
         </AnimatePresence>
       </ul>
     </div>

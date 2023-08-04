@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useMemo, useReducer } from 'react';
 import { RoomContextData } from '../types/room.types';
 import { reducer } from './reducer';
 
@@ -28,5 +28,9 @@ export const RoomProvider: React.FC<RoomProviderProps> = (props) => {
     ...initialState.state,
   });
 
-  return <RoomContext.Provider value={{ state, dispatch }}>{children}</RoomContext.Provider>;
+  const memoizedValue = useMemo(() => {
+    return { state, dispatch };
+  }, [state]);
+
+  return <RoomContext.Provider value={memoizedValue}>{children}</RoomContext.Provider>;
 };

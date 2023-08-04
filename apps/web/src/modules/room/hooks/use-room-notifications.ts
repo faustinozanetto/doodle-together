@@ -1,6 +1,5 @@
 import { SendNotificationSocketPayload, SocketNotificationType } from '@doodle-together/types';
 import { meState } from '@modules/state/me.slice';
-import { roomState } from '@modules/state/room.slice';
 import { socketState } from '@modules/state/socket.slice';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { Toast } from '@modules/ui/components/toasts/types/toasts.types';
@@ -14,6 +13,8 @@ const getNotificationLevel = (notificationType: SocketNotificationType): Toast['
       return 'info';
     case 'user-kicked-self':
       return 'danger';
+    default:
+      return 'info';
   }
 };
 
@@ -23,7 +24,6 @@ export const useRoomNotifications = () => {
   useEffect(() => {
     socketState.socket?.on('send_notification', (data: SendNotificationSocketPayload) => {
       const { me } = meState;
-      const { room } = roomState;
       const { type, broadcast, userId, content } = data;
 
       const level = getNotificationLevel(type);
@@ -32,8 +32,6 @@ export const useRoomNotifications = () => {
       if (broadcast === 'self') {
         toastCondition = (me && me.userId === userId) ?? false;
       } else if (broadcast === 'except') {
-        console.log('NOTIFACION EXCEPT');
-
         toastCondition = (me && me.userId !== userId) ?? false;
       }
 
@@ -43,5 +41,5 @@ export const useRoomNotifications = () => {
     return () => {
       socketState.socket?.off('send_notification');
     };
-  }, [meState.me, roomState.room]);
+  }, [meState.me]);
 };

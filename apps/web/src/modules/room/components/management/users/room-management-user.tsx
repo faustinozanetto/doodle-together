@@ -3,8 +3,8 @@ import React from 'react';
 import { User } from '@doodle-together/types';
 import { cn } from '@modules/ui/lib/ui.lib';
 
-import RoomManagementUserKick from './room-management-user-kick';
 import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
+import RoomManagementUserKick from './room-management-user-kick';
 
 type RoomManagementUserProps = {
   user: User;

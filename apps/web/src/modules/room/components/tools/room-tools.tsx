@@ -1,8 +1,8 @@
 import React from 'react';
-import RoomTool, { RoomToolProps } from './room-tool';
 import { meState } from '@modules/state/me.slice';
 import { roomState } from '@modules/state/room.slice';
 import { useSnapshot } from 'valtio';
+import RoomTool, { RoomToolProps } from './room-tool';
 
 type ToolData = RoomToolProps & { requiresOwner: boolean };
 

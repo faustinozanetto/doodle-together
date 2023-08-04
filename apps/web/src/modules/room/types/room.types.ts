@@ -1,13 +1,14 @@
+import React from 'react';
 import { CanvasPoint } from '@doodle-together/types';
 import { ActionMap } from '@modules/common/types/common.types';
 
 /* Room Draw */
 export type RoomDrawPointPayload = {
+  color: RoomToolCustomization['color'];
+  context: CanvasRenderingContext2D;
   point: CanvasPoint;
   prevPoint: CanvasPoint | null;
-  color: RoomToolCustomization['color'];
   size: RoomToolCustomization['size'];
-  context: CanvasRenderingContext2D;
 };
 
 /* Room Context Types */
@@ -29,8 +30,8 @@ export type RoomContextState = {
 };
 
 export type RoomContextData = {
-  state: RoomContextState;
   dispatch: React.Dispatch<RoomActions>;
+  state: RoomContextState;
 };
 
 export enum RoomActionType {

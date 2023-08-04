@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^db:generate", "^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "env": ["NODE_ENV", "BACKEND_ENDPOINT", "FRONTEND_ENDPOINT"]
+      "env": ["NODE_ENV", "NEXT_PUBLIC_URL", "NEXT_PUBLIC_BACKEND_ENDPOINT"]
     },
     "db:generate": {
       "cache": false

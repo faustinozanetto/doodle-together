@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from '@modules/ui/components/dialog';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
-import RoomManagementUser from './room-management-user';
 import { useRoomUsers } from '@modules/room/hooks/use-room-users';
+import RoomManagementUser from './room-management-user';
 
 const RoomManagementUsers: React.FC = () => {
   const { users } = useRoomUsers({ sortUsers: true });

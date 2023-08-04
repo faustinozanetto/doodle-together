@@ -1,4 +1,4 @@
-export type ApiResponseData<T = unknown> = { message: string; data: T | null };
+export type ApiResponseData<T = unknown> = { data: T | null; message: string };
 
 export type ActionMap<M extends { [index: string]: unknown }> = {
   [Key in keyof M]: M[Key] extends undefined
@@ -6,15 +6,15 @@ export type ActionMap<M extends { [index: string]: unknown }> = {
         type: Key;
       }
     : {
-        type: Key;
         payload: M[Key];
+        type: Key;
       };
 };
 
 export type TokenPayload = {
-  iat: number;
   exp: number;
-  sub: string;
+  iat: number;
   roomId: string;
+  sub: string;
   username: string;
 };

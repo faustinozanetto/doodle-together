@@ -1,8 +1,5 @@
 import { z } from 'zod';
-import {
-  userIdValidationSchema,
-  usernameValidationSchema,
-} from '@modules/user/lib/user.validations';
+import { userIdValidationSchema, usernameValidationSchema } from '@modules/user/lib/user.validations';
 
 export const ROOM_PASSWORD_MIN_LENGHT = 8;
 export const ROOM_PASSWORD_MAX_LENGHT = 24;

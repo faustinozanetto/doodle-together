@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
+import { Separator } from '@modules/ui/components/separator/separator';
 import RoomCustomizationColorPreselected from './room-customization-color-preselected';
 import RoomCustomizationColorCustom from './room-customization-color-custom';
-import { Separator } from '@modules/ui/components/separator/separator';
 
 const RoomCustomizationColor: React.FC = () => {
   return (
