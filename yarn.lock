@@ -542,9 +542,6 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@doodle-together/types@file:packages/types-doodle-together":
-  version "0.0.1"
-
 "@emotion/is-prop-valid@^0.8.2":
   version "0.8.8"
   resolved "https://registry.npmjs.org/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz"

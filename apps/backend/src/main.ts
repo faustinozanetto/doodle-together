@@ -11,14 +11,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
-  const { frontendEndpoint }: ConfigInterface['app'] = configService.get('app');
+  const appConfig: ConfigInterface['app'] = configService.get('app');
 
   app.useWebSocketAdapter(new SocketAdapter(app));
   app.use(cookieParser());
-  app.enableCors({ origin: [frontendEndpoint], credentials: true });
+  app.enableCors({ origin: [appConfig.frontendEndpoint], credentials: true });
 
-  await app.listen(4000);
+  const port = appConfig.port;
 
-  logger.log(`Server running on port ${4000}`);
+  await app.listen(port);
+  logger.log(`⚡️ Server running on port ${port}`);
 }
 bootstrap();

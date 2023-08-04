@@ -14,9 +14,9 @@ export type GetCanvasStateSocketPayload = {
 };
 
 export type SendCanvasStateSocketPayload = {
+  canvasState: string;
   roomId: Room['roomId'];
   userId: User['userId'];
-  canvasState: string;
 };
 
 export type DispatchCanvasStateSocketPayload = {
@@ -28,8 +28,8 @@ export type UpdateRoomSocketPayload = {
 };
 
 export type KickUserSocketPayload = {
-  userId: string;
   roomId: string;
+  userId: string;
 };
 
 export type SocketNotificationType = 'user-joined' | 'user-left' | 'user-kicked-self' | 'user-kicked-except';
@@ -37,8 +37,8 @@ export type SocketNotificationType = 'user-joined' | 'user-left' | 'user-kicked-
 export type SocketNotifcationBroadcastType = 'self' | 'all' | 'except';
 
 export type SendNotificationSocketPayload = {
-  type: SocketNotificationType;
   broadcast: SocketNotifcationBroadcastType;
-  userId: string;
   content: string;
+  type: SocketNotificationType;
+  userId: string;
 };

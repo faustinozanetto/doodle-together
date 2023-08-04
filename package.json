@@ -8,12 +8,10 @@
   },
   "license": "MIT",
   "private": true,
-  "workspaces": {
-    "packages": [
+  "workspaces": [
       "apps/*",
       "packages/*"
-    ]
-  },
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",

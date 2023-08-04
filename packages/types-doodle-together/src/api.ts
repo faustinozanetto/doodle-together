@@ -1,13 +1,13 @@
 import { Room, User } from '../src/common';
 
 export type CreateRoomApiResponse = {
-  room: Room;
   me: User;
+  room: Room;
 };
 
 export type JoinRoomApiResponse = {
-  room: Room;
   me: User;
+  room: Room;
 };
 
 export type LeaveRoomApiResponse = {

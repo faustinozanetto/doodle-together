@@ -1,12 +1,12 @@
 export type Room = {
-  roomId: string;
   ownerId: string;
   password: string;
+  roomId: string;
   users: RoomUsers;
 };
 
 export type RoomUsers = {
-  [userId: string]: { username: string; socketId: string };
+  [userId: string]: { socketId: string; username: string };
 };
 
 export type User = {
