@@ -27,10 +27,10 @@ export class RoomsController {
 
     response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: false,
       secure: true,
       path: '/',
-      maxAge: this.configService.get('app', { infer: true }).roomExpires,
+      maxAge: 60 * 60,
     });
 
     return { room, me };
@@ -42,10 +42,10 @@ export class RoomsController {
 
     response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: false,
       secure: true,
       path: '/',
-      maxAge: this.configService.get('app', { infer: true }).roomExpires,
+      maxAge: 60 * 60,
     });
 
     return { room, me };

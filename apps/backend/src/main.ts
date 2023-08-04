@@ -5,6 +5,7 @@ import { SocketAdapter } from './socket/socket.adapter';
 import { ConfigService } from '@nestjs/config';
 import { ConfigInterface } from './config/config.module';
 import * as cookieParser from 'cookie-parser';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const logger = new Logger('Main');
@@ -15,6 +16,7 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new SocketAdapter(app));
   app.use(cookieParser());
+  app.use(bodyParser({ limit: '50mb', type: 'json' }));
   app.enableCors({ origin: [frontendEndpoint], credentials: true });
 
   await app.listen(4000);
