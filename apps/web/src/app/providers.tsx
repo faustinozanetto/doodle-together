@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ThemeProvider } from 'next-theme-kit';
 import { ToastsProvider } from '@modules/ui/components/toasts/context/toasts-context';
 import { ToastsContainer } from '@modules/ui/components/toasts/components/toasts-container';
-import { actions } from '@modules/state/store';
-import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { useRouter } from 'next/navigation';
 
 type ProvidersProps = {

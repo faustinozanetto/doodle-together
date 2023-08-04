@@ -6,7 +6,7 @@ module.exports = defineConfig({
     es2021: true,
     jest: true,
   },
-  extends: ['next', 'turbo', 'plugin:react/recommended', 'airbnb', 'prettier'],
+  extends: ['turbo', 'airbnb', 'prettier'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
@@ -15,7 +15,7 @@ module.exports = defineConfig({
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint', 'typescript-sort-keys', 'unused-imports', 'prettier', 'prefer-arrow'],
+  plugins: ['@typescript-eslint', 'typescript-sort-keys', 'unused-imports', 'prettier', 'prefer-arrow'],
   rules: {
     '@typescript-eslint/no-unused-vars': 'error',
     'import/extensions': 'off',
@@ -28,11 +28,6 @@ module.exports = defineConfig({
     'no-unused-vars': 'off',
     'no-use-before-define': 'off',
     'prettier/prettier': ['error', { semi: true }],
-    'react/destructuring-assignment': 'off',
-    'react/function-component-definition': 'off',
-    'react/jsx-filename-extension': 'off',
-    'react/jsx-props-no-spreading': 'off',
-    'react/require-default-props': 'off',
     'typescript-sort-keys/interface': 'error',
     'typescript-sort-keys/string-enum': 'error',
     'unused-imports/no-unused-imports': 'error',
