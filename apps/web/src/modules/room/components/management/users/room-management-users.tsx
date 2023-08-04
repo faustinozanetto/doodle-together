@@ -1,45 +1,29 @@
 'use client';
 
-import React from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@modules/ui/components/dialog';
-import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
+import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@modules/ui/components/dialog';
 import { useRoomUsers } from '@modules/room/hooks/use-room-users';
+import { UsersIcon } from '@modules/ui/components/icons/users-icon';
 import RoomManagementUser from './room-management-user';
+import RoomManagementTool from '../room-management-tool';
 
 const RoomManagementUsers: React.FC = () => {
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
   const { users } = useRoomUsers({ sortUsers: true });
 
+  const handleToolClicked = () => {
+    setModalOpen(true);
+  };
+
   return (
-    <div
-      style={{
-        pointerEvents: 'all',
-      }}
+    <RoomManagementTool
+      label="Share Room Link"
+      variant="secondary"
+      icon={<UsersIcon />}
+      onToolClicked={handleToolClicked}
     >
-      <Dialog>
-        <DialogTrigger aria-label="Manage Users" className={iconButtonVariants({ variant: 'secondary' })}>
-          <svg
-            className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-          </svg>
-        </DialogTrigger>
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Manage Room Users</DialogTitle>
@@ -50,7 +34,7 @@ const RoomManagementUsers: React.FC = () => {
           })}
         </DialogContent>
       </Dialog>
-    </div>
+    </RoomManagementTool>
   );
 };
 

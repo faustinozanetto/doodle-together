@@ -35,6 +35,7 @@ const RoomManagementUserKick: React.FC<RoomManagementUserKickProps> = (props) =>
           <div
             className={iconButtonVariants({
               size: 'sm',
+              variant: 'danger-solid',
             })}
           >
             <svg

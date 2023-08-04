@@ -1,9 +1,6 @@
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
-import { useState } from 'react';
 
 export const useCopyText = () => {
-  const [copiedText, setCopiedText] = useState<boolean>(false);
-
   const { toast } = useToast();
 
   const copy = async (text: string) => {
@@ -13,11 +10,11 @@ export const useCopyText = () => {
       } else {
         document.execCommand('copy', true, text);
       }
-      setCopiedText(true);
+      toast({ variant: 'success', content: 'Text copied to clipboard!' });
     } catch (error) {
       toast({ variant: 'danger', content: 'Could not copy text to clipboard!' });
     }
   };
 
-  return { copiedText, copy };
+  return { copy };
 };

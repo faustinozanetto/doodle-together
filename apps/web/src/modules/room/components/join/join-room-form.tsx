@@ -19,6 +19,7 @@ import {
 import { Input } from '@modules/ui/components/forms/input';
 import { PasswordInput } from '@modules/ui/components/forms/password-input';
 import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
+import { useSearchParams } from 'next/navigation';
 
 export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
 
@@ -30,9 +31,15 @@ type JoinRoomFormProps = {
 const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
   const { onSubmit, isPending } = props;
 
+  const searchParams = useSearchParams();
+
   const form = useForm<JoinRoomFormData>({
     resolver: zodResolver(joinRoomValidationSchema),
     mode: 'all',
+    defaultValues: {
+      // If roomId is provided include it as default form value
+      roomId: searchParams.get('roomId') ?? undefined,
+    },
   });
 
   return (

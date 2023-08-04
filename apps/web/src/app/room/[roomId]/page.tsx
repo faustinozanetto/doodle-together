@@ -6,11 +6,20 @@ import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { User } from '@doodle-together/types';
 import { redirect } from 'next/navigation';
 
-const RoomPage: React.FC = async () => {
+type RoomPageProps = {
+  params: {
+    roomId: string;
+  };
+};
+
+const RoomPage: React.FC<RoomPageProps> = async (props) => {
+  const { params } = props;
+  const { roomId } = params;
+
   const cookieStore = cookies();
   const accessToken = cookieStore.get('accessToken');
 
-  if (!accessToken) return redirect('/room/join');
+  if (!accessToken) return redirect(`/room/join?roomId=${roomId}`);
 
   const { username, sub } = getDataFromToken(accessToken?.value);
   const user: User = {

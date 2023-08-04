@@ -6,17 +6,17 @@ import { Button } from '@modules/ui/components/button/button';
 import React from 'react';
 
 const PRESELECTED_COLORS: ToolColorOptionProps[] = [
-  { color: '#FFB6C1', label: 'LightPink' },
+  { color: '#FFB6C1', label: 'Light Pink' },
   { color: '#FFC0CB', label: 'Pink' },
   { color: '#FFD700', label: 'Gold' },
-  { color: '#FFA07A', label: 'LightSalmon' },
-  { color: '#20B2AA', label: 'LightSeaGreen' },
-  { color: '#00CED1', label: 'DarkTurquoise' },
-  { color: '#98FB98', label: 'PaleGreen' },
-  { color: '#87CEEB', label: 'SkyBlue' },
-  { color: '#FF69B4', label: 'HotPink' },
-  { color: '#9370DB', label: 'MediumPurple' },
-  { color: '#F08080', label: 'LightCoral' },
+  { color: '#FFA07A', label: 'Light Salmon' },
+  { color: '#20B2AA', label: 'Light Sea Green' },
+  { color: '#00CED1', label: 'Dark Turquoise' },
+  { color: '#98FB98', label: 'Pale Green' },
+  { color: '#87CEEB', label: 'Sky Blue' },
+  { color: '#FF69B4', label: 'Hot Pink' },
+  { color: '#9370DB', label: 'Medium Purple' },
+  { color: '#F08080', label: 'Light Coral' },
   { color: '#DDA0DD', label: 'Plum' },
 ];
 
