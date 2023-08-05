@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
+import { useSnapshot } from 'valtio';
 import { RoomToolSize } from '@modules/room/types/room.types';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { Separator } from '@modules/ui/components/separator/separator';
-import { useSnapshot } from 'valtio';
 import { customizationActions, customizationState } from '@modules/state/customization.slice';
 
 const TOOL_SIZES: ToolSizeOptionProps[] = [

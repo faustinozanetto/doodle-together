@@ -1,5 +1,5 @@
-import { RoomTool, RoomToolSize, RoomToolStyle } from '@modules/room/types/room.types';
 import { proxy } from 'valtio';
+import { RoomTool, RoomToolSize, RoomToolStyle } from '@modules/room/types/room.types';
 
 export type CustomizationSliceState = {
   color: string;

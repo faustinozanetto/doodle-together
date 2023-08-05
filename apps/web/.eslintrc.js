@@ -10,5 +10,6 @@ module.exports = defineConfig({
     'react/jsx-props-no-spreading': 'off',
     'react/function-component-definition': 'off',
     'arrow-body-style': 'off',
+    'import/order': 'off',
   },
 });

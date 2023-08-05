@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@modules/ui/components/button/button';
 import { useSnapshot } from 'valtio';
+import { Button } from '@modules/ui/components/button/button';
 import { customizationActions, customizationState } from '@modules/state/customization.slice';
 
 const PRESELECTED_COLORS: ToolColorOptionProps[] = [
