@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
-import { RoomActionType, RoomTool as RoomToolData } from '@modules/room/types/room.types';
-import { useRoomContext } from '@modules/room/hooks/use-room-context';
+import { RoomTool as RoomToolData } from '@modules/room/types/room.types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
 import { capitalize } from '@modules/common/lib/common.lib';
+import { customizationActions, customizationState } from '@modules/state/customization.slice';
+import { useSnapshot } from 'valtio';
 
 export type RoomToolProps = {
   icon: React.ReactNode;
@@ -15,20 +16,19 @@ export type RoomToolProps = {
 const RoomTool: React.FC<RoomToolProps> = (props) => {
   const { tool, icon } = props;
 
-  const { state, dispatch } = useRoomContext();
+  const customizationSnapshot = useSnapshot(customizationState);
 
   const handleToolSelection = () => {
-    dispatch({
-      type: RoomActionType.SET_TOOL,
-      payload: { tool },
-    });
+    customizationActions.setTool(tool);
   };
 
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger aria-label={`${tool} Tool`} onClick={handleToolSelection}>
-          <div className={iconButtonVariants({ variant: state.tool === tool ? 'primary' : 'ghost' })}>{icon}</div>
+          <div className={iconButtonVariants({ variant: customizationSnapshot.tool === tool ? 'primary' : 'ghost' })}>
+            {icon}
+          </div>
         </TooltipTrigger>
         <TooltipContent>
           <span className="font-medium">{capitalize(tool)}</span>

@@ -1,6 +1,6 @@
 import { ElementRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { CanvasPoint } from '@doodle-together/types';
-import { useRoomContext } from './use-room-context';
+import { customizationState } from '@modules/state/customization.slice';
 import { drawPoint } from '../lib/room-draw.lib';
 import { RoomDrawPointPayload } from '../types/room.types';
 
@@ -11,8 +11,6 @@ type UseRoomDrawProps = {
 };
 
 export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: UseRoomDrawProps) => {
-  const { state } = useRoomContext();
-
   const [mouseDown, setMouseDown] = useState<boolean>(false);
   const previousPoint = useRef<CanvasPoint | null>(null);
 
@@ -72,7 +70,7 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: U
     const context = getCanvasContext();
     if (!context) return;
 
-    const { tool } = state;
+    const { tool, color, size } = customizationState;
 
     // Create current point object from canvas ref element.
     const { clientX, clientY } = event;
@@ -83,12 +81,11 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: U
     };
 
     if (tool === 'pencil') {
-      const { toolCustomization } = state;
       const drawPointData: RoomDrawPointPayload = {
         point: currentPoint,
         prevPoint: previousPoint.current,
-        color: toolCustomization.color,
-        size: toolCustomization.size,
+        color,
+        size,
         context,
       };
 

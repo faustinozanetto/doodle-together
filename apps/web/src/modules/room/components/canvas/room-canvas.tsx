@@ -86,7 +86,7 @@ const RoomCanvas: React.FC = () => {
       const { room } = roomState;
       const { me } = meState;
 
-      if (!canvasElement || !room || !me || userId === me.userId) return;
+      if (!canvasElement || !room || !me) return;
 
       const canvasState = canvasElement.toDataURL();
       const payload: SendCanvasStateSocketPayload = {
@@ -101,6 +101,8 @@ const RoomCanvas: React.FC = () => {
     // Dispatch canvas state socket listening
     socketState.socket?.on('dispatch_canvas_state', (data: DispatchCanvasStateSocketPayload) => {
       const { canvasState } = data;
+
+      console.log(`Dispatch canvas state received: ${canvasElement}, ${context}`);
 
       if (!canvasElement || !context) return;
 

@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useRoomContext } from '@modules/room/hooks/use-room-context';
-import { RoomActionType, RoomToolSize } from '@modules/room/types/room.types';
+import { RoomToolSize } from '@modules/room/types/room.types';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { Separator } from '@modules/ui/components/separator/separator';
+import { useSnapshot } from 'valtio';
+import { customizationActions, customizationState } from '@modules/state/customization.slice';
 
 const TOOL_SIZES: ToolSizeOptionProps[] = [
   {
@@ -85,19 +86,17 @@ type ToolSizeOptionProps = {
 
 const ToolSizeOption: React.FC<ToolSizeOptionProps> = (props) => {
   const { size, icon } = props;
-  const { state, dispatch } = useRoomContext();
+
+  const customizationSnapshot = useSnapshot(customizationState);
 
   const handleSelectSize = () => {
-    dispatch({
-      type: RoomActionType.SET_TOOL_SIZE,
-      payload: { size },
-    });
+    customizationActions.setSize(size);
   };
 
   return (
     <IconButton
       aria-label={`${size} Size`}
-      variant={size === state.toolCustomization.size ? 'primary' : 'ghost'}
+      variant={size === customizationSnapshot.size ? 'primary' : 'ghost'}
       onClick={handleSelectSize}
       icon={icon}
     />

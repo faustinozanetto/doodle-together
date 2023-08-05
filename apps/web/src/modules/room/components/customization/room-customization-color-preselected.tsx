@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useRoomContext } from '@modules/room/hooks/use-room-context';
-import { RoomActionType } from '@modules/room/types/room.types';
 import { Button } from '@modules/ui/components/button/button';
+import { useSnapshot } from 'valtio';
+import { customizationActions, customizationState } from '@modules/state/customization.slice';
 
 const PRESELECTED_COLORS: ToolColorOptionProps[] = [
   { color: '#FFB6C1', label: 'Light Pink' },
@@ -27,20 +27,18 @@ type ToolColorOptionProps = {
 
 const ToolColorOption: React.FC<ToolColorOptionProps> = (props) => {
   const { color, label } = props;
-  const { state, dispatch } = useRoomContext();
+
+  const customizationSnapshot = useSnapshot(customizationState);
 
   const handleSelectColor = () => {
-    dispatch({
-      type: RoomActionType.SET_TOOL_COLOR,
-      payload: { color },
-    });
+    customizationActions.setColor(color);
   };
 
   return (
     <Button
       aria-label={`${label} Color`}
       className="!p-1 aspect-square"
-      variant={color === state.toolCustomization.color ? 'outline' : 'ghost'}
+      variant={color === customizationSnapshot.color ? 'outline' : 'ghost'}
       onClick={handleSelectColor}
     >
       <div className="h-5 w-5 rounded-xl" style={{ backgroundColor: color }} />

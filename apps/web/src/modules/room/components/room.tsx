@@ -16,7 +16,6 @@ import RoomUsers from './users/room-users';
 import RoomCustomization from './customization/room-customization';
 import RoomCanvas from './canvas/room-canvas';
 import RoomTools from './tools/room-tools';
-import { RoomProvider } from '../context/room-context';
 
 const Room: React.FC = () => {
   const router = useRouter();
@@ -98,26 +97,24 @@ const Room: React.FC = () => {
   }, [roomId]);
 
   return (
-    <RoomProvider>
-      <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
-        <RoomCanvas />
+    <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
+      <RoomCanvas />
 
-        {/* Panels */}
-        <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
-          {/* Top */}
-          <div className="flex justify-between items-start">
-            <RoomUsers />
-            <RoomCustomization />
-          </div>
+      {/* Panels */}
+      <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
+        {/* Top */}
+        <div className="flex justify-between items-start">
+          <RoomUsers />
+          <RoomCustomization />
+        </div>
 
-          {/* Bottom  */}
-          <div className="flex justify-between items-end">
-            <RoomTools />
-            <RoomManagement />
-          </div>
+        {/* Bottom  */}
+        <div className="flex justify-between items-end">
+          <RoomTools />
+          <RoomManagement />
         </div>
       </div>
-    </RoomProvider>
+    </div>
   );
 };
 
