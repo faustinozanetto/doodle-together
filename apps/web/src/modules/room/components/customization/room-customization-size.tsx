@@ -1,10 +1,10 @@
 'use client';
 
+import React from 'react';
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 import { RoomActionType, RoomToolSize } from '@modules/room/types/room.types';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { Separator } from '@modules/ui/components/separator/separator';
-import React from 'react';
 
 const TOOL_SIZES: ToolSizeOptionProps[] = [
   {

@@ -3,12 +3,13 @@
 import React, { useEffect } from 'react';
 
 import { LeaveRoomApiResponse, RequestCanvasStateSocketPayload, UpdateRoomSocketPayload } from '@doodle-together/types';
-import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { useParams, useRouter } from 'next/navigation';
+import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { meActions, meState } from '@modules/state/me.slice';
 import { socketActions, socketState } from '@modules/state/socket.slice';
 import { roomActions, roomState } from '@modules/state/room.slice';
 import { siteConfig } from '@config/config';
+import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { useRoomNotifications } from '../hooks/use-room-notifications';
 import RoomManagement from './management/room-management';
 import RoomUsers from './users/room-users';
@@ -16,7 +17,6 @@ import RoomCustomization from './customization/room-customization';
 import RoomCanvas from './canvas/room-canvas';
 import RoomTools from './tools/room-tools';
 import { RoomProvider } from '../context/room-context';
-import { getDataFromToken } from '@modules/common/lib/common.lib';
 
 const Room: React.FC = () => {
   const router = useRouter();

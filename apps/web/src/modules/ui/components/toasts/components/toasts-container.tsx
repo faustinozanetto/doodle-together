@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { cn } from '@modules/ui/lib/ui.lib';
 import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@modules/ui/lib/ui.lib';
 import { Toast } from './toast';
 import { useToastContext } from '../hooks/use-toast-context';
 

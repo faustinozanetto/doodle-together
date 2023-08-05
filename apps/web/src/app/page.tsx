@@ -1,6 +1,6 @@
+import Link from 'next/link';
 import ThemeToggler from '@modules/theme/components/theme-toggler';
 import { Button, buttonVariants } from '@modules/ui/components/button/button';
-import Link from 'next/link';
 
 export default async function HomePage() {
   return (

@@ -1,10 +1,10 @@
 'use client';
 
+import React, { ChangeEvent } from 'react';
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 import { RoomActionType } from '@modules/room/types/room.types';
 import { ColorInput } from '@modules/ui/components/forms/color-input';
 import { Label } from '@modules/ui/components/label/label';
-import React, { ChangeEvent } from 'react';
 
 const RoomCustomizationColorCustom: React.FC = () => {
   const { dispatch } = useRoomContext();

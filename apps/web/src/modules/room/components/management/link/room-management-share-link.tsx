@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSnapshot } from 'valtio';
 import { siteConfig } from '@config/config';
 import { useCopyText } from '@modules/common/hooks/use-copy-text';
 import { roomState } from '@modules/state/room.slice';
@@ -6,7 +7,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { CopyIcon } from '@modules/ui/components/icons/copy-icon';
 import { ShareIcon } from '@modules/ui/components/icons/share-icon';
-import { useSnapshot } from 'valtio';
 import RoomManagementTool from '../room-management-tool';
 
 const RoomManagementShareLink: React.FC = () => {

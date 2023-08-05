@@ -1,9 +1,9 @@
 import { SendNotificationSocketPayload, SocketNotificationType } from '@doodle-together/types';
+import { useEffect } from 'react';
 import { meState } from '@modules/state/me.slice';
 import { socketState } from '@modules/state/socket.slice';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { Toast } from '@modules/ui/components/toasts/types/toasts.types';
-import { useEffect } from 'react';
 
 const getNotificationLevel = (notificationType: SocketNotificationType): Toast['variant'] => {
   switch (notificationType) {

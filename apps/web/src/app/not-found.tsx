@@ -1,8 +1,8 @@
 import React from 'react';
 
+import Link from 'next/link';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { cn } from '@modules/ui/lib/ui.lib';
-import Link from 'next/link';
 
 export default function NotFoundPage() {
   return (

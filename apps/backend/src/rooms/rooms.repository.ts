@@ -39,7 +39,7 @@ export class RoomsRepository {
     };
 
     const key = `rooms:${roomId}`;
-    const roomExpireDate = this.configService.get('app', { infer: true }).roomExpires;
+    // const roomExpireDate = this.configService.get('app', { infer: true }).roomExpires;
 
     try {
       await this.redis.hmset(

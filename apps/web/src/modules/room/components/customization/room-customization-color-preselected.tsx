@@ -1,9 +1,9 @@
 'use client';
 
+import React from 'react';
 import { useRoomContext } from '@modules/room/hooks/use-room-context';
 import { RoomActionType } from '@modules/room/types/room.types';
 import { Button } from '@modules/ui/components/button/button';
-import React from 'react';
 
 const PRESELECTED_COLORS: ToolColorOptionProps[] = [
   { color: '#FFB6C1', label: 'Light Pink' },

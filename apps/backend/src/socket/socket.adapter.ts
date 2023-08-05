@@ -27,13 +27,13 @@ export class SocketAdapter extends IoAdapter {
     const jwtService = this.app.get(JwtService);
     const server: Server = super.createIOServer(port, optionsWithCORS);
 
-    server.of('rooms').use(createTokenMiddleware(jwtService, this.logger));
+    server.of('rooms').use(createTokenMiddleware(jwtService));
 
     return server;
   }
 }
 
-const createTokenMiddleware = (jwtService: JwtService, logger: Logger) => (socket: SocketWithAuth, next) => {
+const createTokenMiddleware = (jwtService: JwtService) => (socket: SocketWithAuth, next) => {
   const accessToken = socket.handshake.auth.accessToken;
 
   try {

@@ -1,7 +1,7 @@
 import { User } from '@doodle-together/types';
-import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { proxy } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
+import { getDataFromToken } from '@modules/common/lib/common.lib';
 
 export type MeSliceState = {
   accessToken?: string;

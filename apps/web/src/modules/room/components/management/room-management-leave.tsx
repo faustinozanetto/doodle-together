@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { LeaveRoomApiResponse } from '@doodle-together/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,9 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@modules/ui/components/alert-dialog/alert-dialog';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
-import { LeaveRoomApiResponse } from '@doodle-together/types';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
 import { roomState } from '@modules/state/room.slice';
 import { meActions, meState } from '@modules/state/me.slice';

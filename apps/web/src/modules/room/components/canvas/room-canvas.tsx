@@ -1,9 +1,6 @@
 'use client';
 
 import React, { useCallback, useEffect } from 'react';
-import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
-
-import { RoomDrawPointPayload } from '@modules/room/types/room.types';
 import {
   CanvasClearedSocketPayload,
   DispatchCanvasStateSocketPayload,
@@ -11,6 +8,9 @@ import {
   RequestCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
 } from '@doodle-together/types';
+import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
+
+import { RoomDrawPointPayload } from '@modules/room/types/room.types';
 import { roomState } from '@modules/state/room.slice';
 import { socketState } from '@modules/state/socket.slice';
 import { meState } from '@modules/state/me.slice';
@@ -49,6 +49,7 @@ const RoomCanvas: React.FC = () => {
       };
 
       socketState.socket?.emit('request_canvas_state', payload);
+      console.log(`Canvas Resized: (${width}px, ${height}px)`);
     },
     [roomState, meState]
   );

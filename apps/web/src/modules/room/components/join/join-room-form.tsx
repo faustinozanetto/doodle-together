@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { z } from 'zod';
 
+import { useSearchParams } from 'next/navigation';
 import { joinRoomValidationSchema } from '@modules/room/lib/room.validations';
 import { Button } from '@modules/ui/components/button/button';
 import {
@@ -19,7 +20,6 @@ import {
 import { Input } from '@modules/ui/components/forms/input';
 import { PasswordInput } from '@modules/ui/components/forms/password-input';
 import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
-import { useSearchParams } from 'next/navigation';
 
 export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
 

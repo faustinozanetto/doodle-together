@@ -38,6 +38,7 @@ export const buttonVariants = cva(
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants> & {
+    // eslint-disable-next-line react/require-default-props
     icon?: React.ReactNode;
   };
 

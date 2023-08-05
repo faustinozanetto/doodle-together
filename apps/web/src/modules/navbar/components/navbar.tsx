@@ -1,6 +1,6 @@
-import ThemeToggler from '@modules/theme/components/theme-toggler';
 import Link from 'next/link';
 import React from 'react';
+import ThemeToggler from '@modules/theme/components/theme-toggler';
 import NavbarLink, { NavbarLinkProps } from './navbar-link';
 
 const NAVBAR_LINKS: NavbarLinkProps[] = [

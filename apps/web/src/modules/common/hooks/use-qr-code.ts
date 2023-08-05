@@ -1,6 +1,6 @@
-import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { toDataURL, QRCodeToDataURLOptions } from 'qrcode';
 import { useState } from 'react';
+import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 
 export const useQRCode = (link: string, options?: QRCodeToDataURLOptions) => {
   const { toast } = useToast();

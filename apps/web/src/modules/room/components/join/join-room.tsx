@@ -2,11 +2,11 @@
 
 import React, { useTransition } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { JoinRoomApiResponse } from '@doodle-together/types';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 
-import { JoinRoomApiResponse } from '@doodle-together/types';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { roomActions } from '@modules/state/room.slice';
 import { meActions } from '@modules/state/me.slice';

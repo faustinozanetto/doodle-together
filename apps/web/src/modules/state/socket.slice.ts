@@ -1,6 +1,6 @@
-import { initializeSocketConnection } from '@modules/socket/lib/socket.lib';
 import { Socket } from 'socket.io-client';
 import { proxy, ref } from 'valtio';
+import { initializeSocketConnection } from '@modules/socket/lib/socket.lib';
 
 export type SocketSliceState = {
   socket: Socket | null;

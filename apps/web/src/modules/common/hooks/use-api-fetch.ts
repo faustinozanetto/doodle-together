@@ -3,6 +3,7 @@ import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 export const useApiFetch = <TData>(endpoint: string) => {
   const { toast } = useToast();
 
+  // eslint-disable-next-line no-undef
   const fetchData = async (options?: RequestInit): Promise<TData | null> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}${endpoint}`, {
       credentials: 'include',

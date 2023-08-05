@@ -1,7 +1,7 @@
 import { User } from '@doodle-together/types';
-import { roomState } from '@modules/state/room.slice';
 import { useMemo } from 'react';
 import { useSnapshot } from 'valtio';
+import { roomState } from '@modules/state/room.slice';
 
 type UseRoomUsersProps = {
   sortUsers?: boolean;

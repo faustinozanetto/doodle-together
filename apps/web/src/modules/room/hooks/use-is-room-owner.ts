@@ -1,7 +1,7 @@
 import { User } from '@doodle-together/types';
-import { roomState } from '@modules/state/room.slice';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
+import { roomState } from '@modules/state/room.slice';
 
 export const useIsRoomOwner = (user: User | undefined) => {
   const roomSnapshot = useSnapshot(roomState);

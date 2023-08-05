@@ -1,8 +1,8 @@
 import React from 'react';
-import { Separator } from '@modules/ui/components/separator/separator';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRoomUsers } from '@modules/room/hooks/use-room-users';
 import { useSnapshot } from 'valtio';
+import { Separator } from '@modules/ui/components/separator/separator';
+import { useRoomUsers } from '@modules/room/hooks/use-room-users';
 import { meState } from '@modules/state/me.slice';
 import RoomUserEntry from './room-user-entry';
 
