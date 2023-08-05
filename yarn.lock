@@ -3907,10 +3907,10 @@ eslint-config-turbo@1.10.12:
   dependencies:
     eslint-plugin-turbo "1.10.12"
 
-eslint-define-config@1.22.0:
-  version "1.22.0"
-  resolved "https://registry.yarnpkg.com/eslint-define-config/-/eslint-define-config-1.22.0.tgz#fa791048e8ef0017d2896e4feb9f683818b8ccb6"
-  integrity sha512-pckNJppFwC4AX+AGK63aa4sX5BluPwWwHES3fq/ER0jDR2U2czwlngg38B4EQ2ibvofufc+R5QfmdPKI6+74vQ==
+eslint-define-config@1.23.0:
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/eslint-define-config/-/eslint-define-config-1.23.0.tgz#053c08490386e07893748f88cb0fb3bff55998f9"
+  integrity sha512-4mMyu0JuBkQHsCtR+42irIQdFLmLIW+pMAVcyOV/gZRL4O1R8iuH0eMG3oL3Cbi1eo9fDAfT5CIHVHgdyxcf6w==
 
 eslint-import-resolver-node@^0.3.6, eslint-import-resolver-node@^0.3.7:
   version "0.3.7"
