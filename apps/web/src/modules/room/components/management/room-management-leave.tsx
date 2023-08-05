@@ -18,7 +18,7 @@ import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { LeaveRoomApiResponse } from '@doodle-together/types';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
 import { roomState } from '@modules/state/room.slice';
-import { meState } from '@modules/state/me.slice';
+import { meActions, meState } from '@modules/state/me.slice';
 import { socketState } from '@modules/state/socket.slice';
 
 const RoomManagementLeave: React.FC = () => {
@@ -30,7 +30,8 @@ const RoomManagementLeave: React.FC = () => {
 
   const handleLeaveRoom = useCallback(async () => {
     const { room } = roomState;
-    const { me } = meState;
+    const { me, accessToken } = meState;
+
     if (!room || !me) return;
 
     await fetchData({
@@ -38,10 +39,12 @@ const RoomManagementLeave: React.FC = () => {
       body: JSON.stringify({
         roomId: room.roomId,
         userId: me.userId,
+        accessToken,
       }),
     });
 
     socketState.socket?.disconnect();
+    meActions.clearAccessToken();
 
     toast({ variant: 'success', content: 'Room left successfully!' });
     router.replace('/');

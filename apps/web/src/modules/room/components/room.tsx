@@ -2,17 +2,13 @@
 
 import React, { useEffect } from 'react';
 
-import {
-  LeaveRoomApiResponse,
-  RequestCanvasStateSocketPayload,
-  UpdateRoomSocketPayload,
-  User,
-} from '@doodle-together/types';
+import { LeaveRoomApiResponse, RequestCanvasStateSocketPayload, UpdateRoomSocketPayload } from '@doodle-together/types';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { useParams, useRouter } from 'next/navigation';
 import { meActions, meState } from '@modules/state/me.slice';
 import { socketActions, socketState } from '@modules/state/socket.slice';
 import { roomActions, roomState } from '@modules/state/room.slice';
+import { siteConfig } from '@config/config';
 import { useRoomNotifications } from '../hooks/use-room-notifications';
 import RoomManagement from './management/room-management';
 import RoomUsers from './users/room-users';
@@ -21,13 +17,7 @@ import RoomCanvas from './canvas/room-canvas';
 import RoomTools from './tools/room-tools';
 import { RoomProvider } from '../context/room-context';
 
-type RoomProps = {
-  user: User;
-};
-
-const Room: React.FC<RoomProps> = (props) => {
-  const { user } = props;
-
+const Room: React.FC = () => {
   const router = useRouter();
   const { roomId } = useParams();
 
@@ -35,15 +25,28 @@ const Room: React.FC<RoomProps> = (props) => {
 
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
 
+  // Socket and user initialization
   useEffect(() => {
-    meActions.setMe(user);
-    socketActions.initializeSocket();
+    const accessToken = window.localStorage.getItem('accessToken');
 
+    if (!accessToken) {
+      const joinRoomURL = new URL('/room/join', siteConfig.url);
+      joinRoomURL.searchParams.append('roomId', roomId as string);
+      return router.push(joinRoomURL.toString());
+    }
+
+    meActions.setAccessToken(accessToken);
+    socketActions.initializeSocket();
+  }, []);
+
+  useEffect(() => {
     socketState.socket?.on('connect', () => {
+      if (!meState.me) return;
+
       // Send a socket to request the current canvas state.
       const payload: RequestCanvasStateSocketPayload = {
         roomId: roomId as string,
-        userId: user.userId,
+        userId: meState.me.userId,
       };
 
       socketState.socket?.emit('request_canvas_state', payload);
@@ -56,7 +59,7 @@ const Room: React.FC<RoomProps> = (props) => {
 
     socketState.socket?.on('kick_request', async () => {
       const { room } = roomState;
-      const { me } = meState;
+      const { me, accessToken } = meState;
 
       if (!room || !me) return;
 
@@ -65,12 +68,14 @@ const Room: React.FC<RoomProps> = (props) => {
         body: JSON.stringify({
           roomId: room.roomId,
           userId: me.userId,
+          accessToken,
         }),
       });
 
       if (!response) return;
 
       socketState.socket?.disconnect();
+      meActions.clearAccessToken();
 
       router.push('/');
     });
@@ -80,7 +85,7 @@ const Room: React.FC<RoomProps> = (props) => {
       socketState.socket?.off('kick_request');
       socketState.socket?.off('request_canvas_state');
     };
-  }, [user, roomId]);
+  }, [roomId]);
 
   return (
     <RoomProvider>

@@ -34,7 +34,7 @@ export class SocketAdapter extends IoAdapter {
 }
 
 const createTokenMiddleware = (jwtService: JwtService, logger: Logger) => (socket: SocketWithAuth, next) => {
-  const accessToken = socket.handshake.headers.cookie?.replace('accessToken=', '');
+  const accessToken = socket.handshake.auth.accessToken;
 
   try {
     const payload = jwtService.verify(accessToken);

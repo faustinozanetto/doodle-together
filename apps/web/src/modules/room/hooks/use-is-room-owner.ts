@@ -3,7 +3,7 @@ import { roomState } from '@modules/state/room.slice';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-export const useIsRoomOwner = (user: User | null) => {
+export const useIsRoomOwner = (user: User | undefined) => {
   const roomSnapshot = useSnapshot(roomState);
 
   const [isRoomOwner, setIsRoomOwner] = useState<boolean>(false);
