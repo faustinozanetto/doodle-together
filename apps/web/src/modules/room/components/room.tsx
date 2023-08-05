@@ -16,6 +16,7 @@ import RoomCustomization from './customization/room-customization';
 import RoomCanvas from './canvas/room-canvas';
 import RoomTools from './tools/room-tools';
 import { RoomProvider } from '../context/room-context';
+import { getDataFromToken } from '@modules/common/lib/common.lib';
 
 const Room: React.FC = () => {
   const router = useRouter();
@@ -33,6 +34,15 @@ const Room: React.FC = () => {
       const joinRoomURL = new URL('/room/join', siteConfig.url);
       joinRoomURL.searchParams.append('roomId', roomId as string);
       return router.push(joinRoomURL.toString());
+    }
+
+    const { exp } = getDataFromToken(accessToken);
+    const currentTime = Date.now() / 1000;
+
+    if (exp < currentTime) {
+      meActions.clearAccessToken();
+      router.push('/');
+      return;
     }
 
     meActions.setAccessToken(accessToken);
