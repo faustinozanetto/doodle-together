@@ -1,4 +1,4 @@
-import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
+import { Injectable, Logger, ForbiddenException, Inject } from '@nestjs/common';
 import { RoomsRepository } from './rooms.repository';
 import { DeleteRoomInputParams } from './params/delete-room-input.params';
 import { generateRoomId, generateUserId } from '../utils/utils';
@@ -19,12 +19,14 @@ import { LeaveRoomInputParams } from './params/leave-room-input.param';
 import { RemoveUserFromRoomInputParams } from './params/remove-user-to-room-input.param';
 import { JoinRoomInputParams } from './params/join-room-input.param';
 import { FindRoomInputParams } from './params/find-room-input.params';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class RoomsService implements IRoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
   constructor(
+    @Inject(PrismaService) private prismaService: PrismaService,
     private readonly roomsRepository: RoomsRepository,
     private readonly jwtService: JwtService,
     private readonly passwordService: PasswordsService
@@ -38,6 +40,13 @@ export class RoomsService implements IRoomsService {
 
     const { hashedPassword } = await this.passwordService.hashPassword({
       password,
+    });
+
+    const room = await this.prismaService.room.create({
+      data: {
+        password,
+        ownerId,
+      },
     });
 
     const { room } = await this.roomsRepository.createRoom({

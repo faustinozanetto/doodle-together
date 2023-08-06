@@ -20,6 +20,7 @@
     "node": ">=15"
   },
   "dependencies": {
+    "@doodle-together/database": "*",
     "@doodle-together/shared": "*",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "3.0.0",
