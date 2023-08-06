@@ -21,7 +21,6 @@ import {
   UpdateCanvasStateSocketPayload,
   RequestCanvasStateSocketPayload,
   GetCanvasStateSocketPayload,
-  UserWithSocketId,
   SendCanvasStateSocketPayload,
   DispatchCanvasStateSocketPayload,
   CanvasClearedSocketPayload,
@@ -52,21 +51,15 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`Connection established to socketId: ${socketId}`);
     this.sessionManager.addUserToSessions(socketId, socket);
 
-    const { roomId, user } = socket;
-    const { userId, username } = user;
+    const { roomId, userId } = socket;
 
     await socket.join(roomId);
 
-    const { room } = await this.roomsService.addUserToRoom({
-      roomId,
-      userId,
-      username,
-      socketId,
-    });
+    const { room, user } = await this.roomsService.addUserToRoom({ roomId, userId });
 
     const notificationPayload: SendNotificationSocketPayload = {
       type: 'user-joined',
-      content: `User ${username} joined the room!`,
+      content: `User ${user.username} joined the room!`,
       userId,
       broadcast: 'except',
     };
@@ -85,6 +78,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`Connection terminated from socketId: ${socketId}`);
     this.sessionManager.removeUserFromSessions(socketId);
 
+    /*
     const { roomId, user } = socket;
     const { userId, username } = user;
 
@@ -107,6 +101,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     };
 
     this.server.to(roomId).emit(SocketNames.UPDATE_ROOM, updateRoomPayload);
+    */
   }
 
   /* Room Gateway Section */
@@ -125,6 +120,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async requestCanvasState(@MessageBody() data: RequestCanvasStateSocketPayload): Promise<void> {
     const { roomId, userId } = data;
 
+    /*
     const payload: GetCanvasStateSocketPayload = {
       userId,
     };
@@ -148,12 +144,14 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const targetUserSocketId = sortedUsers[0].socketId;
     this.server.to(targetUserSocketId).emit(SocketNames.GET_CANVAS_STATE, payload);
+    */
   }
 
   @SubscribeMessage(SocketNames.SEND_CANVAS_STATE)
   async sendCanvasState(@MessageBody() data: SendCanvasStateSocketPayload): Promise<void> {
     const { canvasState, userId, roomId } = data;
 
+    /*
     const { room } = await this.roomsService.findRoom({
       roomId,
     });
@@ -164,6 +162,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const userSocketId = room.users[userId].socketId;
     this.server.to(userSocketId).emit(SocketNames.DISPATCH_CANVAS_STATE, payload);
+    */
   }
 
   @SubscribeMessage(SocketNames.CANVAS_CLEARED)

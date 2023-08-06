@@ -1,12 +1,10 @@
-import { Room } from '.';
+import { Room } from '@doodle-together/database';
 
 export type CreateRoomApiResponse = {
-  accessToken: string;
   room: Room;
 };
 
 export type JoinRoomApiResponse = {
-  accessToken: string;
   room: Room;
 };
 

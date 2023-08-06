@@ -14,7 +14,7 @@ export class GatewaySessionManager implements IGatewaySessionManager {
 
   addUserToSessions(socketId: string, user: SocketWithAuth) {
     this.sessions.set(socketId, user);
-    this.logger.log(`User added to session with sockedId: ${socketId} and userId: ${user.user.userId}!`);
+    this.logger.log(`User added to session with sockedId: ${socketId} and userId: ${user.userId}!`);
   }
 
   removeUserFromSessions(socketId: string) {

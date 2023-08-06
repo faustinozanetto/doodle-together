@@ -1,4 +1,3 @@
-import { User } from '@doodle-together/shared';
 import { INestApplicationContext, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -28,6 +27,8 @@ export class SocketAdapter extends IoAdapter {
 
     const server: Server = super.createIOServer(port, optionsWithCORS);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     server.of('rooms').use(async (socket: SocketWithAuth, next) => {
       const accessToken = socket.handshake.auth.accessToken;
 
@@ -41,11 +42,7 @@ export class SocketAdapter extends IoAdapter {
       // Parse the accessToken using jwt and set socket auth data.
       try {
         const payload = jwtService.verify(accessToken);
-        const user: User = {
-          userId: payload.sub,
-          username: payload.username,
-        };
-        socket.user = user;
+        socket.userId = payload.sub;
         socket.roomId = payload.roomId;
         next();
       } catch {

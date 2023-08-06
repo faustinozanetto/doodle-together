@@ -1,4 +1,5 @@
-import { CanvasPoint, Room, User } from '.';
+import { Room, User } from '@doodle-together/database';
+import { CanvasPoint } from '.';
 
 export type DrawPointSocketPayload = {
   point: { color: string; point: CanvasPoint; prevPoint: CanvasPoint | null; size: string };
@@ -6,7 +7,7 @@ export type DrawPointSocketPayload = {
 };
 
 export type CanvasClearedSocketPayload = {
-  roomId: Room['roomId'];
+  roomId: Room['id'];
 };
 
 export type UpdateCanvasStateSocketPayload = {
@@ -14,18 +15,18 @@ export type UpdateCanvasStateSocketPayload = {
 };
 
 export type RequestCanvasStateSocketPayload = {
-  roomId: Room['roomId'];
-  userId: User['userId'];
+  roomId: Room['id'];
+  userId: User['id'];
 };
 
 export type GetCanvasStateSocketPayload = {
-  userId: User['userId'];
+  userId: User['id'];
 };
 
 export type SendCanvasStateSocketPayload = {
   canvasState: string;
-  roomId: Room['roomId'];
-  userId: User['userId'];
+  roomId: Room['id'];
+  userId: User['id'];
 };
 
 export type DispatchCanvasStateSocketPayload = {

@@ -1,7 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RequestWithAuth } from '../types';
-import { User } from '@doodle-together/shared';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -16,11 +15,8 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = this.jwtService.verify(accessToken);
-      const user: User = {
-        userId: payload.sub,
-        username: payload.username,
-      };
-      request.user = user;
+
+      request.userId = payload.sub;
       request.roomId = payload.roomId;
       return true;
     } catch {

@@ -1,4 +1,4 @@
 export class CreateRoomInputParams {
   password: string;
-  username: string;
+  ownerId: string;
 }

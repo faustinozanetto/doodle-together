@@ -11,6 +11,7 @@
     "base.json",
     "nextjs.json",
     "ui-library.json",
-    "node16.json"
+    "node16.json",
+    "nestjs.json"
   ]
 }

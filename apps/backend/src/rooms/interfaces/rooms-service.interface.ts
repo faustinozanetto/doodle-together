@@ -9,9 +9,11 @@ import { JoinRoomResponse } from '../responses/join-room.response';
 import { LeaveRoomResponse } from '../responses/leave-room.response';
 import { RemoveUserFromRoomResponse } from '../responses/remove-user-to-room.response';
 import { FindRoomInputParams } from '../params/find-room-input.params';
-import { JoinRoomInputParams } from '../params/join-room-input.param';
+import { JoinRoomInputParams } from '../params/join-room-input.params';
 import { LeaveRoomInputParams } from '../params/leave-room-input.param';
 import { RemoveUserFromRoomInputParams } from '../params/remove-user-to-room-input.param';
+import { UpdateRoomInputParams } from '../params/update-room-input.params';
+import { UpdateRoomResponse } from '../responses/update-room.response';
 
 export interface IRoomsService {
   /**
@@ -26,6 +28,7 @@ export interface IRoomsService {
    * @returns Delete room response : deleted
    */
   deleteRoom(input: DeleteRoomInputParams): Promise<DeleteRoomResponse>;
+  updateRoom(input: UpdateRoomInputParams): Promise<UpdateRoomResponse>;
   /**
    * Finds a room by a given input
    * @param input  Find room input : roomId
