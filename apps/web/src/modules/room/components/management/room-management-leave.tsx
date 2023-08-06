@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { LeaveRoomApiResponse } from '@doodle-together/shared/dist/dist';
+import { LeaveRoomApiResponse } from '@doodle-together/shared';
 import {
   AlertDialog,
   AlertDialogAction,

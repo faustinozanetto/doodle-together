@@ -5,5 +5,5 @@ import { ValidateUserResponse } from '../responses/validate-user.response';
 
 export interface IAuthService {
   validateUser(input: ValidateUserInputParams): Promise<ValidateUserResponse>;
-  generateAccessToken(input: GenerateAccessTokenInputParams): GenerateAccessTokenResponse;
+  generateAccessToken(input: GenerateAccessTokenInputParams): Promise<GenerateAccessTokenResponse>;
 }

@@ -1,25 +1,45 @@
-import { Inject, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Inject, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthGuard } from './guards/auth-guard';
 import { CreateRoomApiResponse, JoinRoomApiResponse, LeaveRoomApiResponse } from '@doodle-together/shared';
 import { Services } from 'src/utils/constants';
 import { IRoomsService } from './interfaces/rooms-service.interface';
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
+import { IAuthService } from 'src/auth/interfaces/auth-service.interface';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @UsePipes(new ValidationPipe())
 @Controller('rooms')
 export class RoomsController {
   constructor(
+    @Inject(ConfigService) private readonly configService: ConfigService,
     @Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService,
-    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService
+    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
+    @Inject(Services.AUTH_SERVICE) private readonly authService: IAuthService
   ) {}
 
   @Post('/create')
-  async create(@Body() body: { username: string; password: string }): Promise<CreateRoomApiResponse> {
+  async create(
+    @Body() body: { username: string; password: string },
+    @Res({ passthrough: true }) res: Response
+  ): Promise<CreateRoomApiResponse> {
     const { username, password } = body;
 
     const { user: roomOwner } = await this.usersService.createUser({ username });
     const { room } = await this.roomsService.createRoom({ ownerId: roomOwner.id, password });
+
+    const { accessToken } = await this.authService.generateAccessToken({
+      roomId: room.id,
+      userId: roomOwner.id,
+      username: roomOwner.username,
+    });
+
+    res.cookie(this.configService.get('JWT_COOKIE_NAME'), accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
 
     return { room };
   }

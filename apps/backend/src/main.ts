@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ConfigInterface } from './config/config.module';
 import { SocketAdapter } from './gateway/gateway.adapter';
 
 import session from 'express-session';
@@ -14,13 +13,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
-  const appConfig: ConfigInterface['app'] = configService.get('app');
-  const authConfig: ConfigInterface['auth'] = configService.get('auth');
 
   app.useWebSocketAdapter(new SocketAdapter(app));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors({ origin: [appConfig.frontendEndpoint], credentials: true });
+  app.enableCors({ origin: [configService.get('FRONTEND_ENDPOINT')], credentials: true });
   app.use(cookieParser());
 
   // const redisStore = new RedisStore({
@@ -29,7 +26,7 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: authConfig.sessionSecret,
+      secret: configService.get('SESSION_SECRET'),
       saveUninitialized: false,
       resave: false,
       cookie: {
@@ -42,7 +39,7 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const port = appConfig.port;
+  const port = configService.get('APP_PORT');
 
   await app.listen(port);
   logger.log(`⚡️ Server running on port ${port}`);

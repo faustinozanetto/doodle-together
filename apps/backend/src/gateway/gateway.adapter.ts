@@ -3,7 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
-import { ConfigInterface } from 'src/config/config.module';
+
+import cookie from 'cookie';
+
 import { SocketWithAuth } from 'src/rooms/types';
 
 export class SocketAdapter extends IoAdapter {
@@ -15,13 +17,12 @@ export class SocketAdapter extends IoAdapter {
 
   createIOServer(port: number, options?: ServerOptions) {
     const configService = this.app.get(ConfigService);
-    const { frontendEndpoint }: ConfigInterface['app'] = configService.get('app');
 
     const optionsWithCORS: ServerOptions = {
       ...options,
       cors: {
         credentials: true,
-        origin: [frontendEndpoint],
+        origin: [configService.get('FRONTEND_ENDPOINT')],
       },
     };
 
@@ -30,7 +31,19 @@ export class SocketAdapter extends IoAdapter {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     server.of('rooms').use(async (socket: SocketWithAuth, next) => {
-      const accessToken = socket.handshake.auth.accessToken;
+      const { cookie: clientCookie } = socket.handshake.headers;
+      if (!clientCookie) {
+        return next(new Error('Not Authenticated. No cookies were sent'));
+      }
+
+      // Decode cookie and verify the cookie name is present
+      const parsedCookie = cookie.parse(clientCookie);
+      const cookieName = configService.get('JWT_COOKIE_NAME');
+      if (!(cookieName in parsedCookie)) {
+        return next(new Error('Not Authenticated'));
+      }
+
+      const accessToken = parsedCookie[cookieName];
 
       if (!accessToken) {
         return next(new Error('Not Authenticated. No accessToken was sent'));
@@ -42,6 +55,7 @@ export class SocketAdapter extends IoAdapter {
       // Parse the accessToken using jwt and set socket auth data.
       try {
         const payload = jwtService.verify(accessToken);
+        this.logger.log({ payload });
         socket.userId = payload.sub;
         socket.roomId = payload.roomId;
         next();

@@ -1,4 +1,4 @@
-import { Room } from '@doodle-together/shared';
+import { Room } from '@doodle-together/database';
 import { proxy } from 'valtio';
 
 export type RoomSliceState = {

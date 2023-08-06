@@ -1,18 +1,17 @@
 import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
-import { ConfigInterface } from './config/config.module';
 
 export const redisModule = RedisModule.registerAsync({
   imports: [ConfigModule],
-  useFactory: async (configService: ConfigService<ConfigInterface>) => {
+  useFactory: async (configService: ConfigService) => {
     const logger = new Logger('RedisModule');
 
     return {
       connectionOptions: {
-        host: configService.get('redis', { infer: true }).host,
-        password: configService.get('redis', { infer: true }).password,
-        port: Number(configService.get('redis', { infer: true }).port),
+        host: configService.get('REDIS_HOST'),
+        password: configService.get('REDIS_PASSWORD'),
+        port: Number(configService.get('REDIS_PORT')),
       },
       onClientReady: (client) => {
         logger.log('Redis client ready');

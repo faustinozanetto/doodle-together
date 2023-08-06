@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigModule } from '@nestjs/config';
 import { RoomsService } from './rooms.service';
 import { RoomsController } from './rooms.controller';
 import { redisModule } from '../modules.config';
@@ -8,9 +7,10 @@ import { Services } from 'src/utils/constants';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersModule } from 'src/users/users.module';
 import { PasswordsModule } from 'src/passwords/passwords.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [ConfigModule, UsersModule, PasswordsModule, redisModule],
+  imports: [UsersModule, PasswordsModule, AuthModule, redisModule],
   controllers: [RoomsController],
   providers: [
     {

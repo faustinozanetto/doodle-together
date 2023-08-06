@@ -7,6 +7,7 @@ import { Services } from 'src/utils/constants';
 import { GenerateAccessTokenInputParams } from './params/generate-access-token-input.params';
 import { GenerateAccessTokenResponse } from './responses/generate-access-token.reseponse';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -14,19 +15,20 @@ export class AuthService implements IAuthService {
 
   constructor(
     @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
-    private jwtService: JwtService
+    @Inject(JwtService) private jwtService: JwtService,
+    @Inject(ConfigService) private readonly configService: ConfigService
   ) {}
 
-  generateAccessToken(input: GenerateAccessTokenInputParams): GenerateAccessTokenResponse {
-    const { user } = input;
-    const { id, username, roomId } = user;
+  async generateAccessToken(input: GenerateAccessTokenInputParams): Promise<GenerateAccessTokenResponse> {
+    const { roomId, userId, username } = input;
 
     const payload = {
       roomId,
       username,
     };
-    const accessToken = this.jwtService.sign(payload, {
-      subject: id,
+    const accessToken = await this.jwtService.signAsync(payload, {
+      subject: userId,
+      expiresIn: this.configService.get<string>('JWT_EXPIRY'),
     });
 
     return { accessToken };
