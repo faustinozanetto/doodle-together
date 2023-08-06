@@ -1,4 +1,4 @@
-export class AddUserToRoomDto {
+export class AddUserToRoomInputParams {
   roomId: string;
   userId: string;
   socketId: string;

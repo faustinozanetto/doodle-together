@@ -1,4 +1,4 @@
-export class LeaveRoomDto {
+export class LeaveRoomInputParams {
   roomId: string;
   userId: string;
 }

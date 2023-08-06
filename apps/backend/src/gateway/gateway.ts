@@ -25,6 +25,8 @@ import {
   SendCanvasStateSocketPayload,
   DispatchCanvasStateSocketPayload,
   CanvasClearedSocketPayload,
+  SendNotificationSocketPayload,
+  UpdateRoomSocketPayload,
 } from '@doodle-together/shared';
 
 @WebSocketGateway({
@@ -45,16 +47,66 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log('Server Gateway initialized successfully!');
   }
 
-  handleConnection(socket: SocketWithAuth) {
+  async handleConnection(socket: SocketWithAuth) {
     const socketId = socket.id;
     this.logger.log(`Connection established to socketId: ${socketId}`);
     this.sessionManager.addUserToSessions(socketId, socket);
+
+    const { roomId, user } = socket;
+    const { userId, username } = user;
+
+    await socket.join(roomId);
+
+    const { room } = await this.roomsService.addUserToRoom({
+      roomId,
+      userId,
+      username,
+      socketId,
+    });
+
+    const notificationPayload: SendNotificationSocketPayload = {
+      type: 'user-joined',
+      content: `User ${username} joined the room!`,
+      userId,
+      broadcast: 'except',
+    };
+
+    this.server.to(roomId).emit(SocketNames.SEND_NOTIFICATION, notificationPayload);
+
+    const updateRoomPayload: UpdateRoomSocketPayload = {
+      room,
+    };
+
+    this.server.to(roomId).emit(SocketNames.UPDATE_ROOM, updateRoomPayload);
   }
 
-  handleDisconnect(socket: SocketWithAuth) {
+  async handleDisconnect(socket: SocketWithAuth) {
     const socketId = socket.id;
     this.logger.log(`Connection terminated from socketId: ${socketId}`);
     this.sessionManager.removeUserFromSessions(socketId);
+
+    const { roomId, user } = socket;
+    const { userId, username } = user;
+
+    await socket.leave(roomId);
+
+    const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
+
+    const notificationPayload: SendNotificationSocketPayload = {
+      type: 'user-left',
+      content: `User ${username} left the room!`,
+      userId,
+
+      broadcast: 'except',
+    };
+
+    this.server.to(roomId).emit(SocketNames.SEND_NOTIFICATION, notificationPayload);
+
+    const updateRoomPayload: UpdateRoomSocketPayload = {
+      room,
+    };
+
+    this.server.to(roomId).emit(SocketNames.UPDATE_ROOM, updateRoomPayload);
   }
 
   /* Room Gateway Section */

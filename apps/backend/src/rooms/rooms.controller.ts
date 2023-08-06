@@ -1,6 +1,6 @@
 import { Inject, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
-import { CreateRoomDto } from './dto/create-room.dto';
+import { CreateRoomDto } from './params/create-room-input.params';
 import { JoinRoomDto } from './dto/join-room.dto';
 import { LeaveRoomDto } from './dto/leave-room.dto';
 import { AuthGuard } from './guards/auth-guard';

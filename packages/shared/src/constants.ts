@@ -7,4 +7,6 @@ export const SocketNames = {
   REQUEST_CANVAS_STATE: 'request_canvas_state',
   SEND_CANVAS_STATE: 'send_canvas_state',
   UPDATE_CANVAS_STATE: 'update_canvas_state',
+  SEND_NOTIFICATION: 'send_notification',
+  UPDATE_ROOM: 'update_room',
 } as const;
