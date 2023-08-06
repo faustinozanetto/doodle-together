@@ -1,4 +1,4 @@
-import { User } from '@doodle-together/types';
+import { User } from '@doodle-together/shared';
 import { proxy } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
 import { getDataFromToken } from '@modules/common/lib/common.lib';

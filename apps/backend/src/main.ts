@@ -1,10 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
-import { SocketAdapter } from './socket/socket.adapter';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ConfigInterface } from './config/config.module';
-import * as cookieParser from 'cookie-parser';
+import { SocketAdapter } from './gateway/gateway.adapter';
 
 async function bootstrap() {
   const logger = new Logger('Main');
@@ -14,7 +13,8 @@ async function bootstrap() {
   const appConfig: ConfigInterface['app'] = configService.get('app');
 
   app.useWebSocketAdapter(new SocketAdapter(app));
-  app.use(cookieParser());
+  app.setGlobalPrefix('api');
+  app.useGlobalPipes(new ValidationPipe());
   app.enableCors({ origin: [appConfig.frontendEndpoint], credentials: true });
 
   const port = appConfig.port;

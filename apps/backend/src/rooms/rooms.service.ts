@@ -17,10 +17,11 @@ import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.resp
 import { PasswordsService } from '../passwords/passwords.service';
 import { LeaveRoomDto } from './dto/leave-room.dto';
 import { LeaveRoomResponse } from './responses/leave-room.response';
-import { User } from '@doodle-together/types';
+import { IRoomService } from './interfaces/room-service.interface';
+import { User } from '@doodle-together/shared';
 
 @Injectable()
-export class RoomsService {
+export class RoomsService implements IRoomService {
   private readonly logger = new Logger(RoomsService.name);
 
   constructor(
@@ -29,11 +30,6 @@ export class RoomsService {
     private readonly passwordService: PasswordsService
   ) {}
 
-  /**
-   * Creates a room by a given input
-   * @param input Create room input : username of owner
-   * @returns Create room response : room & accessToken
-   */
   async createRoom(input: CreateRoomDto): Promise<CreateRoomResponse> {
     const { username, password } = input;
 
@@ -68,31 +64,16 @@ export class RoomsService {
     return { room, accessToken, me };
   }
 
-  /**
-   * Deletes a room by a given input.
-   * @param input Delete room input : roomId
-   * @returns Delete room response : deleted
-   */
   async deleteRoom(input: DeleteRoomDto): Promise<DeleteRoomResponse> {
     const { deleted } = await this.roomsRepository.deleteRoom(input);
     return { deleted };
   }
 
-  /**
-   * Finds a room by a given input
-   * @param input  Find room input : roomId
-   * @returns Find room response : room
-   */
   async findRoom(input: FindRoomDto): Promise<FindRoomResponse> {
     const { room } = await this.roomsRepository.findRoom({ roomId: input.roomId });
     return { room };
   }
 
-  /**
-   * Joins a room by a given input
-   * @param input Join room input : roomId & username
-   * @returns Join room response : room & accessToken
-   */
   async joinRoom(input: JoinRoomDto): Promise<JoinRoomResponse> {
     const { roomId, username, password } = input;
 
@@ -134,11 +115,6 @@ export class RoomsService {
     return { left: true };
   }
 
-  /**
-   * Adds a user to a room
-   * @param input Add use to room input : roomId & userId & username
-   * @returns Add user to room response : room
-   */
   async addUserToRoom(input: AddUserToRoomDto): Promise<AddUserToRoomResponse> {
     const { roomId, username, userId, socketId } = input;
 
@@ -146,11 +122,6 @@ export class RoomsService {
     return { room, user };
   }
 
-  /**
-   * Removes a user from a room
-   * @param input Remove user from room input : roomId & userId
-   * @returns Remove user from room response : room
-   */
   async removeUserFromRoom(input: RemoveUserFromRoomDto): Promise<RemoveUserFromRoomResponse> {
     const { roomId, userId } = input;
 

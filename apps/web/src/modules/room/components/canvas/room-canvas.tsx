@@ -7,7 +7,7 @@ import {
   GetCanvasStateSocketPayload,
   RequestCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
-} from '@doodle-together/types';
+} from '@doodle-together/shared';
 import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
 import { RoomDrawPointPayload } from '@modules/room/types/room.types';

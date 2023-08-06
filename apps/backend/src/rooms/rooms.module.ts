@@ -1,16 +1,24 @@
 import { Module } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
-import { RoomsGateway } from './rooms.gateway';
 import { RoomsRepository } from './rooms.repository';
 import { RoomsService } from './rooms.service';
 import { RoomsController } from './rooms.controller';
-import { jwtModule, redisModule } from '../modules.config';
+import { redisModule } from '../modules.config';
 import { PasswordsService } from '../passwords/passwords.service';
+import { GetewayModule } from 'src/gateway/gateway.module';
+import { Services } from 'src/utils/constants';
 
 @Module({
-  imports: [ConfigModule, jwtModule, redisModule],
+  imports: [ConfigModule, GetewayModule, redisModule],
   controllers: [RoomsController],
-  providers: [RoomsService, RoomsRepository, RoomsGateway, PasswordsService],
+  providers: [
+    {
+      provide: Services.ROOMS_SERVICE,
+      useClass: RoomsService,
+    },
+    RoomsRepository,
+    PasswordsService,
+  ],
 })
 export class RoomModule {}

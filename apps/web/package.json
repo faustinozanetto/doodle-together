@@ -14,7 +14,7 @@
     "lint": "next lint --fix"
   },
   "dependencies": {
-    "@doodle-together/types": "*",
+    "@doodle-together/shared": "*",
     "zod": "3.21.4",
     "next": "13.4.12",
     "next-theme-kit": "0.2.1",

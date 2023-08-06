@@ -1,7 +1,16 @@
-import { Room, User } from '.';
+import { CanvasPoint, Room, User } from './common';
+
+export type DrawPointSocketPayload = {
+  point: { color: string; point: CanvasPoint; prevPoint: CanvasPoint | null; size: string };
+  roomId: string;
+};
 
 export type CanvasClearedSocketPayload = {
   roomId: Room['roomId'];
+};
+
+export type UpdateCanvasStateSocketPayload = {
+  point: DrawPointSocketPayload['point'];
 };
 
 export type RequestCanvasStateSocketPayload = {

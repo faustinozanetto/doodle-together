@@ -1,4 +1,4 @@
-import { CanvasPoint } from '@doodle-together/types';
+import { CanvasPoint } from '@doodle-together/shared';
 
 export class DrawPointDto {
   roomId: string;

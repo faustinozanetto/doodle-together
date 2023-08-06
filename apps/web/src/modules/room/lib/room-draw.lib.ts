@@ -1,4 +1,4 @@
-import { CanvasPoint } from '@doodle-together/types';
+import { CanvasPoint } from '@doodle-together/shared';
 import { RoomDrawPointPayload } from '../types/room.types';
 import { getToolSizeToWidth } from './room.lib';
 

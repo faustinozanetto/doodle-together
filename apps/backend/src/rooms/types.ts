@@ -1,11 +1,11 @@
 import { Socket } from 'socket.io';
 import { Request } from 'express';
+import { User } from '@doodle-together/shared';
 
-export type AuthData = {
-  userId: string;
+export type SocketAuthData = {
+  user: User;
   roomId: string;
-  username: string;
 };
 
-export type SocketWithAuth = Socket & AuthData;
-export type RequestWithAuth = Request & AuthData;
+export type SocketWithAuth = Socket & SocketAuthData;
+export type RequestWithAuth = Request & SocketAuthData;

@@ -1,4 +1,4 @@
-import { Room } from '@doodle-together/types';
+import { Room } from '@doodle-together/shared';
 
 export class RoomResponse {
   room: Room;

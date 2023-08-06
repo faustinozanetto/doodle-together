@@ -13,16 +13,16 @@ import { RoomsService } from './rooms.service';
 import { DrawPointDto } from './dto/draw-point.dto';
 import { SocketWithAuth } from './types';
 import {
-  CanvasClearedSocketPayload,
-  DispatchCanvasStateSocketPayload,
-  GetCanvasStateSocketPayload,
-  KickUserSocketPayload,
-  RequestCanvasStateSocketPayload,
-  SendCanvasStateSocketPayload,
   SendNotificationSocketPayload,
   UpdateRoomSocketPayload,
   UserWithSocketId,
-} from '@doodle-together/types';
+  KickUserSocketPayload,
+  RequestCanvasStateSocketPayload,
+  GetCanvasStateSocketPayload,
+  SendCanvasStateSocketPayload,
+  DispatchCanvasStateSocketPayload,
+  CanvasClearedSocketPayload,
+} from '@doodle-together/shared';
 
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({
@@ -44,7 +44,8 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
    * @param client Socket data with auth details
    */
   async handleConnection(client: SocketWithAuth) {
-    const { roomId, userId, username } = client;
+    const { roomId, user } = client;
+    const { userId, username } = user;
 
     await client.join(roomId);
     const socketId = client.id;
@@ -77,7 +78,8 @@ export class RoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
    * @param client Socket data with auth details
    */
   async handleDisconnect(client: SocketWithAuth) {
-    const { roomId, userId, username } = client;
+    const { roomId, user } = client;
+    const { userId, username } = user;
 
     await client.leave(roomId);
 

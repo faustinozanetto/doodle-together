@@ -25,7 +25,6 @@
     "node": ">=15"
   },
   "dependencies": {
-    "@doodle-together/types": "*",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "3.0.0",
     "@nestjs/core": "^10.0.0",
@@ -44,6 +43,7 @@
     "class-transformer": "0.5.1"
   },
   "devDependencies": {
+    "@doodle-together/shared": "*",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",

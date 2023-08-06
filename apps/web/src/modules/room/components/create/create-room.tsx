@@ -3,7 +3,7 @@
 import React, { useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CreateRoomApiResponse } from '@doodle-together/types';
+import { CreateRoomApiResponse } from '@doodle-together/shared';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 

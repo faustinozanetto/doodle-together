@@ -1,5 +1,5 @@
 import { ElementRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { CanvasPoint } from '@doodle-together/types';
+import { CanvasPoint } from '@doodle-together/shared';
 import { customizationState } from '@modules/state/customization.slice';
 import { drawPoint } from '../lib/room-draw.lib';
 import { RoomDrawPointPayload } from '../types/room.types';

@@ -1,4 +1,4 @@
-import { Room, User } from '@doodle-together/types';
+import { Room, User } from '@doodle-together/shared';
 
 export class JoinRoomResponse {
   room: Room;

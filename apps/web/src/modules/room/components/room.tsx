@@ -2,7 +2,6 @@
 
 import React, { useEffect } from 'react';
 
-import { LeaveRoomApiResponse, RequestCanvasStateSocketPayload, UpdateRoomSocketPayload } from '@doodle-together/types';
 import { useParams, useRouter } from 'next/navigation';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { meActions, meState } from '@modules/state/me.slice';
@@ -16,6 +15,11 @@ import RoomUsers from './users/room-users';
 import RoomCustomization from './customization/room-customization';
 import RoomCanvas from './canvas/room-canvas';
 import RoomTools from './tools/room-tools';
+import {
+  LeaveRoomApiResponse,
+  RequestCanvasStateSocketPayload,
+  UpdateRoomSocketPayload,
+} from '@doodle-together/shared';
 
 const Room: React.FC = () => {
   const router = useRouter();
@@ -50,6 +54,7 @@ const Room: React.FC = () => {
 
   useEffect(() => {
     socketState.socket?.on('connect', () => {
+      console.log(`Socket connection established: ${meState.me}`);
       if (!meState.me) return;
 
       // Send a socket to request the current canvas state.

@@ -1,4 +1,4 @@
-import { User } from '@doodle-together/types';
+import { User } from '@doodle-together/shared';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { roomState } from '@modules/state/room.slice';
