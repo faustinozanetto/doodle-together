@@ -13,7 +13,7 @@ import { JoinRoomResponse } from '../responses/join-room.response';
 import { LeaveRoomResponse } from '../responses/leave-room.response';
 import { RemoveUserFromRoomResponse } from '../responses/remove-user-to-room.response';
 
-export interface IRoomService {
+export interface IRoomsService {
   /**
    * Creates a room by a given input
    * @param input Create room input : username of owner

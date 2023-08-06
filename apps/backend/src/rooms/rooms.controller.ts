@@ -1,16 +1,17 @@
-import { UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Inject, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
-import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { JoinRoomDto } from './dto/join-room.dto';
 import { LeaveRoomDto } from './dto/leave-room.dto';
 import { AuthGuard } from './guards/auth-guard';
 import { CreateRoomApiResponse, JoinRoomApiResponse, LeaveRoomApiResponse } from '@doodle-together/shared';
+import { Services } from 'src/utils/constants';
+import { IRoomsService } from './interfaces/rooms-service.interface';
 
 @UsePipes(new ValidationPipe())
 @Controller('rooms')
 export class RoomsController {
-  constructor(private roomsService: RoomsService) {}
+  constructor(@Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService) {}
 
   @Post('/create')
   async create(@Body() body: CreateRoomDto): Promise<CreateRoomApiResponse> {

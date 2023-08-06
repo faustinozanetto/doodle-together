@@ -2,7 +2,6 @@ import Redis from 'ioredis';
 import { Inject, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Room, User } from '@doodle-together/shared';
 import { RoomResponse } from './responses/room-response';
 import { CreateRoomInput } from './dto/inputs/create-room.input';
 import { DeleteRoomResponse } from './responses/delete-room.response';
@@ -14,6 +13,7 @@ import { ConfigInterface } from '../config/config.module';
 import { AddUserToRoomResponse } from './responses/add-user-to-room.response';
 import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.response';
 import { IORedisKey } from 'src/redis/redis.module';
+import { Room, User } from '@doodle-together/shared';
 
 @Injectable()
 export class RoomsRepository {

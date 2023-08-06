@@ -4,14 +4,12 @@ import { ConfigModule } from '@nestjs/config';
 import { RoomsRepository } from './rooms.repository';
 import { RoomsService } from './rooms.service';
 import { RoomsController } from './rooms.controller';
-import { redisModule } from '../modules.config';
+import { jwtModule, redisModule } from '../modules.config';
 import { PasswordsService } from '../passwords/passwords.service';
-import { GetewayModule } from 'src/gateway/gateway.module';
 import { Services } from 'src/utils/constants';
 
 @Module({
-  imports: [ConfigModule, GetewayModule, redisModule],
-  controllers: [RoomsController],
+  imports: [ConfigModule, jwtModule, redisModule],
   providers: [
     {
       provide: Services.ROOMS_SERVICE,
@@ -19,6 +17,13 @@ import { Services } from 'src/utils/constants';
     },
     RoomsRepository,
     PasswordsService,
+  ],
+  controllers: [RoomsController],
+  exports: [
+    {
+      provide: Services.ROOMS_SERVICE,
+      useClass: RoomsService,
+    },
   ],
 })
 export class RoomModule {}

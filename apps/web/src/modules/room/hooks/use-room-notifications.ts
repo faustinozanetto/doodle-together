@@ -1,4 +1,4 @@
-import { SendNotificationSocketPayload, SocketNotificationType } from '@doodle-together/shared';
+import { SendNotificationSocketPayload, SocketNotificationType } from '@doodle-together/shared/dist';
 import { useEffect } from 'react';
 import { meState } from '@modules/state/me.slice';
 import { socketState } from '@modules/state/socket.slice';

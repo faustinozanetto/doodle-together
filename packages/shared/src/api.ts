@@ -1,4 +1,4 @@
-import { Room } from './common';
+import { Room } from '.';
 
 export type CreateRoomApiResponse = {
   accessToken: string;

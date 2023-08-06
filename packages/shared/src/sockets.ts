@@ -1,4 +1,4 @@
-import { CanvasPoint, Room, User } from './common';
+import { CanvasPoint, Room, User } from '.';
 
 export type DrawPointSocketPayload = {
   point: { color: string; point: CanvasPoint; prevPoint: CanvasPoint | null; size: string };

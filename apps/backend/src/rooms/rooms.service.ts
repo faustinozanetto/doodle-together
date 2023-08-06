@@ -17,11 +17,11 @@ import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.resp
 import { PasswordsService } from '../passwords/passwords.service';
 import { LeaveRoomDto } from './dto/leave-room.dto';
 import { LeaveRoomResponse } from './responses/leave-room.response';
-import { IRoomService } from './interfaces/room-service.interface';
+import { IRoomsService } from './interfaces/rooms-service.interface';
 import { User } from '@doodle-together/shared';
 
 @Injectable()
-export class RoomsService implements IRoomService {
+export class RoomsService implements IRoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
   constructor(

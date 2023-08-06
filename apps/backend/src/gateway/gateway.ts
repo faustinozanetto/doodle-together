@@ -5,12 +5,16 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
+  MessageBody,
+  SubscribeMessage,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { SocketWithAuth } from 'src/rooms/types';
 import { Services } from 'src/utils/constants';
 
 import { IGatewaySessionManager } from './interfaces/gateway-session-manager.interface';
+
+import { IRoomsService } from 'src/rooms/interfaces/rooms-service.interface';
 import {
   SocketNames,
   DrawPointSocketPayload,
@@ -29,7 +33,10 @@ import {
 export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(ServerGateway.name);
 
-  constructor(@Inject(Services.GATEWAY_SESSION_MANAGER) readonly sessionManager: IGatewaySessionManager) {}
+  constructor(
+    @Inject(Services.GATEWAY_SESSION_MANAGER) readonly sessionManager: IGatewaySessionManager,
+    @Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -51,7 +58,6 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   /* Room Gateway Section */
-  /*
   @SubscribeMessage(SocketNames.DRAW_POINT)
   async drawPoint(@MessageBody() data: DrawPointSocketPayload): Promise<void> {
     const { roomId, point } = data;
@@ -113,5 +119,5 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const { roomId } = data;
 
     this.server.to(roomId).emit(SocketNames.CLEAR_CANVAS);
-  }*/
+  }
 }

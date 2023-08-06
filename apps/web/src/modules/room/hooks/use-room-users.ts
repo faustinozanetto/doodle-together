@@ -1,4 +1,4 @@
-import { User } from '@doodle-together/shared';
+import { User } from '@doodle-together/shared/dist';
 import { useMemo } from 'react';
 import { useSnapshot } from 'valtio';
 import { roomState } from '@modules/state/room.slice';

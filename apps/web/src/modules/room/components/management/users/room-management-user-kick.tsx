@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { KickUserSocketPayload, User } from '@doodle-together/shared';
+import { KickUserSocketPayload, User } from '@doodle-together/shared/dist';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
 import { roomState } from '@modules/state/room.slice';
