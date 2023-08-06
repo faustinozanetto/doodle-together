@@ -29,13 +29,13 @@ const CreateRoom: React.FC = () => {
 
       if (!response) return;
 
-      const { room, accessToken } = response;
+      const { room } = response;
 
       roomActions.setRoom(room);
-      meActions.setAccessToken(accessToken);
+      //meActions.setAccessToken(accessToken);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
-      router.replace(`/room/${room.roomId}`);
+      router.replace(`/room/${room.id}`);
     });
   };
 

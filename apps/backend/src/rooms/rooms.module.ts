@@ -3,14 +3,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { RoomsService } from './rooms.service';
 import { RoomsController } from './rooms.controller';
-import { jwtModule, redisModule } from '../modules.config';
-import { PasswordsService } from '../passwords/passwords.service';
+import { redisModule } from '../modules.config';
 import { Services } from 'src/utils/constants';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersModule } from 'src/users/users.module';
+import { PasswordsModule } from 'src/passwords/passwords.module';
 
 @Module({
-  imports: [ConfigModule, UsersModule, jwtModule, redisModule],
+  imports: [ConfigModule, UsersModule, PasswordsModule, redisModule],
   controllers: [RoomsController],
   providers: [
     {
@@ -18,7 +18,6 @@ import { UsersModule } from 'src/users/users.module';
       useClass: RoomsService,
     },
     PrismaService,
-    PasswordsService,
   ],
   exports: [
     {

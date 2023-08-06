@@ -8,7 +8,6 @@ import { AddUserToRoomInputParams } from './params/add-user-to-room-input.param'
 import { FindRoomResponse } from './responses/find-room.response';
 import { AddUserToRoomResponse } from './responses/add-user-to-room.response';
 import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.response';
-import { PasswordsService } from '../passwords/passwords.service';
 import { LeaveRoomResponse } from './responses/leave-room.response';
 import { IRoomsService } from './interfaces/rooms-service.interface';
 import { LeaveRoomInputParams } from './params/leave-room-input.param';
@@ -20,6 +19,7 @@ import { Services } from 'src/utils/constants';
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
 import { UpdateRoomInputParams } from './params/update-room-input.params';
 import { UpdateRoomResponse } from './responses/update-room.response';
+import { IPasswordsService } from 'src/passwords/interfaces/passwords-service.interface';
 
 @Injectable()
 export class RoomsService implements IRoomsService {
@@ -28,13 +28,13 @@ export class RoomsService implements IRoomsService {
   constructor(
     @Inject(PrismaService) private prismaService: PrismaService,
     @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
-    private readonly passwordService: PasswordsService
+    @Inject(Services.PASSWORDS_SERVICE) private readonly passwordsService: IPasswordsService
   ) {}
 
   async createRoom(input: CreateRoomInputParams): Promise<CreateRoomResponse> {
     const { ownerId, password } = input;
 
-    const { hashedPassword } = await this.passwordService.hashPassword({
+    const { hashedPassword } = await this.passwordsService.hashPassword({
       password,
     });
 
@@ -79,7 +79,7 @@ export class RoomsService implements IRoomsService {
     const { room } = await this.findRoom({ roomId });
 
     // Validate password
-    const { isPasswordValid } = await this.passwordService.validatePassword({
+    const { isPasswordValid } = await this.passwordsService.validatePassword({
       password,
       hashedPassword: room.password,
     });
@@ -111,7 +111,9 @@ export class RoomsService implements IRoomsService {
   async removeUserFromRoom(input: RemoveUserFromRoomInputParams): Promise<RemoveUserFromRoomResponse> {
     const { roomId, userId } = input;
 
+    const { user } = await this.usersService.findUser({ userId });
+
     const { updatedRoom } = await this.updateRoom({ roomId, data: { users: { disconnect: { id: userId } } } });
-    return { room: updatedRoom };
+    return { room: updatedRoom, user };
   }
 }

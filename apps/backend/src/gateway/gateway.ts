@@ -78,17 +78,15 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`Connection terminated from socketId: ${socketId}`);
     this.sessionManager.removeUserFromSessions(socketId);
 
-    /*
-    const { roomId, user } = socket;
-    const { userId, username } = user;
+    const { roomId, userId } = socket;
+
+    const { room, user } = await this.roomsService.removeUserFromRoom({ roomId, userId });
 
     await socket.leave(roomId);
 
-    const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
-
     const notificationPayload: SendNotificationSocketPayload = {
       type: 'user-left',
-      content: `User ${username} left the room!`,
+      content: `User ${user.username} left the room!`,
       userId,
 
       broadcast: 'except',
@@ -101,7 +99,6 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     };
 
     this.server.to(roomId).emit(SocketNames.UPDATE_ROOM, updateRoomPayload);
-    */
   }
 
   /* Room Gateway Section */
