@@ -2,16 +2,17 @@
 
 import React from 'react';
 
-import { IconButton, IconButtonProps } from '@modules/ui/components/icon-button/icon-button';
+import { IconButtonStyleProps, iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
 
-type RoomManagementToolProps = IconButtonProps & {
+type RoomManagementToolProps = IconButtonStyleProps & {
   children: React.ReactNode;
   label: string;
   onToolClicked: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
 const RoomManagementTool: React.FC<RoomManagementToolProps> = (props) => {
-  const { children, label, onToolClicked, ...rest } = props;
+  const { children, label, size, variant, onToolClicked, icon } = props;
 
   return (
     <div
@@ -19,7 +20,16 @@ const RoomManagementTool: React.FC<RoomManagementToolProps> = (props) => {
         pointerEvents: 'all',
       }}
     >
-      <IconButton aria-label={label} onClick={onToolClicked} {...rest} />
+      <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger aria-label={label} onClick={onToolClicked} className={iconButtonVariants({ size, variant })}>
+            {icon}
+          </TooltipTrigger>
+          <TooltipContent>
+            <span className="font-medium">{label}</span>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       {children}
     </div>
   );

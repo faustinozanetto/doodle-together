@@ -3,6 +3,7 @@ import { useSnapshot } from 'valtio';
 import { meState } from '@modules/state/me.slice';
 import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 import RoomTool, { RoomToolProps } from './room-tool';
+import { Separator } from '@modules/ui/components/separator/separator';
 
 type ToolData = RoomToolProps & { requiresOwner: boolean };
 
@@ -78,10 +79,14 @@ const RoomTools: React.FC = () => {
   const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isRoomOwner));
 
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border space-x-2 flex pointer-events-auto">
-      {filteredTools.map((tool) => {
-        return <RoomTool key={`tool-${tool.tool}`} {...tool} />;
-      })}
+    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto">
+      <span className="font-bold">Tools</span>
+      <Separator />
+      <div className="flex gap-2">
+        {filteredTools.map((tool) => {
+          return <RoomTool key={`tool-${tool.tool}`} {...tool} />;
+        })}
+      </div>
     </div>
   );
 };

@@ -17,12 +17,7 @@ const RoomManagementUsers: React.FC = () => {
   };
 
   return (
-    <RoomManagementTool
-      label="Share Room Link"
-      variant="secondary"
-      icon={<UsersIcon />}
-      onToolClicked={handleToolClicked}
-    >
+    <RoomManagementTool label="Room Users" variant="secondary" icon={<UsersIcon />} onToolClicked={handleToolClicked}>
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>

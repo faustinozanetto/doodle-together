@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LeaveRoomApiResponse } from '@doodle-together/shared';
 import {
@@ -12,17 +12,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@modules/ui/components/alert-dialog/alert-dialog';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
-import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
+
 import { roomState } from '@modules/state/room.slice';
 import { meState } from '@modules/state/me.slice';
 import { socketState } from '@modules/state/socket.slice';
+import { LeaveIcon } from '@modules/ui/components/icons/leave-icon';
+import RoomManagementTool from './room-management-tool';
 
 const RoomManagementLeave: React.FC = () => {
   const router = useRouter();
+
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
 
@@ -49,28 +52,18 @@ const RoomManagementLeave: React.FC = () => {
     router.replace('/');
   }, [roomState.room, meState.me]);
 
+  const handleButtonClicked = () => {
+    setDialogOpen(true);
+  };
+
   return (
-    <div
-      style={{
-        pointerEvents: 'all',
-      }}
+    <RoomManagementTool
+      label="Leave Room"
+      icon={<LeaveIcon />}
+      onToolClicked={handleButtonClicked}
+      variant="danger-solid"
     >
-      <AlertDialog>
-        <AlertDialogTrigger aria-label="Leave Room" className={iconButtonVariants({ variant: 'danger-solid' })}>
-          <svg
-            className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
-            <path d="M7 12h14l-3 -3m0 6l3 -3" />
-          </svg>
-        </AlertDialogTrigger>
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -84,7 +77,7 @@ const RoomManagementLeave: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </RoomManagementTool>
   );
 };
 
