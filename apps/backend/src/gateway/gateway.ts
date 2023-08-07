@@ -69,8 +69,8 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     await socket.leave(roomId);
 
     const roomIsDeleted = this.roomsManager.getRoom(roomId);
-    console.log({ roomIsDeleted });
 
+    // If room was marked as deleted do not remove user and emit notification. That will be handled by the client socket listenting room_deleted using the leave endpoint
     if (roomIsDeleted && roomIsDeleted.isDeleted) {
       return;
     }

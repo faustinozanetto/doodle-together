@@ -28,6 +28,10 @@ export class AuthGuard implements CanActivate {
 
   private extractTokenFromHeader(request: Request): string {
     const clientCookie = request.headers.cookie;
+    if (!clientCookie) {
+      throw new UnauthorizedException();
+    }
+
     // Decode cookie and verify the cookie name is present
     const parsedCookie = cookie.parse(clientCookie);
     const cookieName = this.configService.get('JWT_COOKIE_NAME');

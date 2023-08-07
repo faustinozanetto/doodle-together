@@ -10,6 +10,7 @@ import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { roomActions } from '@modules/state/room.slice';
 import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
+import { meActions } from '@modules/state/me.slice';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();
@@ -28,9 +29,10 @@ const CreateRoom: React.FC = () => {
 
       if (!response) return;
 
-      const { room } = response;
+      const { room, user } = response;
 
       roomActions.setRoom(room);
+      meActions.setMe(user);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
       router.replace(`/room/${room.id}`);

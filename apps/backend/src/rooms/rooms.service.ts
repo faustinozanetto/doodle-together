@@ -1,4 +1,4 @@
-import { Injectable, Logger, ForbiddenException, Inject } from '@nestjs/common';
+import { Injectable, Logger, ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
 import { DeleteRoomInputParams } from './params/delete-room-input.params';
 import { CreateRoomInputParams } from './params/create-room-input.params';
 import { JoinRoomResponse } from './responses/join-room.response';
@@ -87,6 +87,8 @@ export class RoomsService implements IRoomsService {
     const { roomId, userId, password } = input;
 
     const { room } = await this.findRoom({ roomId });
+    if (!room) throw new NotFoundException('Room not found!');
+
     // Validate password
     const { isPasswordValid } = await this.passwordsService.validatePassword({
       password,
