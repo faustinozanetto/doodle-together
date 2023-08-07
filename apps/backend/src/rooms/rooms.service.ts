@@ -15,17 +15,20 @@ import { RemoveUserFromRoomInputParams } from './params/remove-user-to-room-inpu
 import { JoinRoomInputParams } from './params/join-room-input.params';
 import { FindRoomInputParams } from './params/find-room-input.params';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Services } from 'src/utils/constants';
+import { Events, Services } from 'src/utils/constants';
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
 import { UpdateRoomInputParams } from './params/update-room-input.params';
 import { UpdateRoomResponse } from './responses/update-room.response';
 import { IPasswordsService } from 'src/passwords/interfaces/passwords-service.interface';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { RoomDeletedEvent } from './events/room-deleted.event';
 
 @Injectable()
 export class RoomsService implements IRoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
   constructor(
+    @Inject(EventEmitter2) private readonly eventEmitter: EventEmitter2,
     @Inject(PrismaService) private prismaService: PrismaService,
     @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
     @Inject(Services.PASSWORDS_SERVICE) private readonly passwordsService: IPasswordsService
@@ -54,6 +57,10 @@ export class RoomsService implements IRoomsService {
     await this.prismaService.room.delete({
       where: { id: roomId },
     });
+
+    const roomDeleteEvent = new RoomDeletedEvent(roomId);
+    this.eventEmitter.emit(Events.ROOM_DELETE_EVENT, roomDeleteEvent);
+
     return { deleted: true };
   }
 

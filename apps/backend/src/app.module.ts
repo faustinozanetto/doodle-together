@@ -6,15 +6,17 @@ import { UsersModule } from './users/users.module';
 import { PasswordsModule } from './passwords/passwords.module';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     EventEmitterModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     AuthModule,
     UsersModule,
     PasswordsModule,
     GatewayModule,
+    EventsModule,
   ],
   controllers: [],
   providers: [PrismaService],

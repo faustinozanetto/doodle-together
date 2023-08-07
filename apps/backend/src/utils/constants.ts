@@ -5,3 +5,7 @@ export enum Services {
   PASSWORDS_SERVICE = 'PASSWORDS_SERVICE',
   AUTH_SERVICE = 'AUTH_SERVICE',
 }
+
+export enum Events {
+  ROOM_DELETE_EVENT = 'room.delete',
+}

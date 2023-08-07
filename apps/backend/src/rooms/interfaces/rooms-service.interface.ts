@@ -28,6 +28,11 @@ export interface IRoomsService {
    * @returns Delete room response : deleted
    */
   deleteRoom(input: DeleteRoomInputParams): Promise<DeleteRoomResponse>;
+  /**
+   * Updates a room by a given input.
+   * @param input Update room input : roomId : data
+   * @returns Updated room response : updatedRoom
+   */
   updateRoom(input: UpdateRoomInputParams): Promise<UpdateRoomResponse>;
   /**
    * Finds a room by a given input
