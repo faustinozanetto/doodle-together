@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { RoomsService } from './rooms.service';
 import { RoomsController } from './rooms.controller';
@@ -8,9 +8,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersModule } from 'src/users/users.module';
 import { PasswordsModule } from 'src/passwords/passwords.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { GatewayModule } from 'src/gateway/gateway.module';
 
 @Module({
-  imports: [UsersModule, PasswordsModule, AuthModule, redisModule],
+  imports: [forwardRef(() => GatewayModule), UsersModule, PasswordsModule, AuthModule, redisModule],
   controllers: [RoomsController],
   providers: [
     {

@@ -7,6 +7,7 @@ import {
   OnGatewayInit,
   MessageBody,
   SubscribeMessage,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { SocketWithAuth } from 'src/rooms/types';
@@ -29,6 +30,7 @@ import {
   KickUserSocketPayload,
 } from '@doodle-together/shared';
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
+import { IGatewayRoomsManager } from './interfaces/gateway-rooms-manager.interface';
 
 @WebSocketGateway({
   namespace: 'rooms',
@@ -38,6 +40,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   constructor(
     @Inject(Services.GATEWAY_SESSION_MANAGER) readonly sessionManager: IGatewaySessionManager,
+    @Inject(Services.GATEWAY_ROOMS_MANAGER) readonly roomsManager: IGatewayRoomsManager,
     @Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService,
     @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService
   ) {}
@@ -53,38 +56,24 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const { id, roomId, userId, username } = socket;
 
     this.logger.log(`Connection established to socketId: ${id} and username: ${username}`);
-    this.sessionManager.addUserToSessions(socket.userId, { socketId: id, username });
+    this.sessionManager.addUserToSessions(userId, { socketId: id, username });
 
     await socket.join(roomId);
-
-    const { room, user } = await this.roomsService.addUserToRoom({ roomId, userId });
-
-    const notificationPayload: SendNotificationSocketPayload = {
-      type: 'user-joined',
-      content: `User ${user.username} joined the room!`,
-      userId,
-      broadcast: 'except',
-    };
-
-    this.server.to(roomId).emit(SocketNames.SEND_NOTIFICATION, notificationPayload);
-
-    const updateRoomPayload: UpdateRoomSocketPayload = {
-      room,
-    };
-
-    this.server.to(roomId).emit(SocketNames.UPDATE_ROOM, updateRoomPayload);
   }
 
   async handleDisconnect(socket: SocketWithAuth) {
-    const socketId = socket.id;
-    this.logger.log(`Connection terminated from socketId: ${socketId}`);
-    this.sessionManager.removeUserFromSessions(socket.userId);
-
-    const { roomId, userId, username } = socket;
-
-    const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
+    const { id, roomId, userId, username } = socket;
+    this.logger.log(`Connection terminated from socketId: ${id}`);
+    this.sessionManager.removeUserFromSessions(userId);
 
     await socket.leave(roomId);
+
+    const roomIsDeleted = this.roomsManager.getRoom(roomId);
+    console.log({ roomIsDeleted });
+
+    if (roomIsDeleted && roomIsDeleted.isDeleted) {
+      return;
+    }
 
     const notificationPayload: SendNotificationSocketPayload = {
       type: 'user-left',
@@ -96,6 +85,8 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     this.server.to(roomId).emit(SocketNames.SEND_NOTIFICATION, notificationPayload);
 
+    const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
+
     const updateRoomPayload: UpdateRoomSocketPayload = {
       room,
     };
@@ -104,6 +95,30 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   /* Room Gateway Section */
+  @SubscribeMessage(SocketNames.USER_JOINED)
+  async userJoined(@ConnectedSocket() socket: SocketWithAuth) {
+    const { userId, username, roomId, id } = socket;
+
+    this.logger.log('User Joined: ' + JSON.stringify({ userId, username, roomId, id }));
+
+    const notificationPayload: SendNotificationSocketPayload = {
+      type: 'user-joined',
+      content: `User ${username} joined the room!`,
+      userId,
+      broadcast: 'except',
+    };
+
+    this.server.to(roomId).emit(SocketNames.SEND_NOTIFICATION, notificationPayload);
+
+    const { room } = await this.roomsService.addUserToRoom({ roomId, userId });
+
+    const updateRoomPayload: UpdateRoomSocketPayload = {
+      room,
+    };
+
+    this.server.to(roomId).emit(SocketNames.UPDATE_ROOM, updateRoomPayload);
+  }
+
   @SubscribeMessage(SocketNames.KICK_USER)
   async kickUser(@MessageBody() data: KickUserSocketPayload): Promise<void> {
     const { roomId, userId } = data;

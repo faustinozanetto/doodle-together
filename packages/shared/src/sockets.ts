@@ -6,6 +6,9 @@ export type DrawPointSocketPayload = {
   roomId: string;
 };
 
+export type UserJoinedSocketPayload = {};
+export type UserLeftSocketPayload = {};
+
 export type CanvasClearedSocketPayload = {
   roomId: Room['id'];
 };

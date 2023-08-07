@@ -39,6 +39,7 @@ const RoomManagementLeave: React.FC = () => {
       body: JSON.stringify({
         roomId: room.id,
         userId: me.id,
+        roomDeleted: false,
       }),
     });
 

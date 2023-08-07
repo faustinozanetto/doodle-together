@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Param, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ForbiddenException, Inject, Logger, Param, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Body, Delete, Controller, Post } from '@nestjs/common';
 import { CreateRoomApiResponse, JoinRoomApiResponse, LeaveRoomApiResponse } from '@doodle-together/shared';
 import { Services } from 'src/utils/constants';
@@ -10,12 +10,16 @@ import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
 import { User } from '@doodle-together/database';
+import { ServerGateway } from 'src/gateway/gateway';
 
 @UsePipes(new ValidationPipe())
 @Controller('rooms')
 export class RoomsController {
+  private logger = new Logger(RoomsController.name);
+
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
+    @Inject(ServerGateway) private readonly gateway: ServerGateway,
     @Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService,
     @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
     @Inject(Services.AUTH_SERVICE) private readonly authService: IAuthService
@@ -31,6 +35,8 @@ export class RoomsController {
     const { user: roomOwner } = await this.usersService.createUser({ username });
     const { room } = await this.roomsService.createRoom({ ownerId: roomOwner.id, password });
     await this.usersService.updateUser({ userId: roomOwner.id, data: { roomId: room.id } });
+
+    this.gateway.roomsManager.addRoomToManager(room.id, { isDeleted: false });
 
     const { accessToken } = await this.authService.generateAccessToken({
       roomId: room.id,
@@ -75,13 +81,17 @@ export class RoomsController {
   @UseGuards(AuthGuard)
   @Post('/leave')
   async leave(
-    @Body() body: { roomId: string; userId: string },
+    @Body() body: { roomId: string; userId: string; roomDeleted: boolean },
     @Res({ passthrough: true }) res: Response
   ): Promise<LeaveRoomApiResponse> {
-    const { roomId, userId } = body;
+    const { roomId, userId, roomDeleted } = body;
 
-    const { left } = await this.roomsService.leaveRoom({ roomId, userId });
-    await this.usersService.deleteUser({ userId });
+    let left = true;
+    if (!roomDeleted) {
+      const { left: roomLeft } = await this.roomsService.leaveRoom({ roomId, userId });
+      await this.usersService.deleteUser({ userId });
+      left = roomLeft;
+    }
 
     res.clearCookie(this.configService.get('JWT_COOKIE_NAME'));
 
@@ -96,6 +106,11 @@ export class RoomsController {
     if (room.ownerId !== user.id) {
       throw new ForbiddenException('Not allowed!');
     }
+
+    this.logger.log(`Deleting room with roomId: ${room.id}`);
+
+    // Mark room as deleted.
+    this.gateway.roomsManager.updateRoom(roomId, { isDeleted: true });
 
     await this.roomsService.deleteRoom({ roomId });
 

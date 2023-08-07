@@ -12,4 +12,5 @@ export const SocketNames = {
   DELETE_ROOM: 'delete_room',
   KICK_USER: 'kick_user',
   KICK_REQUEST: 'kick_request',
+  USER_JOINED: 'user_joined',
 } as const;
