@@ -43,6 +43,7 @@ export class RoomsService implements IRoomsService {
         password: hashedPassword,
         ownerId,
       },
+      include: { users: true },
     });
 
     return { room };
@@ -58,7 +59,8 @@ export class RoomsService implements IRoomsService {
 
   async findRoom(input: FindRoomInputParams): Promise<FindRoomResponse> {
     const { roomId } = input;
-    const room = await this.prismaService.room.findUnique({ where: { id: roomId } });
+    const room = await this.prismaService.room.findUnique({ where: { id: roomId }, include: { users: true } });
+
     return { room };
   }
 
@@ -68,6 +70,7 @@ export class RoomsService implements IRoomsService {
     const updatedRoom = await this.prismaService.room.update({
       where: { id: roomId },
       data,
+      include: { users: true },
     });
 
     return { updatedRoom };
@@ -77,7 +80,6 @@ export class RoomsService implements IRoomsService {
     const { roomId, userId, password } = input;
 
     const { room } = await this.findRoom({ roomId });
-
     // Validate password
     const { isPasswordValid } = await this.passwordsService.validatePassword({
       password,

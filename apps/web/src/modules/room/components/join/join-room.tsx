@@ -9,7 +9,6 @@ import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { roomActions } from '@modules/state/room.slice';
-import { meActions } from '@modules/state/me.slice';
 import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 
 const JoinRoom: React.FC = () => {
@@ -29,13 +28,12 @@ const JoinRoom: React.FC = () => {
 
       if (!response) return;
 
-      const { room, accessToken } = response;
+      const { room } = response;
 
       roomActions.setRoom(room);
-      meActions.setAccessToken(accessToken);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
-      router.replace(`/room/${room.roomId}`);
+      router.replace(`/room/${room.id}`);
     });
   };
 

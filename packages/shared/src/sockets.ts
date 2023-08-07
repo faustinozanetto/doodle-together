@@ -1,5 +1,5 @@
 import { Room, User } from '@doodle-together/database';
-import { CanvasPoint } from '.';
+import { CanvasPoint, RoomWithUsers } from '.';
 
 export type DrawPointSocketPayload = {
   point: { color: string; point: CanvasPoint; prevPoint: CanvasPoint | null; size: string };
@@ -25,7 +25,6 @@ export type GetCanvasStateSocketPayload = {
 
 export type SendCanvasStateSocketPayload = {
   canvasState: string;
-  roomId: Room['id'];
   userId: User['id'];
 };
 
@@ -34,7 +33,7 @@ export type DispatchCanvasStateSocketPayload = {
 };
 
 export type UpdateRoomSocketPayload = {
-  room: Room;
+  room: RoomWithUsers;
 };
 
 export type KickUserSocketPayload = {

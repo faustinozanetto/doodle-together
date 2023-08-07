@@ -18,11 +18,11 @@ const RoomUsers: React.FC = () => {
       <ul className="gap-2 mt-2">
         <AnimatePresence>
           {users.map((user, index) => {
-            const isCurrentUser = (meSnapshot && meSnapshot.me && meSnapshot.me.userId === user.userId) ?? false;
+            const isCurrentUser = (meSnapshot && meSnapshot.me && meSnapshot.me.id === user.id) ?? false;
 
             return (
               <motion.li
-                key={user.userId}
+                key={user.id}
                 initial={{ opacity: 0, translateY: -10 }}
                 animate={{ opacity: 1, translateY: 0 }}
                 exit={{ opacity: 0, translateY: -10 }}

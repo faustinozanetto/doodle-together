@@ -30,7 +30,7 @@ const RoomManagementUsers: React.FC = () => {
             <DialogDescription>Here you can view the currently connected users and manage them.</DialogDescription>
           </DialogHeader>
           {users.map((user) => {
-            return <RoomManagementUser key={`users-management-${user.userId}`} user={user} />;
+            return <RoomManagementUser key={`users-management-${user.id}`} user={user} />;
           })}
         </DialogContent>
       </Dialog>

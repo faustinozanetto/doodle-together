@@ -1,17 +1,13 @@
-import { User } from '@doodle-together/shared';
-import { useEffect, useState } from 'react';
+import { User } from '@doodle-together/database';
 import { useSnapshot } from 'valtio';
 import { roomState } from '@modules/state/room.slice';
 
-export const useIsRoomOwner = (user: User | undefined) => {
+export const useIsRoomOwner = (user: User | null): { isRoomOwner: boolean } => {
   const roomSnapshot = useSnapshot(roomState);
 
-  const [isRoomOwner, setIsRoomOwner] = useState<boolean>(false);
+  if (!user || !roomSnapshot.room) return { isRoomOwner: false };
 
-  useEffect(() => {
-    const isOwner = (roomSnapshot && roomSnapshot.room && user && user.userId === roomSnapshot.room.ownerId) ?? false;
-    setIsRoomOwner(isOwner);
-  }, [user, roomSnapshot]);
+  const isRoomOwner = user.id === roomSnapshot.room.ownerId;
 
   return { isRoomOwner };
 };

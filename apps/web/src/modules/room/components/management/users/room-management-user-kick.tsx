@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
 
-import { KickUserSocketPayload, User } from '@doodle-together/shared/dist';
+import { KickUserSocketPayload, SocketNames } from '@doodle-together/shared';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
 import { roomState } from '@modules/state/room.slice';
 import { socketState } from '@modules/state/socket.slice';
+import { User } from '@doodle-together/database';
 
 type RoomManagementUserKickProps = {
   user: User;
@@ -12,20 +13,21 @@ type RoomManagementUserKickProps = {
 
 const RoomManagementUserKick: React.FC<RoomManagementUserKickProps> = (props) => {
   const { user } = props;
-  const { username, userId } = user;
+  const { username, id } = user;
 
   const label = `Kick ${username}`;
 
   const handleUserKick = useCallback(() => {
     const { room } = roomState;
+
     if (!room) return;
 
     const payload: KickUserSocketPayload = {
-      userId,
-      roomId: room.roomId,
+      userId: id,
+      roomId: room.id,
     };
 
-    socketState.socket?.emit('kick_user', payload);
+    socketState.socket?.emit(SocketNames.KICK_USER, payload);
   }, [roomState.room]);
 
   return (

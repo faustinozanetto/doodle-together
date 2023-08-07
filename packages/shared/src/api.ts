@@ -1,11 +1,11 @@
-import { Room } from '@doodle-together/database';
+import { RoomWithUsers } from '.';
 
 export type CreateRoomApiResponse = {
-  room: Room;
+  room: RoomWithUsers;
 };
 
 export type JoinRoomApiResponse = {
-  room: Room;
+  room: RoomWithUsers;
 };
 
 export type LeaveRoomApiResponse = {

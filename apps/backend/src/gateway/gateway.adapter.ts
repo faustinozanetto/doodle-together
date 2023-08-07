@@ -55,7 +55,6 @@ export class SocketAdapter extends IoAdapter {
       // Parse the accessToken using jwt and set socket auth data.
       try {
         const payload = jwtService.verify(accessToken);
-        this.logger.log({ payload });
         socket.userId = payload.sub;
         socket.roomId = payload.roomId;
         next();

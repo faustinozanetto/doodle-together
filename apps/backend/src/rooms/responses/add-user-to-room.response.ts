@@ -1,6 +1,7 @@
-import { Room, User } from '@doodle-together/database';
+import { User } from '@doodle-together/database';
+import { RoomWithUsers } from '@doodle-together/shared';
 
 export class AddUserToRoomResponse {
-  room: Room;
+  room: RoomWithUsers;
   user: User;
 }

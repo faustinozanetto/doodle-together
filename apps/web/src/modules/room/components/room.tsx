@@ -16,6 +16,7 @@ import RoomTools from './tools/room-tools';
 import {
   LeaveRoomApiResponse,
   RequestCanvasStateSocketPayload,
+  SocketNames,
   UpdateRoomSocketPayload,
 } from '@doodle-together/shared';
 import { User } from '@doodle-together/database';
@@ -58,7 +59,6 @@ const Room: React.FC<RoomProps> = (props) => {
 
   useEffect(() => {
     socketState.socket?.on('connect', () => {
-      console.log(`Socket connection established: ${meState.me}`);
       if (!meState.me) return;
 
       // Send a socket to request the current canvas state.
@@ -67,15 +67,15 @@ const Room: React.FC<RoomProps> = (props) => {
         userId: meState.me.id,
       };
 
-      socketState.socket?.emit('request_canvas_state', payload);
+      socketState.socket?.emit(SocketNames.REQUEST_CANVAS_STATE, payload);
     });
 
-    socketState.socket?.on('update_room', (data: UpdateRoomSocketPayload) => {
+    socketState.socket?.on(SocketNames.UPDATE_ROOM, (data: UpdateRoomSocketPayload) => {
       const { room } = data;
       roomActions.setRoom(room);
     });
 
-    socketState.socket?.on('kick_request', async () => {
+    socketState.socket?.on(SocketNames.KICK_REQUEST, async () => {
       const { room } = roomState;
       const { me } = meState;
 
@@ -97,9 +97,9 @@ const Room: React.FC<RoomProps> = (props) => {
     });
 
     return () => {
-      socketState.socket?.off('update_room');
-      socketState.socket?.off('kick_request');
-      socketState.socket?.off('request_canvas_state');
+      socketState.socket?.off(SocketNames.UPDATE_ROOM);
+      socketState.socket?.off(SocketNames.KICK_REQUEST);
+      socketState.socket?.off(SocketNames.REQUEST_CANVAS_STATE);
     };
   }, [roomId]);
 

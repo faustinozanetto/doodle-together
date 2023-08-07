@@ -7,6 +7,7 @@ import {
   GetCanvasStateSocketPayload,
   RequestCanvasStateSocketPayload,
   SendCanvasStateSocketPayload,
+  SocketNames,
 } from '@doodle-together/shared';
 import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
@@ -21,7 +22,7 @@ const RoomCanvas: React.FC = () => {
       const { room } = roomState;
       if (!room) return;
 
-      socketState.socket?.emit('draw_point', { roomId: room.roomId, point: data });
+      socketState.socket?.emit('draw_point', { roomId: room.id, point: data });
     },
     [roomState.room]
   );
@@ -31,7 +32,7 @@ const RoomCanvas: React.FC = () => {
     if (!room) return;
 
     const payload: CanvasClearedSocketPayload = {
-      roomId: room.roomId,
+      roomId: room.id,
     };
 
     socketState.socket?.emit('canvas_cleared', payload);
@@ -44,8 +45,8 @@ const RoomCanvas: React.FC = () => {
       if (!room || !me) return;
 
       const payload: RequestCanvasStateSocketPayload = {
-        roomId: room.roomId,
-        userId: me.userId,
+        roomId: room.id,
+        userId: me.id,
       };
 
       socketState.socket?.emit('request_canvas_state', payload);
@@ -65,14 +66,14 @@ const RoomCanvas: React.FC = () => {
     const context = canvasElement?.getContext('2d');
 
     // Clear canvas socket listening
-    socketState.socket?.on('clear_canvas', () => {
+    socketState.socket?.on(SocketNames.CLEAR_CANVAS, () => {
       if (!context) return;
 
       clearCanvas();
     });
 
     // Update canvas state socket listening
-    socketState.socket?.on('update_canvas_state', (data) => {
+    socketState.socket?.on(SocketNames.UPDATE_CANVAS_STATE, (data) => {
       if (!context) return;
 
       const { point } = data;
@@ -80,7 +81,7 @@ const RoomCanvas: React.FC = () => {
     });
 
     // Get canvas state socket listening
-    socketState.socket?.on('get_canvas_state', (data: GetCanvasStateSocketPayload) => {
+    socketState.socket?.on(SocketNames.GET_CANVAS_STATE, (data: GetCanvasStateSocketPayload) => {
       const { userId } = data;
 
       const { room } = roomState;
@@ -90,16 +91,15 @@ const RoomCanvas: React.FC = () => {
 
       const canvasState = canvasElement.toDataURL();
       const payload: SendCanvasStateSocketPayload = {
-        roomId: room.roomId,
         canvasState,
         userId,
       };
 
-      socketState.socket?.emit('send_canvas_state', payload);
+      socketState.socket?.emit(SocketNames.SEND_CANVAS_STATE, payload);
     });
 
     // Dispatch canvas state socket listening
-    socketState.socket?.on('dispatch_canvas_state', (data: DispatchCanvasStateSocketPayload) => {
+    socketState.socket?.on(SocketNames.DISPATCH_CANVAS_STATE, (data: DispatchCanvasStateSocketPayload) => {
       const { canvasState } = data;
 
       console.log(`Dispatch canvas state received: ${canvasElement}, ${context}`);
@@ -115,10 +115,10 @@ const RoomCanvas: React.FC = () => {
     });
 
     return () => {
-      socketState.socket?.off('update_canvas_state');
-      socketState.socket?.off('get_canvas_state');
-      socketState.socket?.off('clear_canvas');
-      socketState.socket?.off('dispatch_canvas_state');
+      socketState.socket?.off(SocketNames.UPDATE_CANVAS_STATE);
+      socketState.socket?.off(SocketNames.GET_CANVAS_STATE);
+      socketState.socket?.off(SocketNames.CLEAR_CANVAS);
+      socketState.socket?.off(SocketNames.DISPATCH_CANVAS_STATE);
     };
   }, [canvasRef, roomState.room]);
 

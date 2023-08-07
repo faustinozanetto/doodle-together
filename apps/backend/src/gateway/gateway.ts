@@ -24,7 +24,11 @@ import {
   CanvasClearedSocketPayload,
   SendNotificationSocketPayload,
   UpdateRoomSocketPayload,
+  GetCanvasStateSocketPayload,
+  DispatchCanvasStateSocketPayload,
+  KickUserSocketPayload,
 } from '@doodle-together/shared';
+import { IUsersService } from 'src/users/interfaces/users-service.interface';
 
 @WebSocketGateway({
   namespace: 'rooms',
@@ -34,7 +38,8 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   constructor(
     @Inject(Services.GATEWAY_SESSION_MANAGER) readonly sessionManager: IGatewaySessionManager,
-    @Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService
+    @Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService,
+    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService
   ) {}
 
   @WebSocketServer()
@@ -47,7 +52,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async handleConnection(socket: SocketWithAuth) {
     const socketId = socket.id;
     this.logger.log(`Connection established to socketId: ${socketId}`);
-    this.sessionManager.addUserToSessions(socketId, socket);
+    this.sessionManager.addUserToSessions(socket.userId, { socketId });
 
     const { roomId, userId } = socket;
 
@@ -74,7 +79,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async handleDisconnect(socket: SocketWithAuth) {
     const socketId = socket.id;
     this.logger.log(`Connection terminated from socketId: ${socketId}`);
-    this.sessionManager.removeUserFromSessions(socketId);
+    this.sessionManager.removeUserFromSessions(socket.userId);
 
     const { roomId, userId } = socket;
 
@@ -100,6 +105,41 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   /* Room Gateway Section */
+  @SubscribeMessage(SocketNames.KICK_USER)
+  async kickUser(@MessageBody() data: KickUserSocketPayload): Promise<void> {
+    const { roomId, userId } = data;
+
+    const { room } = await this.roomsService.findRoom({
+      roomId,
+    });
+
+    const userExists = room.users.findIndex((user) => user.id === userId);
+    if (userExists === -1) return;
+
+    const { user } = await this.usersService.findUser({ userId });
+
+    const exceptNotificationPayload: SendNotificationSocketPayload = {
+      type: 'user-kicked-except',
+      content: `User ${user.username} has been kicked!`,
+      userId,
+      broadcast: 'except',
+    };
+
+    this.server.to(roomId).emit(SocketNames.SEND_NOTIFICATION, exceptNotificationPayload);
+
+    const selfNotificationPayload: SendNotificationSocketPayload = {
+      type: 'user-kicked-self',
+      content: `You have been kicked from the room!`,
+      userId,
+      broadcast: 'self',
+    };
+
+    const targetUserSocketId = this.sessionManager.getUserSession(userId).socketId;
+
+    this.server.to(targetUserSocketId).emit(SocketNames.SEND_NOTIFICATION, selfNotificationPayload);
+    this.server.to(targetUserSocketId).emit(SocketNames.KICK_REQUEST);
+  }
+
   @SubscribeMessage(SocketNames.DRAW_POINT)
   async drawPoint(@MessageBody() data: DrawPointSocketPayload): Promise<void> {
     const { roomId, point } = data;
@@ -115,7 +155,6 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async requestCanvasState(@MessageBody() data: RequestCanvasStateSocketPayload): Promise<void> {
     const { roomId, userId } = data;
 
-    /*
     const payload: GetCanvasStateSocketPayload = {
       userId,
     };
@@ -124,40 +163,31 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       roomId,
     });
 
-    const users: UserWithSocketId[] = [];
-    for (const user in room.users) {
-      users.push({ userId: user, username: room.users[user].username, socketId: room.users[user].socketId });
-    }
-
-    if (users.length === 0) return;
+    // If there are no more users than the requestor return.
+    if (room.users.length === 0) return;
 
     // Sort by owner priority
-    const sortedUsers = users.sort((user) => {
-      if (user.userId === room.ownerId) return -1;
+    const sortedUsers = room.users.sort((user) => {
+      if (user.id === room.ownerId) return -1;
       return 1;
     });
 
-    const targetUserSocketId = sortedUsers[0].socketId;
+    const highestPriorityUser = sortedUsers[0];
+    const targetUserSocketId = this.sessionManager.getUserSession(highestPriorityUser.id).socketId;
+
     this.server.to(targetUserSocketId).emit(SocketNames.GET_CANVAS_STATE, payload);
-    */
   }
 
   @SubscribeMessage(SocketNames.SEND_CANVAS_STATE)
   async sendCanvasState(@MessageBody() data: SendCanvasStateSocketPayload): Promise<void> {
-    const { canvasState, userId, roomId } = data;
-
-    /*
-    const { room } = await this.roomsService.findRoom({
-      roomId,
-    });
+    const { canvasState, userId } = data;
 
     const payload: DispatchCanvasStateSocketPayload = {
       canvasState,
     };
 
-    const userSocketId = room.users[userId].socketId;
+    const userSocketId = this.sessionManager.getUserSession(userId).socketId;
     this.server.to(userSocketId).emit(SocketNames.DISPATCH_CANVAS_STATE, payload);
-    */
   }
 
   @SubscribeMessage(SocketNames.CANVAS_CLEARED)

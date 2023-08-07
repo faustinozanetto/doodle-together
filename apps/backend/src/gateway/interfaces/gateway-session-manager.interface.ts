@@ -1,8 +1,10 @@
-import { SocketWithAuth } from 'src/rooms/types';
+export interface GatewaySessionUser {
+  socketId: string;
+}
 
 export interface IGatewaySessionManager {
-  addUserToSessions(socketId: string, user: SocketWithAuth);
-  removeUserFromSessions(socketId: string);
-  getUserSession(socketId: string): SocketWithAuth;
-  getSessions(): Map<string, SocketWithAuth>;
+  addUserToSessions(userId: string, user: GatewaySessionUser);
+  removeUserFromSessions(userId: string);
+  getUserSession(userId: string): GatewaySessionUser;
+  getSessions(): Map<string, GatewaySessionUser>;
 }

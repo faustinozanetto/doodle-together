@@ -30,9 +30,9 @@ export const useRoomNotifications = () => {
 
       let toastCondition = true;
       if (broadcast === 'self') {
-        toastCondition = (me && me.userId === userId) ?? false;
+        toastCondition = (me && me.id === userId) ?? false;
       } else if (broadcast === 'except') {
-        toastCondition = (me && me.userId !== userId) ?? false;
+        toastCondition = (me && me.id !== userId) ?? false;
       }
 
       if (toastCondition) toast({ variant: level, content });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from '@doodle-together/shared';
+import { User } from '@doodle-together/database';
 import { cn } from '@modules/ui/lib/ui.lib';
 import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 import RoomUserOwnerDecor from './room-user-owner-decor';

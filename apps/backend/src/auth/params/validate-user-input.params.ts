@@ -1,3 +1,3 @@
 export class ValidateUserInputParams {
-  userId: string;
+  accessToken: string;
 }

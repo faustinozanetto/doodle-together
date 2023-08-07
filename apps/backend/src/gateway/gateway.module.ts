@@ -4,9 +4,10 @@ import { Services } from 'src/utils/constants';
 import { GatewaySessionManager } from './gateway.session';
 import { ConfigModule } from '@nestjs/config';
 import { RoomModule } from 'src/rooms/rooms.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [ConfigModule, RoomModule],
+  imports: [ConfigModule, RoomModule, UsersModule],
   providers: [
     ServerGateway,
     {
