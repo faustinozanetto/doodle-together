@@ -7,6 +7,7 @@ import RoomManagementUsers from './users/room-management-users';
 import RoomManagementLeave from './room-management-leave';
 import RoomManagementShareLink from './link/room-management-share-link';
 import RoomManagementShareQR from './qr/room-management-share-qr';
+import RoomManagementDelete from './room-management-delete';
 
 const RoomManagement: React.FC = () => {
   const meSnapshot = useSnapshot(meState);
@@ -18,6 +19,7 @@ const RoomManagement: React.FC = () => {
       {isRoomOwner && <RoomManagementUsers />}
       <RoomManagementShareLink />
       <RoomManagementShareQR />
+      {isRoomOwner && <RoomManagementDelete />}
       <RoomManagementLeave />
     </div>
   );

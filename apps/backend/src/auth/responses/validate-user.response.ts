@@ -1,3 +1,5 @@
+import { User } from '@doodle-together/database';
+
 export class ValidateUserResponse {
-  isValid: boolean;
+  user: User;
 }

@@ -1,4 +1,4 @@
-import { Inject, Param, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ForbiddenException, Inject, Param, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Body, Delete, Controller, Post } from '@nestjs/common';
 import { CreateRoomApiResponse, JoinRoomApiResponse, LeaveRoomApiResponse } from '@doodle-together/shared';
 import { Services } from 'src/utils/constants';
@@ -92,8 +92,13 @@ export class RoomsController {
   @Delete(':roomId')
   async delete(@Param('roomId') roomId: string, @CurrentUser() user: User) {
     const { room } = await this.roomsService.findRoom({ roomId });
-    console.log({ room, user });
 
-    return {};
+    if (room.ownerId !== user.id) {
+      throw new ForbiddenException('Not allowed!');
+    }
+
+    await this.roomsService.deleteRoom({ roomId });
+
+    return { deleted: true };
   }
 }

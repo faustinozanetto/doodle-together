@@ -23,4 +23,4 @@ import { UsersModule } from 'src/users/users.module';
     },
   ],
 })
-export class GetewayModule {}
+export class GatewayModule {}

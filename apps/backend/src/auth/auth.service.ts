@@ -6,6 +6,8 @@ import { GenerateAccessTokenInputParams } from './params/generate-access-token-i
 import { GenerateAccessTokenResponse } from './responses/generate-access-token.reseponse';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Services } from 'src/utils/constants';
+import { IUsersService } from 'src/users/interfaces/users-service.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -13,6 +15,7 @@ export class AuthService implements IAuthService {
 
   constructor(
     @Inject(JwtService) private readonly jwtService: JwtService,
+    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
     @Inject(ConfigService) private readonly configService: ConfigService
   ) {}
 
@@ -35,11 +38,11 @@ export class AuthService implements IAuthService {
     const { accessToken } = input;
 
     try {
-      await this.jwtService.verifyAsync(accessToken);
+      const { sub: userId } = await this.jwtService.verifyAsync(accessToken);
+      const { user } = await this.usersService.findUser({ userId });
+      return { user };
     } catch (error) {
       throw new UnauthorizedException();
     }
-
-    return { isValid: true };
   }
 }
