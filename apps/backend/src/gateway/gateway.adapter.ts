@@ -57,6 +57,7 @@ export class SocketAdapter extends IoAdapter {
         const payload = jwtService.verify(accessToken);
         socket.userId = payload.sub;
         socket.roomId = payload.roomId;
+        socket.username = payload.username;
         next();
       } catch {
         next(new Error('Not allowed!'));

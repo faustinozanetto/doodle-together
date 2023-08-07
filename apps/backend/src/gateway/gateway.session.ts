@@ -22,7 +22,7 @@ export class GatewaySessionManager implements IGatewaySessionManager {
   }
 
   getUserSession(userId: string) {
-    return this.sessions.get(userId);
+    return this.sessions.get(userId) ?? null;
   }
 
   getSessions() {

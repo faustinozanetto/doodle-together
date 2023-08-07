@@ -113,9 +113,7 @@ export class RoomsService implements IRoomsService {
   async removeUserFromRoom(input: RemoveUserFromRoomInputParams): Promise<RemoveUserFromRoomResponse> {
     const { roomId, userId } = input;
 
-    const { user } = await this.usersService.findUser({ userId });
-
     const { updatedRoom } = await this.updateRoom({ roomId, data: { users: { disconnect: { id: userId } } } });
-    return { room: updatedRoom, user };
+    return { room: updatedRoom };
   }
 }

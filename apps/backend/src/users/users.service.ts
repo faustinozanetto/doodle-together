@@ -8,6 +8,8 @@ import { FindUserInputParams } from './params/find-user-input.params';
 import { CreateUserResponse } from './responses/create-user.response';
 import { DeleteUserResponse } from './responses/delete-user.response';
 import { FindUserResponse } from './responses/find-user.response';
+import { UpdateUserInputParams } from './params/update-user-input.params';
+import { UpdateUserResponse } from './responses/update-user.response';
 
 @Injectable()
 export class UsersService implements IUsersService {
@@ -45,5 +47,16 @@ export class UsersService implements IUsersService {
     });
 
     return { user };
+  }
+
+  async updateUser(input: UpdateUserInputParams): Promise<UpdateUserResponse> {
+    const { userId, data } = input;
+
+    const updatedUser = await this.prismaService.user.update({
+      where: { id: userId },
+      data,
+    });
+
+    return { updatedUser };
   }
 }

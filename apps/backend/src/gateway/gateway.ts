@@ -50,11 +50,10 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   async handleConnection(socket: SocketWithAuth) {
-    const socketId = socket.id;
-    this.logger.log(`Connection established to socketId: ${socketId}`);
-    this.sessionManager.addUserToSessions(socket.userId, { socketId });
+    const { id, roomId, userId, username } = socket;
 
-    const { roomId, userId } = socket;
+    this.logger.log(`Connection established to socketId: ${id} and username: ${username}`);
+    this.sessionManager.addUserToSessions(socket.userId, { socketId: id, username });
 
     await socket.join(roomId);
 
@@ -81,15 +80,15 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`Connection terminated from socketId: ${socketId}`);
     this.sessionManager.removeUserFromSessions(socket.userId);
 
-    const { roomId, userId } = socket;
+    const { roomId, userId, username } = socket;
 
-    const { room, user } = await this.roomsService.removeUserFromRoom({ roomId, userId });
+    const { room } = await this.roomsService.removeUserFromRoom({ roomId, userId });
 
     await socket.leave(roomId);
 
     const notificationPayload: SendNotificationSocketPayload = {
       type: 'user-left',
-      content: `User ${user.username} left the room!`,
+      content: `User ${username} left the room!`,
       userId,
 
       broadcast: 'except',
@@ -134,10 +133,11 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       broadcast: 'self',
     };
 
-    const targetUserSocketId = this.sessionManager.getUserSession(userId).socketId;
+    const targetUser = this.sessionManager.getUserSession(userId);
+    if (!targetUser) return;
 
-    this.server.to(targetUserSocketId).emit(SocketNames.SEND_NOTIFICATION, selfNotificationPayload);
-    this.server.to(targetUserSocketId).emit(SocketNames.KICK_REQUEST);
+    this.server.to(targetUser.socketId).emit(SocketNames.SEND_NOTIFICATION, selfNotificationPayload);
+    this.server.to(targetUser.socketId).emit(SocketNames.KICK_REQUEST);
   }
 
   @SubscribeMessage(SocketNames.DRAW_POINT)
@@ -164,7 +164,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     });
 
     // If there are no more users than the requestor return.
-    if (room.users.length === 0) return;
+    if (!room || room.users.length === 0) return;
 
     // Sort by owner priority
     const sortedUsers = room.users.sort((user) => {
@@ -173,9 +173,10 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     });
 
     const highestPriorityUser = sortedUsers[0];
-    const targetUserSocketId = this.sessionManager.getUserSession(highestPriorityUser.id).socketId;
+    const targetUser = this.sessionManager.getUserSession(highestPriorityUser.id);
+    if (!targetUser) return;
 
-    this.server.to(targetUserSocketId).emit(SocketNames.GET_CANVAS_STATE, payload);
+    this.server.to(targetUser.socketId).emit(SocketNames.GET_CANVAS_STATE, payload);
   }
 
   @SubscribeMessage(SocketNames.SEND_CANVAS_STATE)
@@ -186,8 +187,10 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       canvasState,
     };
 
-    const userSocketId = this.sessionManager.getUserSession(userId).socketId;
-    this.server.to(userSocketId).emit(SocketNames.DISPATCH_CANVAS_STATE, payload);
+    const userSession = this.sessionManager.getUserSession(userId);
+    if (!userSession) return;
+
+    this.server.to(userSession.socketId).emit(SocketNames.DISPATCH_CANVAS_STATE, payload);
   }
 
   @SubscribeMessage(SocketNames.CANVAS_CLEARED)
