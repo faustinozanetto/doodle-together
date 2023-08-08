@@ -28,6 +28,7 @@ import {
   GetCanvasStateSocketPayload,
   DispatchCanvasStateSocketPayload,
   KickUserSocketPayload,
+  DrawEraserSocketPayload,
 } from '@doodle-together/shared';
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
 import { IGatewayRoomsManager } from './interfaces/gateway-rooms-manager.interface';
@@ -157,10 +158,23 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage(SocketNames.DRAW_POINT)
   async drawPoint(@MessageBody() data: DrawPointSocketPayload): Promise<void> {
-    const { roomId, point } = data;
+    const { roomId, data: pointData } = data;
 
     const updateCanvasStatePayload: UpdateCanvasStateSocketPayload = {
-      point,
+      data: pointData,
+      tool: 'pencil',
+    };
+
+    this.server.to(roomId).emit(SocketNames.UPDATE_CANVAS_STATE, updateCanvasStatePayload);
+  }
+
+  @SubscribeMessage(SocketNames.DRAW_ERASER)
+  async drawEraser(@MessageBody() data: DrawEraserSocketPayload): Promise<void> {
+    const { roomId, data: eraserData } = data;
+
+    const updateCanvasStatePayload: UpdateCanvasStateSocketPayload = {
+      data: eraserData,
+      tool: 'eraser',
     };
 
     this.server.to(roomId).emit(SocketNames.UPDATE_CANVAS_STATE, updateCanvasStatePayload);

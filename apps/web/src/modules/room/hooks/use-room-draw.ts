@@ -1,16 +1,17 @@
 import { ElementRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { CanvasPoint } from '@doodle-together/shared';
 import { customizationState } from '@modules/state/customization.slice';
-import { drawPoint } from '../lib/room-draw.lib';
-import { RoomDrawPointPayload } from '../types/room.types';
+import { drawEraser, drawPoint } from '../lib/room-draw.lib';
+import { RoomDrawEraserPayload, RoomDrawPointPayload } from '../types/room.types';
 
 type UseRoomDrawProps = {
   onCanvasCleared: () => void;
   onCanvasResized: (width: number, height: number) => void;
-  onPointDraw: (data: RoomDrawPointPayload) => void;
+  onEraserDraw: (drawEraserPayload: RoomDrawEraserPayload) => void;
+  onPointDraw: (drawPointPayload: RoomDrawPointPayload) => void;
 };
 
-export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: UseRoomDrawProps) => {
+export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized, onEraserDraw }: UseRoomDrawProps) => {
   const [mouseDown, setMouseDown] = useState<boolean>(false);
   const previousPoint = useRef<CanvasPoint | null>(null);
 
@@ -34,25 +35,6 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: U
     if (!context) return null;
 
     return context;
-  };
-
-  const drawEraser = (point: CanvasPoint) => {
-    if (!previousPoint.current) return;
-
-    const context = getCanvasContext();
-    if (!context) return;
-
-    // Setup style.
-    context.globalCompositeOperation = 'destination-out';
-    context.lineWidth = 25;
-
-    const startPoint: CanvasPoint = previousPoint.current ?? point;
-
-    // Draw
-    context.beginPath();
-    context.moveTo(startPoint.x, startPoint.y);
-    context.lineTo(point.x, point.y);
-    context.stroke();
   };
 
   const clearCanvas = useCallback(() => {
@@ -81,7 +63,7 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: U
     };
 
     if (tool === 'pencil') {
-      const drawPointData: RoomDrawPointPayload = {
+      const drawPointPayload: RoomDrawPointPayload = {
         point: currentPoint,
         prevPoint: previousPoint.current,
         color,
@@ -89,10 +71,16 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized }: U
         context,
       };
 
-      drawPoint(drawPointData);
-      onPointDraw(drawPointData);
+      drawPoint(drawPointPayload);
+      onPointDraw(drawPointPayload);
     } else if (tool === 'eraser') {
-      drawEraser(currentPoint);
+      const drawEraserPayload: RoomDrawEraserPayload = {
+        context,
+        point: currentPoint,
+        prevPoint: previousPoint.current,
+      };
+      drawEraser(drawEraserPayload);
+      onEraserDraw(drawEraserPayload);
     } else if (tool === 'clear') {
       clearCanvas();
       onCanvasCleared();

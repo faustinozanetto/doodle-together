@@ -1,20 +1,11 @@
 import { Room, User } from '@doodle-together/database';
-import { CanvasPoint, RoomWithUsers } from '.';
-
-export type DrawPointSocketPayload = {
-  point: { color: string; point: CanvasPoint; prevPoint: CanvasPoint | null; size: string };
-  roomId: string;
-};
+import { CanvasPoint, RoomToolSize, RoomWithUsers } from '.';
 
 export type UserJoinedSocketPayload = {};
 export type UserLeftSocketPayload = {};
 
 export type CanvasClearedSocketPayload = {
   roomId: Room['id'];
-};
-
-export type UpdateCanvasStateSocketPayload = {
-  point: DrawPointSocketPayload['point'];
 };
 
 export type RequestCanvasStateSocketPayload = {
@@ -54,3 +45,31 @@ export type SendNotificationSocketPayload = {
   type: SocketNotificationType;
   userId: string;
 };
+
+export type DrawPointSocketPayload = {
+  data: {
+    color: string;
+    point: CanvasPoint;
+    prevPoint: CanvasPoint | null;
+    size: RoomToolSize;
+  };
+  roomId: string;
+};
+
+export type DrawEraserSocketPayload = {
+  data: {
+    point: CanvasPoint;
+    prevPoint: CanvasPoint | null;
+  };
+  roomId: string;
+};
+
+export type UpdateCanvasStateSocketPayload =
+  | {
+      data: DrawPointSocketPayload['data'];
+      tool: 'pencil';
+    }
+  | {
+      data: DrawEraserSocketPayload['data'];
+      tool: 'eraser';
+    };

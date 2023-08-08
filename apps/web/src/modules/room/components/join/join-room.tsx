@@ -41,7 +41,7 @@ const JoinRoom: React.FC = () => {
     <div className="bg-foreground rounded-lg shadow-lg border p-6 flex flex-col gap-2 w-[95vw] max-w-[400px]">
       <div className="flex space-y-2 flex-col">
         <h1 className="text-2xl font-semibold leading-none tracking-tight">Join Room</h1>
-        <p className="text-sm">Unleash Your Artistic Bond. Doodle Together - Enter a Room!</p>
+        <p className="text-sm text-muted-foreground">Unleash Your Artistic Bond. Doodle Together - Enter a Room!</p>
       </div>
       <JoinRoomForm onSubmit={handleRoomJoin} isPending={isPending} />
       {/* Create Room */}
