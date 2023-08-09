@@ -33,8 +33,5 @@
   "lint-staged": {
     "extends": "./lint-staged.config.ts"
   },
-  "packageManager": "yarn@1.22.19",
-  "engines": {
-    "node": ">=16.0.0"
-  }
+  "packageManager": "^yarn@1.22.19"
 }

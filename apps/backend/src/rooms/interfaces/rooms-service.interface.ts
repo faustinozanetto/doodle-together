@@ -10,8 +10,8 @@ import { LeaveRoomResponse } from '../responses/leave-room.response';
 import { RemoveUserFromRoomResponse } from '../responses/remove-user-to-room.response';
 import { FindRoomInputParams } from '../params/find-room-input.params';
 import { JoinRoomInputParams } from '../params/join-room-input.params';
-import { LeaveRoomInputParams } from '../params/leave-room-input.param';
-import { RemoveUserFromRoomInputParams } from '../params/remove-user-to-room-input.param';
+import { LeaveRoomInputParams } from '../params/leave-room-input.params';
+import { RemoveUserFromRoomInputParams } from '../params/remove-user-to-room-input.params';
 import { UpdateRoomInputParams } from '../params/update-room-input.params';
 import { UpdateRoomResponse } from '../responses/update-room.response';
 
