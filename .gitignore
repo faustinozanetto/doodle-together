@@ -1,7 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-.env
-
 # dependencies
 node_modules
 .pnp
@@ -15,8 +13,8 @@ coverage
 out/
 build
 
-# buid
-dist
+**/dist
+**/.env
 
 # misc
 .DS_Store
@@ -36,6 +34,3 @@ yarn-error.log*
 
 # turbo
 .turbo
-.vercel
-
-.yarn

@@ -90,7 +90,8 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
           )}
         />
 
-        <Button aria-label="Join Room" type="submit" className="w-full" icon={isPending && <LoadingIcon />}>
+        <Button aria-label="Join Room" type="submit" className="w-full">
+          {isPending && <LoadingIcon />}
           Join Room
         </Button>
       </form>

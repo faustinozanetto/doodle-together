@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { User } from '@doodle-together/shared/dist';
 import { cn } from '@modules/ui/lib/ui.lib';
 
 import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 import RoomManagementUserKick from './room-management-user-kick';
+import { User } from '@doodle-together/database';
 
 type RoomManagementUserProps = {
   user: User;

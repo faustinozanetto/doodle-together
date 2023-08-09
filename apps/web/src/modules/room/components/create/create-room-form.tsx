@@ -68,7 +68,8 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = (props) => {
           )}
         />
 
-        <Button aria-label="Create Room" type="submit" className="w-full" icon={isPending && <LoadingIcon />}>
+        <Button aria-label="Create Room" type="submit" className="w-full">
+          {isPending && <LoadingIcon />}
           Create Room
         </Button>
       </form>
