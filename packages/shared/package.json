@@ -19,7 +19,7 @@
     "@doodle-together/database": "*"
   },
   "devDependencies": {
-    "typescript": "^5.1.6",
-    "tsup": "7.2.0"
+    "tsup": "7.2.0",
+    "typescript": "^5.1.6"
   }
 }
