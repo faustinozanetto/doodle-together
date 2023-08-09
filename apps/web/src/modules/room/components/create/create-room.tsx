@@ -3,14 +3,14 @@
 import React, { useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CreateRoomApiResponse } from '@doodle-together/types';
+import { CreateRoomApiResponse } from '@doodle-together/shared';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { roomActions } from '@modules/state/room.slice';
-import { meActions } from '@modules/state/me.slice';
 import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
+import { meActions } from '@modules/state/me.slice';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();
@@ -29,13 +29,13 @@ const CreateRoom: React.FC = () => {
 
       if (!response) return;
 
-      const { room, accessToken } = response;
+      const { room, user } = response;
 
       roomActions.setRoom(room);
-      meActions.setAccessToken(accessToken);
+      meActions.setMe(user);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
-      router.replace(`/room/${room.roomId}`);
+      router.replace(`/room/${room.id}`);
     });
   };
 

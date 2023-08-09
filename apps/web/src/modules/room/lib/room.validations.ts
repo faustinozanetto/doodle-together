@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { userIdValidationSchema, usernameValidationSchema } from '@modules/user/lib/user.validations';
+import { roomState } from '@modules/state/room.slice';
 
 export const ROOM_PASSWORD_MIN_LENGHT = 8;
 export const ROOM_PASSWORD_MAX_LENGHT = 24;
@@ -28,4 +29,14 @@ export const createRoomValidationSchema = z.object({
 export const leaveRoomValidationSchema = z.object({
   roomId: roomIdValidationSchema,
   userId: userIdValidationSchema,
+});
+
+export const deleteRoomValidationSchema = z.object({
+  roomId: roomIdValidationSchema.refine(
+    (str) => {
+      if (str === roomState.room?.id) return true;
+      return false;
+    },
+    { message: 'Room ids do not match!' }
+  ),
 });

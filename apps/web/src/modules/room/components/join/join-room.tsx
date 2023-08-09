@@ -3,13 +3,12 @@
 import React, { useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { JoinRoomApiResponse } from '@doodle-together/types';
+import { JoinRoomApiResponse } from '@doodle-together/shared';
 import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { roomActions } from '@modules/state/room.slice';
-import { meActions } from '@modules/state/me.slice';
 import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
 
 const JoinRoom: React.FC = () => {
@@ -29,13 +28,12 @@ const JoinRoom: React.FC = () => {
 
       if (!response) return;
 
-      const { room, accessToken } = response;
+      const { room } = response;
 
       roomActions.setRoom(room);
-      meActions.setAccessToken(accessToken);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
-      router.replace(`/room/${room.roomId}`);
+      router.replace(`/room/${room.id}`);
     });
   };
 
@@ -43,7 +41,7 @@ const JoinRoom: React.FC = () => {
     <div className="bg-foreground rounded-lg shadow-lg border p-6 flex flex-col gap-2 w-[95vw] max-w-[400px]">
       <div className="flex space-y-2 flex-col">
         <h1 className="text-2xl font-semibold leading-none tracking-tight">Join Room</h1>
-        <p className="text-sm">Unleash Your Artistic Bond. Doodle Together - Enter a Room!</p>
+        <p className="text-sm text-muted-foreground">Unleash Your Artistic Bond. Doodle Together - Enter a Room!</p>
       </div>
       <JoinRoomForm onSubmit={handleRoomJoin} isPending={isPending} />
       {/* Create Room */}

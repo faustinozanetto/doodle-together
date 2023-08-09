@@ -9,8 +9,8 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-      "apps/*",
-      "packages/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "build": "turbo build",
@@ -20,18 +20,22 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.6.6",
-    "@commitlint/config-conventional": "^17.6.6",
-    "husky": "^8.0.3",
-    "lint-staged": "^13.2.3",
+    "@commitlint/cli": "17.6.6",
+    "@commitlint/config-conventional": "17.6.6",
+    "eslint": "8.45.0",
     "eslint-config-doodle-together": "*",
-    "eslint": "^8.45.0",
-    "prettier": "^3.0.0",
-    "prettier-plugin-tailwindcss": "^0.4.0",
-    "turbo": "^1.10.7"
+    "husky": "8.0.3",
+    "lint-staged": "13.2.3",
+    "prettier": "3.0.0",
+    "prettier-plugin-tailwindcss": "0.4.0",
+    "turbo": "^1.10.12"
   },
   "lint-staged": {
     "extends": "./lint-staged.config.ts"
   },
-  "packageManager": "^yarn@1.22.19"
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "packageManager": "yarn@3.6.1"
 }

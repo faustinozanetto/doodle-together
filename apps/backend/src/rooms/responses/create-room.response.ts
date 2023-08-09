@@ -1,7 +1,5 @@
-import { Room, User } from '@doodle-together/types';
+import { RoomWithUsers } from '@doodle-together/shared';
 
 export class CreateRoomResponse {
-  room: Room;
-  me: User;
-  accessToken: string;
+  room: RoomWithUsers;
 }

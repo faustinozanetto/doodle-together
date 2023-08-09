@@ -12,17 +12,17 @@ const RoomUsers: React.FC = () => {
   const { users } = useRoomUsers({ sortUsers: true });
 
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border pointer-events-auto h-fit min-w-[10rem]">
+    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto min-w-[10rem]">
       <span className="font-bold">Users</span>
       <Separator />
-      <ul className="gap-2 mt-2">
+      <ul className="flex flex-col gap-2">
         <AnimatePresence>
           {users.map((user, index) => {
-            const isCurrentUser = (meSnapshot && meSnapshot.me && meSnapshot.me.userId === user.userId) ?? false;
+            const isCurrentUser = (meSnapshot && meSnapshot.me && meSnapshot.me.id === user.id) ?? false;
 
             return (
               <motion.li
-                key={user.userId}
+                key={user.id}
                 initial={{ opacity: 0, translateY: -10 }}
                 animate={{ opacity: 1, translateY: 0 }}
                 exit={{ opacity: 0, translateY: -10 }}

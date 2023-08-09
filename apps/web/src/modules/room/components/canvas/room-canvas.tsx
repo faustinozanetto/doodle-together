@@ -1,27 +1,62 @@
 'use client';
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import {
   CanvasClearedSocketPayload,
-  DispatchCanvasStateSocketPayload,
-  GetCanvasStateSocketPayload,
+  DrawEraserSocketPayload,
+  DrawPointSocketPayload,
   RequestCanvasStateSocketPayload,
-  SendCanvasStateSocketPayload,
-} from '@doodle-together/types';
+  SocketNames,
+} from '@doodle-together/shared';
 import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
-import { RoomDrawPointPayload } from '@modules/room/types/room.types';
+import { RoomDrawEraserPayload, RoomDrawPointPayload } from '@modules/room/types/room.types';
 import { roomState } from '@modules/state/room.slice';
 import { socketState } from '@modules/state/socket.slice';
 import { meState } from '@modules/state/me.slice';
+import { useClearRoomCanvasSocket } from '@modules/room/hooks/sockets/use-clear-room-canvas-socket';
+import { useUpdateRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-update-room-canvas-state-socket';
+import { useGetRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-get-room-canvas-state-socket';
+import { useDispatchRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-dispatch-room-canvas-state-socket';
+import { drawEraser } from '@modules/room/lib/room-draw.lib';
 
 const RoomCanvas: React.FC = () => {
   const onPointDraw = useCallback(
-    (data: RoomDrawPointPayload) => {
+    (drawPointPayload: RoomDrawPointPayload) => {
       const { room } = roomState;
+
       if (!room) return;
 
-      socketState.socket?.emit('draw_point', { roomId: room.roomId, point: data });
+      const payload: DrawPointSocketPayload = {
+        data: {
+          color: drawPointPayload.color,
+          point: drawPointPayload.point,
+          prevPoint: drawPointPayload.prevPoint,
+          size: drawPointPayload.size,
+        },
+        roomId: room.id,
+      };
+
+      socketState.socket?.emit(SocketNames.DRAW_POINT, payload);
+    },
+    [roomState.room]
+  );
+
+  const onEraserDraw = useCallback(
+    (drawEraserPayload: RoomDrawEraserPayload) => {
+      const { room } = roomState;
+
+      if (!room) return;
+
+      const payload: DrawEraserSocketPayload = {
+        data: {
+          point: drawEraserPayload.point,
+          prevPoint: drawEraserPayload.prevPoint,
+        },
+        roomId: room.id,
+      };
+
+      socketState.socket?.emit(SocketNames.DRAW_ERASER, payload);
     },
     [roomState.room]
   );
@@ -31,101 +66,48 @@ const RoomCanvas: React.FC = () => {
     if (!room) return;
 
     const payload: CanvasClearedSocketPayload = {
-      roomId: room.roomId,
+      roomId: room.id,
     };
 
-    socketState.socket?.emit('canvas_cleared', payload);
+    socketState.socket?.emit(SocketNames.CANVAS_CLEARED, payload);
   }, [roomState.room]);
 
-  const onCanvasResized = useCallback(
-    (width, height) => {
-      const { room } = roomState;
-      const { me } = meState;
-      if (!room || !me) return;
+  const onCanvasResized = useCallback(() => {
+    const { room } = roomState;
+    const { me } = meState;
+    if (!room || !me) return;
 
-      const payload: RequestCanvasStateSocketPayload = {
-        roomId: room.roomId,
-        userId: me.userId,
-      };
+    const payload: RequestCanvasStateSocketPayload = {
+      roomId: room.id,
+      userId: me.id,
+    };
 
-      socketState.socket?.emit('request_canvas_state', payload);
-      console.log(`Canvas Resized: (${width}px, ${height}px)`);
-    },
-    [roomState, meState]
-  );
+    socketState.socket?.emit(SocketNames.REQUEST_CANVAS_STATE, payload);
+  }, [roomState, meState]);
 
   const { wrapperRef, canvasRef, handleOnMouseDown, drawPoint, clearCanvas } = useRoomDraw({
     onPointDraw,
     onCanvasCleared,
     onCanvasResized,
+    onEraserDraw,
   });
 
-  useEffect(() => {
-    const canvasElement = canvasRef.current;
-    const context = canvasElement?.getContext('2d');
-
-    // Clear canvas socket listening
-    socketState.socket?.on('clear_canvas', () => {
-      if (!context) return;
-
-      clearCanvas();
-    });
-
-    // Update canvas state socket listening
-    socketState.socket?.on('update_canvas_state', (data) => {
-      if (!context) return;
-
-      const { point } = data;
-      drawPoint({ ...point, context });
-    });
-
-    // Get canvas state socket listening
-    socketState.socket?.on('get_canvas_state', (data: GetCanvasStateSocketPayload) => {
-      const { userId } = data;
-
-      const { room } = roomState;
-      const { me } = meState;
-
-      if (!canvasElement || !room || !me) return;
-
-      const canvasState = canvasElement.toDataURL();
-      const payload: SendCanvasStateSocketPayload = {
-        roomId: room.roomId,
-        canvasState,
-        userId,
-      };
-
-      socketState.socket?.emit('send_canvas_state', payload);
-    });
-
-    // Dispatch canvas state socket listening
-    socketState.socket?.on('dispatch_canvas_state', (data: DispatchCanvasStateSocketPayload) => {
-      const { canvasState } = data;
-
-      console.log(`Dispatch canvas state received: ${canvasElement}, ${context}`);
-
-      if (!canvasElement || !context) return;
-
-      const img = new Image();
-      img.src = canvasState;
-      img.onload = () => {
-        context.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        context.drawImage(img, 0, 0);
-      };
-    });
-
-    return () => {
-      socketState.socket?.off('update_canvas_state');
-      socketState.socket?.off('get_canvas_state');
-      socketState.socket?.off('clear_canvas');
-      socketState.socket?.off('dispatch_canvas_state');
-    };
-  }, [canvasRef, roomState.room]);
+  /** Room Canvas Socket Hooks */
+  useClearRoomCanvasSocket({ canvasRef, onCanvasCleared: clearCanvas });
+  useUpdateRoomCanvasStateSocket({
+    canvasRef,
+    onCanvasUpdated: (data, context) => {
+      if (data.tool === 'pencil') drawPoint({ ...data.data, context });
+      else if (data.tool === 'eraser') drawEraser({ ...data.data, context });
+    },
+  });
+  useGetRoomCanvasStateSocket({ canvasRef });
+  useDispatchRoomCanvasStateSocket({ canvasRef });
 
   return (
     <div ref={wrapperRef} className="h-full w-full">
       <canvas
-        id="canvas"
+        id="room-canvas"
         ref={canvasRef}
         className="cursor-pointer"
         onMouseDown={handleOnMouseDown}

@@ -1,4 +1,4 @@
-import { RoomToolSize } from '../types/room.types';
+import { RoomToolSize } from '@doodle-together/shared';
 
 export const getToolSizeToWidth = (size: RoomToolSize) => {
   switch (size) {

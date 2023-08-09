@@ -1,132 +1,108 @@
-import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
-import { RoomsRepository } from './rooms.repository';
-import { DeleteRoomDto } from './dto/delete-room.dto';
-import { JoinRoomDto } from './dto/join-room.dto';
-import { generateRoomId, generateUserId } from '../utils/utils';
-import { CreateRoomDto } from './dto/create-room.dto';
+import { Injectable, Logger, ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
+import { DeleteRoomInputParams } from './params/delete-room-input.params';
+import { CreateRoomInputParams } from './params/create-room-input.params';
 import { JoinRoomResponse } from './responses/join-room.response';
 import { CreateRoomResponse } from './responses/create-room.response';
 import { DeleteRoomResponse } from './responses/delete-room.response';
-import { JwtService } from '@nestjs/jwt';
-import { RemoveUserFromRoomDto } from './dto/remove-user-to-room.dto';
-import { AddUserToRoomDto } from './dto/add-user-to-room.dto';
-import { FindRoomDto } from './dto/find-room.dto';
+import { AddUserToRoomInputParams } from './params/add-user-to-room-input.param';
 import { FindRoomResponse } from './responses/find-room.response';
 import { AddUserToRoomResponse } from './responses/add-user-to-room.response';
 import { RemoveUserFromRoomResponse } from './responses/remove-user-to-room.response';
-import { PasswordsService } from '../passwords/passwords.service';
-import { LeaveRoomDto } from './dto/leave-room.dto';
 import { LeaveRoomResponse } from './responses/leave-room.response';
-import { User } from '@doodle-together/types';
+import { IRoomsService } from './interfaces/rooms-service.interface';
+import { LeaveRoomInputParams } from './params/leave-room-input.params';
+import { RemoveUserFromRoomInputParams } from './params/remove-user-to-room-input.params';
+import { JoinRoomInputParams } from './params/join-room-input.params';
+import { FindRoomInputParams } from './params/find-room-input.params';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Events, Services } from 'src/utils/constants';
+import { IUsersService } from 'src/users/interfaces/users-service.interface';
+import { UpdateRoomInputParams } from './params/update-room-input.params';
+import { UpdateRoomResponse } from './responses/update-room.response';
+import { IPasswordsService } from 'src/passwords/interfaces/passwords-service.interface';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { RoomDeletedEvent } from './events/room-deleted.event';
 
 @Injectable()
-export class RoomsService {
+export class RoomsService implements IRoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
   constructor(
-    private readonly roomsRepository: RoomsRepository,
-    private readonly jwtService: JwtService,
-    private readonly passwordService: PasswordsService
+    @Inject(EventEmitter2) private readonly eventEmitter: EventEmitter2,
+    @Inject(PrismaService) private prismaService: PrismaService,
+    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
+    @Inject(Services.PASSWORDS_SERVICE) private readonly passwordsService: IPasswordsService
   ) {}
 
-  /**
-   * Creates a room by a given input
-   * @param input Create room input : username of owner
-   * @returns Create room response : room & accessToken
-   */
-  async createRoom(input: CreateRoomDto): Promise<CreateRoomResponse> {
-    const { username, password } = input;
+  async createRoom(input: CreateRoomInputParams): Promise<CreateRoomResponse> {
+    const { ownerId, password } = input;
 
-    const userId = generateUserId();
-    const roomId = generateRoomId();
-
-    const { hashedPassword } = await this.passwordService.hashPassword({
+    const { hashedPassword } = await this.passwordsService.hashPassword({
       password,
     });
 
-    const { room } = await this.roomsRepository.createRoom({
-      roomId,
-      userId,
-      password: hashedPassword,
+    const room = await this.prismaService.room.create({
+      data: {
+        password: hashedPassword,
+        ownerId,
+      },
+      include: { users: true },
     });
 
-    const me: User = {
-      userId,
-      username,
-    };
-
-    const accessToken = this.jwtService.sign(
-      {
-        roomId: room.roomId,
-        username,
-      },
-      {
-        subject: userId,
-      }
-    );
-
-    return { room, accessToken, me };
-  }
-
-  /**
-   * Deletes a room by a given input.
-   * @param input Delete room input : roomId
-   * @returns Delete room response : deleted
-   */
-  async deleteRoom(input: DeleteRoomDto): Promise<DeleteRoomResponse> {
-    const { deleted } = await this.roomsRepository.deleteRoom(input);
-    return { deleted };
-  }
-
-  /**
-   * Finds a room by a given input
-   * @param input  Find room input : roomId
-   * @returns Find room response : room
-   */
-  async findRoom(input: FindRoomDto): Promise<FindRoomResponse> {
-    const { room } = await this.roomsRepository.findRoom({ roomId: input.roomId });
     return { room };
   }
 
-  /**
-   * Joins a room by a given input
-   * @param input Join room input : roomId & username
-   * @returns Join room response : room & accessToken
-   */
-  async joinRoom(input: JoinRoomDto): Promise<JoinRoomResponse> {
-    const { roomId, username, password } = input;
+  async deleteRoom(input: DeleteRoomInputParams): Promise<DeleteRoomResponse> {
+    const { roomId } = input;
+    await this.prismaService.room.delete({
+      where: { id: roomId },
+    });
 
-    const userId = generateUserId();
+    const roomDeleteEvent = new RoomDeletedEvent(roomId);
+    this.eventEmitter.emit(Events.ROOM_DELETE_EVENT, roomDeleteEvent);
 
-    const { room } = await this.roomsRepository.findRoom({ roomId });
+    return { deleted: true };
+  }
+
+  async findRoom(input: FindRoomInputParams): Promise<FindRoomResponse> {
+    const { roomId } = input;
+    const room = await this.prismaService.room.findUnique({ where: { id: roomId }, include: { users: true } });
+
+    return { room };
+  }
+
+  async updateRoom(input: UpdateRoomInputParams): Promise<UpdateRoomResponse> {
+    const { roomId, data } = input;
+
+    const updatedRoom = await this.prismaService.room.update({
+      where: { id: roomId },
+      data,
+      include: { users: true },
+    });
+
+    return { updatedRoom };
+  }
+
+  async joinRoom(input: JoinRoomInputParams): Promise<JoinRoomResponse> {
+    const { roomId, userId, password } = input;
+
+    const { room } = await this.findRoom({ roomId });
+    if (!room) throw new NotFoundException('Room not found!');
 
     // Validate password
-    const { isPasswordValid } = await this.passwordService.validatePassword({
+    const { isPasswordValid } = await this.passwordsService.validatePassword({
       password,
       hashedPassword: room.password,
     });
 
     if (!isPasswordValid) throw new ForbiddenException('Invalid room password!');
 
-    const me: User = {
-      userId,
-      username,
-    };
+    const { room: updatedRoom } = await this.addUserToRoom({ roomId, userId });
 
-    const accessToken = this.jwtService.sign(
-      {
-        roomId: room.roomId,
-        username: me.username,
-      },
-      {
-        subject: me.userId,
-      }
-    );
-
-    return { room, me, accessToken };
+    return { room: updatedRoom };
   }
 
-  async leaveRoom(input: LeaveRoomDto): Promise<LeaveRoomResponse> {
+  async leaveRoom(input: LeaveRoomInputParams): Promise<LeaveRoomResponse> {
     const { roomId, userId } = input;
 
     await this.removeUserFromRoom({ roomId, userId });
@@ -134,27 +110,19 @@ export class RoomsService {
     return { left: true };
   }
 
-  /**
-   * Adds a user to a room
-   * @param input Add use to room input : roomId & userId & username
-   * @returns Add user to room response : room
-   */
-  async addUserToRoom(input: AddUserToRoomDto): Promise<AddUserToRoomResponse> {
-    const { roomId, username, userId, socketId } = input;
-
-    const { room, user } = await this.roomsRepository.addUserToRoom({ roomId, userId, username, socketId });
-    return { room, user };
-  }
-
-  /**
-   * Removes a user from a room
-   * @param input Remove user from room input : roomId & userId
-   * @returns Remove user from room response : room
-   */
-  async removeUserFromRoom(input: RemoveUserFromRoomDto): Promise<RemoveUserFromRoomResponse> {
+  async addUserToRoom(input: AddUserToRoomInputParams): Promise<AddUserToRoomResponse> {
     const { roomId, userId } = input;
 
-    const { room } = await this.roomsRepository.removeUserFromRoom({ roomId, userId });
-    return { room };
+    const { updatedRoom } = await this.updateRoom({ roomId, data: { users: { connect: { id: userId } } } });
+    const { user } = await this.usersService.findUser({ userId });
+
+    return { room: updatedRoom, user };
+  }
+
+  async removeUserFromRoom(input: RemoveUserFromRoomInputParams): Promise<RemoveUserFromRoomResponse> {
+    const { roomId, userId } = input;
+
+    const { updatedRoom } = await this.updateRoom({ roomId, data: { users: { disconnect: { id: userId } } } });
+    return { room: updatedRoom };
   }
 }

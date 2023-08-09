@@ -1,4 +1,4 @@
-import { CanvasPoint } from '@doodle-together/types';
+import { CanvasPoint, RoomToolSize } from '@doodle-together/shared';
 
 export type RoomDrawPointPayload = {
   color: string;
@@ -8,6 +8,8 @@ export type RoomDrawPointPayload = {
   size: RoomToolSize;
 };
 
-export type RoomTool = 'pencil' | 'eraser' | 'clear';
-export type RoomToolSize = 'small' | 'medium' | 'large' | 'extra-large';
-export type RoomToolStyle = 'solid' | 'dashed' | 'dotted';
+export type RoomDrawEraserPayload = {
+  context: CanvasRenderingContext2D;
+  point: CanvasPoint;
+  prevPoint: CanvasPoint | null;
+};

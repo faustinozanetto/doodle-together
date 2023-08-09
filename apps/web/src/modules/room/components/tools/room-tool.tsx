@@ -3,7 +3,7 @@
 import React from 'react';
 import { useSnapshot } from 'valtio';
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
-import { RoomTool as RoomToolData } from '@modules/room/types/room.types';
+import { RoomTool as RoomToolData } from '@doodle-together/shared';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
 import { capitalize } from '@modules/common/lib/common.lib';
 import { customizationActions, customizationState } from '@modules/state/customization.slice';

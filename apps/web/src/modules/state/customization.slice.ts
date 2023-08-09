@@ -1,5 +1,5 @@
+import { RoomToolSize, RoomToolStyle, RoomTool } from '@doodle-together/shared';
 import { proxy } from 'valtio';
-import { RoomTool, RoomToolSize, RoomToolStyle } from '@modules/room/types/room.types';
 
 export type CustomizationSliceState = {
   color: string;

@@ -15,7 +15,7 @@ const RoomManagementShareLink: React.FC = () => {
   const roomSnapshot = useSnapshot(roomState);
   const { copy } = useCopyText();
 
-  const roomLink = `${siteConfig.url}/room/${roomSnapshot.room?.roomId}`;
+  const roomLink = `${siteConfig.url}/room/${roomSnapshot.room?.id}`;
 
   const handleToolClicked = () => {
     setModalOpen(true);

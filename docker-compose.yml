@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - doodle_together_network
+
+  backend:
+    container_name: backend
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
+    restart: always
+    ports:
+      - 4000:4000
+    depends_on:
+      - db
+    networks:
+      - doodle_together_network
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    container_name: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  doodle_together_network:
+    external: true
+
+volumes:
+  postgres:
+    name: docker-db

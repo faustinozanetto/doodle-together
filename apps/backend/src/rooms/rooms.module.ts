@@ -1,16 +1,30 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
-import { ConfigModule } from '@nestjs/config';
-import { RoomsGateway } from './rooms.gateway';
-import { RoomsRepository } from './rooms.repository';
 import { RoomsService } from './rooms.service';
 import { RoomsController } from './rooms.controller';
-import { jwtModule, redisModule } from '../modules.config';
-import { PasswordsService } from '../passwords/passwords.service';
+import { redisModule } from '../modules.config';
+import { Services } from 'src/utils/constants';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UsersModule } from 'src/users/users.module';
+import { PasswordsModule } from 'src/passwords/passwords.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { GatewayModule } from 'src/gateway/gateway.module';
 
 @Module({
-  imports: [ConfigModule, jwtModule, redisModule],
+  imports: [forwardRef(() => GatewayModule), UsersModule, PasswordsModule, AuthModule, redisModule],
   controllers: [RoomsController],
-  providers: [RoomsService, RoomsRepository, RoomsGateway, PasswordsService],
+  providers: [
+    {
+      provide: Services.ROOMS_SERVICE,
+      useClass: RoomsService,
+    },
+    PrismaService,
+  ],
+  exports: [
+    {
+      provide: Services.ROOMS_SERVICE,
+      useClass: RoomsService,
+    },
+  ],
 })
 export class RoomModule {}

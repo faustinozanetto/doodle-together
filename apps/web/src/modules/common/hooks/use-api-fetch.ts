@@ -5,7 +5,7 @@ export const useApiFetch = <TData>(endpoint: string) => {
 
   // eslint-disable-next-line no-undef
   const fetchData = async (options?: RequestInit): Promise<TData | null> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}${endpoint}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}/api${endpoint}`, {
       credentials: 'include',
       headers: {
         'Access-Control-Allow-Credentials': 'true',

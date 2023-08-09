@@ -1,4 +1,3 @@
-import { User } from '@doodle-together/types';
 import { useMemo } from 'react';
 import { useSnapshot } from 'valtio';
 import { roomState } from '@modules/state/room.slice';
@@ -13,17 +12,15 @@ export const useRoomUsers = ({ sortUsers = false }: UseRoomUsersProps) => {
   const users = useMemo(() => {
     if (!roomSnapshot.room) return [];
 
-    const users: User[] = Object.entries(roomSnapshot.room.users ?? {}).map(([userId, { username }]) => {
-      return { userId, username };
-    });
+    const roomUsers = Array.from(roomSnapshot.room.users);
 
     if (sortUsers)
-      users.sort((a) => {
-        if (a.userId === roomSnapshot.room?.ownerId) return -1;
+      roomUsers.sort((user) => {
+        if (user.id === roomSnapshot.room?.ownerId) return -1;
         return 1;
       });
 
-    return users;
+    return roomUsers;
   }, [roomSnapshot]);
 
   return { users };

@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { useSnapshot } from 'valtio';
-import { RoomToolStyle } from '@modules/room/types/room.types';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { Separator } from '@modules/ui/components/separator/separator';
 import { customizationActions, customizationState } from '@modules/state/customization.slice';
+import { RoomToolStyle } from '@doodle-together/shared';
 
 const TOOL_STYLES: ToolStyleOptionProps[] = [
   {

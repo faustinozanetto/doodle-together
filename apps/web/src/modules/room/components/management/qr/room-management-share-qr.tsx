@@ -13,7 +13,7 @@ const RoomManagementShareQR: React.FC = () => {
 
   const roomSnapshot = useSnapshot(roomState);
 
-  const roomLink = `${siteConfig.url}/room/${roomSnapshot.room?.roomId}`;
+  const roomLink = `${siteConfig.url}/room/${roomSnapshot.room?.id}`;
 
   const { generateQRCode, result: qrCodeResult } = useQRCode(roomLink, { scale: 5, margin: 1, type: 'image/webp' });
 
