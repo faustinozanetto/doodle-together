@@ -18,8 +18,9 @@ import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 
 import { roomState } from '@modules/state/room.slice';
 import { meState } from '@modules/state/me.slice';
-import RoomManagementTool from './room-management-tool';
+import RoomManagementTool from '../room-management-tool';
 import { DeleteIcon } from '@modules/ui/components/icons/delete-icon';
+import RoomManagementDeleteForm, { DeleteRoomFormData } from './room-management-delete-form';
 
 const RoomManagementDelete: React.FC = () => {
   const router = useRouter();
@@ -30,7 +31,7 @@ const RoomManagementDelete: React.FC = () => {
 
   const { toast } = useToast();
 
-  const handleDeleteRoom = useCallback(async () => {
+  const handleDeleteRoom = async (data: DeleteRoomFormData) => {
     const { room } = roomState;
     const { me } = meState;
 
@@ -42,7 +43,7 @@ const RoomManagementDelete: React.FC = () => {
 
     toast({ variant: 'success', content: 'Room deleted successfully!' });
     router.replace('/');
-  }, [roomState.room, meState.me]);
+  };
 
   const handleButtonClicked = () => {
     setDialogOpen(true);
@@ -59,14 +60,15 @@ const RoomManagementDelete: React.FC = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              You are about to delete the room?. Are you sure you want to proceed?.
-            </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteRoom}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
+          <AlertDialogDescription>
+            Please type the room id
+            <span className="font-bold bg-foreground p-1 rounded-lg border text-primary-600 dark:text-primary-400 wrap mx-1">
+              {roomState.room?.id}
+            </span>
+            below to confirm this action. Keep in mind this is a irreversible event!
+          </AlertDialogDescription>
+          <RoomManagementDeleteForm onSubmit={handleDeleteRoom} />
         </AlertDialogContent>
       </AlertDialog>
     </RoomManagementTool>

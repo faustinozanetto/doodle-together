@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import { Observable } from 'rxjs';
@@ -29,7 +30,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const now = Date.now();
     return next.handle().pipe(
       tap(() => {
-        const response = context.switchToHttp().getResponse();
+        const response = context.switchToHttp().getResponse<Response>();
 
         const { statusCode } = response;
         const contentLength = response.get('content-length');

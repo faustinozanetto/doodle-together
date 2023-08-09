@@ -7,7 +7,7 @@ import RoomManagementUsers from './users/room-management-users';
 import RoomManagementLeave from './room-management-leave';
 import RoomManagementShareLink from './link/room-management-share-link';
 import RoomManagementShareQR from './qr/room-management-share-qr';
-import RoomManagementDelete from './room-management-delete';
+import RoomManagementDelete from './delete/room-management-delete';
 import { Separator } from '@modules/ui/components/separator/separator';
 
 const RoomManagement: React.FC = () => {

@@ -22,20 +22,19 @@
   "devDependencies": {
     "@commitlint/cli": "17.6.6",
     "@commitlint/config-conventional": "17.6.6",
+    "eslint": "8.45.0",
+    "eslint-config-doodle-together": "*",
     "husky": "8.0.3",
     "lint-staged": "13.2.3",
-    "eslint-config-doodle-together": "*",
-    "eslint": "8.45.0",
     "prettier": "3.0.0",
     "prettier-plugin-tailwindcss": "0.4.0",
-    "turbo": "1.9.3"
+    "turbo": "^1.10.12"
   },
   "lint-staged": {
     "extends": "./lint-staged.config.ts"
   },
   "packageManager": "yarn@1.22.19",
   "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=7.0.0"
+    "node": ">=16.0.0"
   }
 }
