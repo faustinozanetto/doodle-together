@@ -15,11 +15,23 @@ async function bootstrap() {
   app.useWebSocketAdapter(new SocketAdapter(app));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors({
-    origin: [configService.get('FRONTEND_ENDPOINT')],
-    credentials: true,
-    methods: ['GET', 'PUT', 'POST', 'DELETE'],
-  });
+
+  const allowCrossDomain = (req, res, next) => {
+    res.header(`Access-Control-Allow-Origin`, configService.get('FRONTEND_ENDPOINT'));
+    res.header(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE`);
+    res.header(`Access-Control-Allow-Headers`, `Content-Type`);
+    next();
+  };
+  // app.enableCors({
+  //   origin: [configService.get('FRONTEND_ENDPOINT')],
+  //   credentials: true,
+  //   methods: 'GET,PUT,POST,DELETE,OPTIONS',
+  //   allowedHeaders: [
+  //     'Access-Control-Allow-Headers',
+  //     'Content-Type, Authorization, Content-Length, X-Requested-With, X-Api-Key',
+  //   ],
+  // });
+  app.use(allowCrossDomain);
   app.use(cookieParser());
 
   const port = configService.get('APP_PORT');
