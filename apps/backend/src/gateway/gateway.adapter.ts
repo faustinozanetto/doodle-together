@@ -18,13 +18,17 @@ export class SocketAdapter extends IoAdapter {
   createIOServer(port: number, options?: ServerOptions) {
     const configService = this.app.get(ConfigService);
 
+    const corsOrigin = configService.get<string>('FRONTEND_ENDPOINT');
+
     const optionsWithCORS: ServerOptions = {
       ...options,
       cors: {
         credentials: true,
-        origin: [configService.get('FRONTEND_ENDPOINT')],
+        origin: [corsOrigin],
       },
     };
+
+    this.logger.log('Socket Adapter configured with cors origin: ' + corsOrigin);
 
     const server: Server = super.createIOServer(port, optionsWithCORS);
 
@@ -48,8 +52,6 @@ export class SocketAdapter extends IoAdapter {
       if (!accessToken) {
         return next(new Error('Not Authenticated. No accessToken was sent'));
       }
-
-      this.logger.log('Parsing accessToken from user.');
 
       const jwtService = this.app.get(JwtService);
       // Parse the accessToken using jwt and set socket auth data.

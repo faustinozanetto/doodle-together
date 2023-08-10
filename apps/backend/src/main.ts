@@ -15,7 +15,11 @@ async function bootstrap() {
   app.useWebSocketAdapter(new SocketAdapter(app));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors({ origin: [configService.get('FRONTEND_ENDPOINT')], credentials: true });
+  app.enableCors({
+    origin: [configService.get('FRONTEND_ENDPOINT')],
+    credentials: true,
+    methods: ['GET', 'PUT', 'POST', 'DELETE'],
+  });
   app.use(cookieParser());
 
   const port = configService.get('APP_PORT');

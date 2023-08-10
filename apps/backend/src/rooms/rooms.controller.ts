@@ -13,7 +13,6 @@ import { CreateRoomApiResponse, JoinRoomApiResponse, LeaveRoomApiResponse } from
 import { Services } from 'src/utils/constants';
 import { IRoomsService } from './interfaces/rooms-service.interface';
 import { IUsersService } from 'src/users/interfaces/users-service.interface';
-import { IAuthService } from 'src/auth/interfaces/auth-service.interface';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
@@ -31,8 +30,7 @@ export class RoomsController {
     @Inject(ConfigService) private readonly configService: ConfigService,
     @Inject(ServerGateway) private readonly gateway: ServerGateway,
     @Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService,
-    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
-    @Inject(Services.AUTH_SERVICE) private readonly authService: IAuthService
+    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService
   ) {}
 
   @Post('/create')

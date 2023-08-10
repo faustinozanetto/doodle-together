@@ -4,4 +4,8 @@ export class RoomDeletedEvent {
   constructor(roomId: string) {
     this.roomId = roomId;
   }
+
+  getRoomId() {
+    return this.roomId;
+  }
 }
