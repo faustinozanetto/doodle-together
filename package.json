@@ -28,14 +28,14 @@
     "lint-staged": "13.2.3",
     "prettier": "3.0.0",
     "prettier-plugin-tailwindcss": "0.4.0",
-    "turbo": "^1.10.3"
+    "turbo": "1.9.3"
   },
   "lint-staged": {
     "extends": "./lint-staged.config.ts"
   },
   "engines": {
     "node": ">=17.0.0",
-    "npm": ">=6.0.0"
+    "npm": ">=7.0.0"
   },
   "packageManager": "yarn@1.22.19"
 }
