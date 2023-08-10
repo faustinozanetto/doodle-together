@@ -28,6 +28,9 @@
     "predev": "npm run generate",
     "studio": "prisma studio"
   },
+  "engines": {
+    "node": ">=17.0.0"
+  },
   "dependencies": {
     "@prisma/client": "^5.0.0"
   },
