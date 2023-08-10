@@ -36,5 +36,5 @@ export const useKickRequestRoomSocket = () => {
     return () => {
       socketState.socket?.off(SocketNames.KICK_REQUEST);
     };
-  }, []);
+  }, [meState, roomState]);
 };

@@ -33,5 +33,5 @@ export const useGetRoomCanvasStateSocket = ({ canvasRef }: UseGetRoomCanvasState
     return () => {
       socketState.socket?.off(SocketNames.GET_CANVAS_STATE);
     };
-  }, [canvasRef]);
+  }, [canvasRef, roomState, meState]);
 };

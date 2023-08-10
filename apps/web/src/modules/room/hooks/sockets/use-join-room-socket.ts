@@ -25,5 +25,5 @@ export const useJoinRoomSocket = (roomId: string) => {
     return () => {
       socketState.socket?.off('connect');
     };
-  }, []);
+  }, [meState]);
 };

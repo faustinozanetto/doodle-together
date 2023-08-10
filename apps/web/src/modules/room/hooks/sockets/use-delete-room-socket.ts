@@ -36,5 +36,5 @@ export const useDeleteRoomSocket = () => {
     return () => {
       socketState.socket?.off(SocketNames.DELETE_ROOM);
     };
-  }, []);
+  }, [roomState, meState]);
 };

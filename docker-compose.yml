@@ -2,18 +2,18 @@ version: '3'
 
 services:
   web:
-    container_name: web
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile
     restart: always
     ports:
       - 3000:3000
+    expose:
+      - 3000
     networks:
       - doodle_together_network
 
   backend:
-    container_name: backend
     build:
       context: .
       dockerfile: ./apps/backend/Dockerfile
@@ -21,27 +21,65 @@ services:
     ports:
       - 4000:4000
     depends_on:
-      - db
+      - postgres
+      - redis-db
+    links:
+      - postgres
+      - redis-db
+    environment:
+      REDIS_HOST: redis-db
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redispassword
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/doodle_together
+      ROOM_EXPIRES: 7200
+      JWT_COOKIE_NAME: auth-cookie
+      JWT_SECRET: kasasjvr5s8a6a8e2as
+      JWT_EXPIRY: 1d
+      SALT_ROUNDS: 10
+      APP_PORT: 4000
+      FRONTEND_ENDPOINT: http://localhost:3000
     networks:
       - doodle_together_network
 
-  db:
-    image: postgres
+  redis-db:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass redispassword
+    networks:
+      - doodle_together_network
+
+  postgres:
+    image: postgres:latest
     restart: always
-    environment:
-      - POSTGRES_PASSWORD=postgres
-    container_name: postgres
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: doodle_together
+    networks:
+      - doodle_together_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '8080:80'
+    networks:
+      - doodle_together_network
 
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname
 networks:
   doodle_together_network:
-    external: true
+    driver: bridge
 
 volumes:
-  postgres:
-    name: docker-db
+  postgres-data:
