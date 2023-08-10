@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   CanvasClearedSocketPayload,
   DrawEraserSocketPayload,
@@ -19,8 +19,12 @@ import { useUpdateRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-
 import { useGetRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-get-room-canvas-state-socket';
 import { useDispatchRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-dispatch-room-canvas-state-socket';
 import { drawEraser } from '@modules/room/lib/room-draw.lib';
+import { customizationState } from '@modules/state/customization.slice';
+import { useSnapshot } from 'valtio';
 
 const RoomCanvas: React.FC = () => {
+  const customizationStateSnapshot = useSnapshot(customizationState);
+
   const onPointDraw = useCallback(
     (drawPointPayload: RoomDrawPointPayload) => {
       const { room } = roomState;
@@ -104,6 +108,20 @@ const RoomCanvas: React.FC = () => {
   useGetRoomCanvasStateSocket({ canvasRef });
   useDispatchRoomCanvasStateSocket({ canvasRef });
 
+  const generateCanvasStyles = useMemo(() => {
+    const { background } = customizationStateSnapshot;
+    const { enableGrid, gridSize } = background;
+
+    const styles: React.CSSProperties = {
+      backgroundImage: enableGrid
+        ? 'linear-gradient(to right, hsl(var(--border)), 1px, transparent 1px), linear-gradient(hsl(var(--border)), 1px, transparent 1px)'
+        : '',
+      backgroundSize: `${gridSize}px ${gridSize}px`,
+    };
+
+    return styles;
+  }, [customizationStateSnapshot]);
+
   return (
     <div ref={wrapperRef} className="h-full w-full">
       <canvas
@@ -113,11 +131,7 @@ const RoomCanvas: React.FC = () => {
         onMouseDown={handleOnMouseDown}
         width={0}
         height={0}
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, hsl(var(--border)), 1px, transparent 1px), linear-gradient(hsl(var(--border)), 1px, transparent 1px)',
-          backgroundSize: '10px 10px',
-        }}
+        style={generateCanvasStyles}
       />
     </div>
   );

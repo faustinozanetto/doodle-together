@@ -10,7 +10,7 @@ const NavbarLink: React.FC<NavbarLinkProps> = (props) => {
   const { href, label } = props;
 
   return (
-    <Link href={href} className="font-medium hover:text-primary-500">
+    <Link href={href} className="font-medium hover:text-primary">
       {label}
     </Link>
   );

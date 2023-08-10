@@ -14,7 +14,7 @@ export default async function HomePage() {
             <Button variant="ghost">Button</Button>
             <Button variant="outline">Button</Button>
             <Button variant="secondary">Button</Button>
-            <Button variant="danger">Button</Button>
+            <Button variant="destructive">Button</Button>
           </div>
         </div>
       </div>

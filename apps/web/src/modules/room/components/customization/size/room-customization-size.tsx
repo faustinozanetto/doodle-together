@@ -3,16 +3,16 @@
 import React from 'react';
 import { useSnapshot } from 'valtio';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
-import { Separator } from '@modules/ui/components/separator/separator';
 import { customizationActions, customizationState } from '@modules/state/customization.slice';
 import { RoomToolSize } from '@doodle-together/shared';
+import RoomCustomizationSection from '../room-customization-section';
 
 const TOOL_SIZES: ToolSizeOptionProps[] = [
   {
     size: 'small',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -29,7 +29,7 @@ const TOOL_SIZES: ToolSizeOptionProps[] = [
     size: 'medium',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -46,7 +46,7 @@ const TOOL_SIZES: ToolSizeOptionProps[] = [
     size: 'large',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -63,7 +63,7 @@ const TOOL_SIZES: ToolSizeOptionProps[] = [
     size: 'extra-large',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -96,7 +96,7 @@ const ToolSizeOption: React.FC<ToolSizeOptionProps> = (props) => {
   return (
     <IconButton
       aria-label={`${size} Size`}
-      variant={size === customizationSnapshot.size ? 'primary' : 'ghost'}
+      variant={size === customizationSnapshot.size ? 'default' : 'ghost'}
       onClick={handleSelectSize}
       icon={icon}
     />
@@ -105,15 +105,13 @@ const ToolSizeOption: React.FC<ToolSizeOptionProps> = (props) => {
 
 const RoomCustomizationSize: React.FC = () => {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-bold">Size</span>
-      <Separator />
+    <RoomCustomizationSection name="Size">
       <div className="flex gap-1 mx-auto">
         {TOOL_SIZES.map((size) => {
           return <ToolSizeOption key={size.size} {...size} />;
         })}
       </div>
-    </div>
+    </RoomCustomizationSection>
   );
 };
 

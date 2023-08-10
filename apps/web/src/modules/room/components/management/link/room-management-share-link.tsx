@@ -26,7 +26,12 @@ const RoomManagementShareLink: React.FC = () => {
   };
 
   return (
-    <RoomManagementTool label="Share Room Link" icon={<ShareIcon />} onToolClicked={handleToolClicked}>
+    <RoomManagementTool
+      label="Share Room Link"
+      variant="outline"
+      icon={<ShareIcon />}
+      onToolClicked={handleToolClicked}
+    >
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -36,7 +41,7 @@ const RoomManagementShareLink: React.FC = () => {
               instantly and work together on your masterpiece.
             </DialogDescription>
           </DialogHeader>
-          <div className="bg-foreground p-2 border rounded-lg shadow-lg flex justify-between items-center">
+          <div className="p-2 border rounded-lg shadow-lg flex justify-between items-center">
             <span className="text-ellipsis overflow-hidden whitespace-nowrap w-[24rem]">{roomLink}</span>
 
             <IconButton aria-label="Copy Room Link" icon={<CopyIcon />} onClick={handleCopyLink} />

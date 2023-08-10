@@ -16,7 +16,7 @@ const RoomManagement: React.FC = () => {
   const { isRoomOwner } = useIsRoomOwner(meSnapshot.me);
 
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto">
+    <div className="bg-background p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto">
       <span className="font-bold">Management</span>
       <Separator />
       <div className="flex gap-2">

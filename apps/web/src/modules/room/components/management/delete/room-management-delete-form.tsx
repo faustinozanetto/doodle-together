@@ -55,7 +55,7 @@ const RoomManagementDeleteForm: React.FC<RoomManagementDeleteFormProps> = (props
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <Button type="submit" variant="danger-solid">
+          <Button type="submit" variant="destructive">
             Delete
           </Button>
         </AlertDialogFooter>

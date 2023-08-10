@@ -22,6 +22,8 @@ import { UpdateRoomResponse } from './responses/update-room.response';
 import { IPasswordsService } from 'src/passwords/interfaces/passwords-service.interface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RoomDeletedEvent } from './events/room-deleted.event';
+import { RoomExistsInputParams } from './params/room-exists-input.params';
+import { RoomExistsResponse } from './responses/room-exists.response';
 
 @Injectable()
 export class RoomsService implements IRoomsService {
@@ -54,6 +56,7 @@ export class RoomsService implements IRoomsService {
 
   async deleteRoom(input: DeleteRoomInputParams): Promise<DeleteRoomResponse> {
     const { roomId } = input;
+
     await this.prismaService.room.delete({
       where: { id: roomId },
     });
@@ -66,9 +69,18 @@ export class RoomsService implements IRoomsService {
 
   async findRoom(input: FindRoomInputParams): Promise<FindRoomResponse> {
     const { roomId } = input;
+
     const room = await this.prismaService.room.findUnique({ where: { id: roomId }, include: { users: true } });
 
     return { room };
+  }
+
+  async roomExists(input: RoomExistsInputParams): Promise<RoomExistsResponse> {
+    const { roomId } = input;
+
+    const count = await this.prismaService.room.count({ where: { id: roomId } });
+
+    return { exists: count > 0 };
   }
 
   async updateRoom(input: UpdateRoomInputParams): Promise<UpdateRoomResponse> {
@@ -80,6 +92,8 @@ export class RoomsService implements IRoomsService {
       include: { users: true },
     });
 
+    if (!updatedRoom) throw new NotFoundException('Room not found!');
+
     return { updatedRoom };
   }
 
@@ -87,7 +101,6 @@ export class RoomsService implements IRoomsService {
     const { roomId, userId, password } = input;
 
     const { room } = await this.findRoom({ roomId });
-    if (!room) throw new NotFoundException('Room not found!');
 
     // Validate password
     const { isPasswordValid } = await this.passwordsService.validatePassword({

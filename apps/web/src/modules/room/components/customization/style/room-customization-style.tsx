@@ -6,13 +6,14 @@ import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { Separator } from '@modules/ui/components/separator/separator';
 import { customizationActions, customizationState } from '@modules/state/customization.slice';
 import { RoomToolStyle } from '@doodle-together/shared';
+import RoomCustomizationSection from '../room-customization-section';
 
 const TOOL_STYLES: ToolStyleOptionProps[] = [
   {
     style: 'solid',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -29,7 +30,7 @@ const TOOL_STYLES: ToolStyleOptionProps[] = [
     style: 'dotted',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -57,7 +58,7 @@ const TOOL_STYLES: ToolStyleOptionProps[] = [
     style: 'dashed',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -96,7 +97,7 @@ const ToolStyleOption: React.FC<ToolStyleOptionProps> = (props) => {
   return (
     <IconButton
       aria-label={`${style} Style`}
-      variant={style === customizationSnapshot.style ? 'primary' : 'ghost'}
+      variant={style === customizationSnapshot.style ? 'default' : 'ghost'}
       onClick={handleSelectStyle}
       icon={icon}
     />
@@ -105,15 +106,13 @@ const ToolStyleOption: React.FC<ToolStyleOptionProps> = (props) => {
 
 const RoomCustomizationStyle: React.FC = () => {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-bold">Style</span>
-      <Separator />
+    <RoomCustomizationSection name="Style">
       <div className="flex gap-1 mx-auto">
         {TOOL_STYLES.map((style) => {
           return <ToolStyleOption key={style.style} {...style} />;
         })}
       </div>
-    </div>
+    </RoomCustomizationSection>
   );
 };
 

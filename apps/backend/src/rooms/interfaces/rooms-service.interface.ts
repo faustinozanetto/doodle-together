@@ -14,6 +14,8 @@ import { LeaveRoomInputParams } from '../params/leave-room-input.params';
 import { RemoveUserFromRoomInputParams } from '../params/remove-user-to-room-input.params';
 import { UpdateRoomInputParams } from '../params/update-room-input.params';
 import { UpdateRoomResponse } from '../responses/update-room.response';
+import { RoomExistsInputParams } from '../params/room-exists-input.params';
+import { RoomExistsResponse } from '../responses/room-exists.response';
 
 export interface IRoomsService {
   /**
@@ -40,6 +42,12 @@ export interface IRoomsService {
    * @returns Find room response : room
    */
   findRoom(input: FindRoomInputParams): Promise<FindRoomResponse>;
+  /**
+   * Returns true or false if a room exists
+   * @param input Room exists input : roomId
+   * @returns True or false : exists
+   */
+  roomExists(input: RoomExistsInputParams): Promise<RoomExistsResponse>;
   /**
    * Joins a room by a given input
    * @param input Join room input : roomId & username

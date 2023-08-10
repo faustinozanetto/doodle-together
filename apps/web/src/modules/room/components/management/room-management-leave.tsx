@@ -59,9 +59,9 @@ const RoomManagementLeave: React.FC = () => {
   return (
     <RoomManagementTool
       label="Leave Room"
-      icon={<LeaveIcon />}
+      icon={<LeaveIcon className="stroke-current" />}
       onToolClicked={handleButtonClicked}
-      variant="danger-solid"
+      variant="destructive"
     >
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent>

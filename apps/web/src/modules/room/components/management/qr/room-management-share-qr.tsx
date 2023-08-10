@@ -23,7 +23,7 @@ const RoomManagementShareQR: React.FC = () => {
   };
 
   return (
-    <RoomManagementTool label="Share Room QR" icon={<QRCodeIcon />} onToolClicked={handleToolClicked}>
+    <RoomManagementTool label="Share Room QR" variant="outline" icon={<QRCodeIcon />} onToolClicked={handleToolClicked}>
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>

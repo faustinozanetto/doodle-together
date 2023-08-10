@@ -1,4 +1,4 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Logger, NotFoundException } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -100,6 +100,11 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async userJoined(@ConnectedSocket() socket: SocketWithAuth) {
     const { userId, username, roomId, id } = socket;
 
+    const { exists } = await this.roomsService.roomExists({ roomId });
+    if (!exists) return;
+
+    const { room } = await this.roomsService.addUserToRoom({ roomId, userId });
+
     this.logger.log('User Joined: ' + JSON.stringify({ userId, username, roomId, id }));
 
     const notificationPayload: SendNotificationSocketPayload = {
@@ -110,8 +115,6 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     };
 
     this.server.to(roomId).emit(SocketNames.SEND_NOTIFICATION, notificationPayload);
-
-    const { room } = await this.roomsService.addUserToRoom({ roomId, userId });
 
     const updateRoomPayload: UpdateRoomSocketPayload = {
       room,

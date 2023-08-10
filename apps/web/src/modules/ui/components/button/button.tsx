@@ -9,30 +9,22 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:
-          'bg-primary-300 dark:bg-primary-800 text-neutral-900 hover:bg-primary-400/90 dark:hover:bg-primary-700/90 dark:text-neutral-50',
-        secondary:
-          'bg-secondary-300 hover:bg-secondary-400 focus-visible:ring-secondary-400 dark:bg-secondary-800 dark:hover:bg-secondary-900 text-neutral-900 dark:text-neutral-50',
-        outline:
-          'border border-input bg-background hover:bg-primary-400 hover:text-accent-foreground dark:hover:bg-primary-900',
-        ghost:
-          'bg-transparent hover:bg-primary-300 focus-visible:ring-primary-400 dark:hover:bg-primary-900 text-neutral-900 dark:text-neutral-50',
-        danger:
-          'bg-transparent hover:bg-red-100 focus-visible:ring-red-400 dark:hover:bg-red-900 text-red-400 dark:text-neutral-50',
-        'danger-solid':
-          'bg-red-300 dark:bg-red-800 text-neutral-900 hover:bg-red-400 dark:hover:bg-red-700 dark:text-neutral-50',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
-        xs: 'text-xs h-6 px-3',
-        sm: 'text-sm h-8 px-4',
-        base: 'h-9 md:h-10 px-4',
-        lg: 'text-lg h-12 px-5',
-        xl: 'text-xl h-14 px-6',
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-md px-3',
+        lg: 'h-11 rounded-md px-8',
       },
     },
     defaultVariants: {
-      variant: 'primary',
-      size: 'base',
+      variant: 'default',
+      size: 'default',
     },
   }
 );

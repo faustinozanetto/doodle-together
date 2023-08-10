@@ -19,13 +19,13 @@ const RoomManagementUser: React.FC<RoomManagementUserProps> = (props) => {
   return (
     <div
       className={cn(
-        'flex gap-2 items-center bg-background shadow-lg rounded-lg border p-2',
-        isRoomOwner && 'border-primary-400 dark:border-primary-500 border-2'
+        'flex gap-2 items-center shadow-lg rounded-lg border p-2',
+        isRoomOwner && 'border-primary border-2'
       )}
     >
-      <div className="bg-foreground rounded-full shadow-lg border p-2">
+      <div className="rounded-full shadow-lg border p-2">
         <svg
-          className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+          className="h-5 w-5 stroke-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="none"

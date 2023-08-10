@@ -26,7 +26,7 @@ const RoomTool: React.FC<RoomToolProps> = (props) => {
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger aria-label={`${tool} Tool`} onClick={handleToolSelection}>
-          <div className={iconButtonVariants({ variant: customizationSnapshot.tool === tool ? 'primary' : 'ghost' })}>
+          <div className={iconButtonVariants({ variant: customizationSnapshot.tool === tool ? 'default' : 'ghost' })}>
             {icon}
           </div>
         </TooltipTrigger>

@@ -13,7 +13,7 @@ const TOOLS: ToolData[] = [
     tool: 'pencil',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -32,7 +32,7 @@ const TOOLS: ToolData[] = [
     tool: 'eraser',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -51,7 +51,7 @@ const TOOLS: ToolData[] = [
     tool: 'clear',
     icon: (
       <svg
-        className="h-5 w-5 stroke-neutral-900 dark:stroke-neutral-50"
+        className="h-5 w-5 stroke-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -79,7 +79,7 @@ const RoomTools: React.FC = () => {
   const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isRoomOwner));
 
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto">
+    <div className="bg-background  p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto">
       <span className="font-bold">Tools</span>
       <Separator />
       <div className="flex gap-2">

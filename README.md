@@ -78,7 +78,10 @@ REDIS_PASSWORD="redispassword"
 ROOM_EXPIRES=7200
 
 # Auth
-JWT_SECRET="supersecret"
+JWT_COOKIE_NAME=auth-cookie
+JWT_SECRET=supersecret
+JWT_EXPIRY=1d
+SALT_ROUNDS=10
 
 # App
 APP_PORT=4000

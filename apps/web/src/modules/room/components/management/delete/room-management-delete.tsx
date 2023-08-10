@@ -52,9 +52,9 @@ const RoomManagementDelete: React.FC = () => {
   return (
     <RoomManagementTool
       label="Delete Room"
-      icon={<DeleteIcon />}
+      icon={<DeleteIcon className="stroke-current" />}
       onToolClicked={handleButtonClicked}
-      variant="danger-solid"
+      variant="destructive"
     >
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent>

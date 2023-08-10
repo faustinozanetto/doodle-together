@@ -12,7 +12,7 @@ const RoomUsers: React.FC = () => {
   const { users } = useRoomUsers({ sortUsers: true });
 
   return (
-    <div className="bg-foreground p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto min-w-[10rem]">
+    <div className="bg-background p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto min-w-[10rem]">
       <span className="font-bold">Users</span>
       <Separator />
       <ul className="flex flex-col gap-2">
