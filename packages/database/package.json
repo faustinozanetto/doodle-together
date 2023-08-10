@@ -22,7 +22,7 @@
     "db:seed": "tsx src/seed.ts",
     "dev": "tsup --watch",
     "format": "prisma format",
-    "generate": "prisma generate --schema=../../packages/database/prisma/schema.prisma",
+    "generate": "prisma generate",
     "lint": "eslint \"src/**/*.ts\"",
     "prebuild": "npm run generate",
     "predev": "npm run generate",

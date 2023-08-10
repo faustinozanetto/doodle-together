@@ -19,7 +19,7 @@
     "db:seed": "turbo run db:seed",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "generate": "turbo run generate",
+    "generate": "turbo run generate -- --schema='../../packages/database/prisma/schema.prisma'",
     "lint": "turbo run lint"
   },
   "devDependencies": {
