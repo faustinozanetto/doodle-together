@@ -18,6 +18,7 @@ import { Input } from '@modules/ui/components/forms/input';
 import { AlertDialogCancel, AlertDialogFooter } from '@modules/ui/components/alert-dialog/alert-dialog';
 import { z } from 'zod';
 import { Button } from '@modules/ui/components/button/button';
+import { roomState } from '@modules/state/room.slice';
 
 export type DeleteRoomFormData = z.infer<typeof deleteRoomValidationSchema>;
 
@@ -41,11 +42,12 @@ const RoomManagementDeleteForm: React.FC<RoomManagementDeleteFormProps> = (props
           name="roomId"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel>Room ID</FormLabel>
+              <FormLabel>
+                Type <span className="font-bold">{roomState.room?.id}</span> to confirm
+              </FormLabel>
               <FormControl>
                 <Input placeholder="3DA243K" {...field} />
               </FormControl>
-              <FormDescription>Current room id</FormDescription>
               <FormMessage />
             </FormItem>
           )}

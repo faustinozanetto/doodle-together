@@ -62,11 +62,7 @@ const RoomManagementDelete: React.FC = () => {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogDescription>
-            Please type the room id
-            <span className="font-bold bg-foreground p-1 rounded-lg border text-primary-600 dark:text-primary-400 wrap mx-1">
-              {roomState.room?.id}
-            </span>
-            below to confirm this action. Keep in mind this is a irreversible event!
+            Deleting the room will result in removing all current users. Keep in mind this is a irreversible event!
           </AlertDialogDescription>
           <RoomManagementDeleteForm onSubmit={handleDeleteRoom} />
         </AlertDialogContent>
