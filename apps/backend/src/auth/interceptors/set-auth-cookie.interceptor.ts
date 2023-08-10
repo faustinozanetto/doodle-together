@@ -29,7 +29,6 @@ export class SetAuthCookieInterceptor implements NestInterceptor {
           httpOnly: true,
           sameSite: 'none',
           secure: true,
-          domain: this.configService.get('FRONTEND_ENDPOINT'),
           maxAge: 1000 * 60 * 60 * 24, // 1 day
         });
 
