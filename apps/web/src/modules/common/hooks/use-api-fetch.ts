@@ -8,7 +8,6 @@ export const useApiFetch = <TData>(endpoint: string) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT}/api${endpoint}`, {
       credentials: 'include',
       headers: {
-        'Access-Control-Allow-Credentials': 'true',
         'Content-Type': 'application/json',
         ...options?.headers,
       },
