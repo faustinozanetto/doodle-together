@@ -15,11 +15,14 @@ async function bootstrap() {
   app.useWebSocketAdapter(new SocketAdapter(app));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
-  app.use(cookieParser());
+
   app.enableCors({
     origin: configService.get('FRONTEND_ENDPOINT'),
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
     credentials: true,
   });
+
+  app.use(cookieParser());
 
   const port = configService.get('APP_PORT');
 

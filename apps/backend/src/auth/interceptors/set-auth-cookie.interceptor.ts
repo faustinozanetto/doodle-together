@@ -29,7 +29,8 @@ export class SetAuthCookieInterceptor implements NestInterceptor {
           httpOnly: true,
           sameSite: 'none',
           secure: true,
-          maxAge: 1000 * 60 * 60 * 24, // 1 day
+          maxAge: 1000 * 60 * 60 * 24, // 1 day,
+          path: '/',
         });
 
         return { room, user };
