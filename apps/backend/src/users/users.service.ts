@@ -23,6 +23,7 @@ export class UsersService implements IUsersService {
       data: {
         username,
       },
+      include: { room: { select: { id: true, ownerId: true } } },
     });
 
     return { user };
@@ -44,6 +45,7 @@ export class UsersService implements IUsersService {
 
     const user = await this.prismaService.user.findUnique({
       where: { id: userId },
+      include: { room: { select: { id: true, ownerId: true } } },
     });
 
     return { user };
@@ -55,6 +57,7 @@ export class UsersService implements IUsersService {
     const updatedUser = await this.prismaService.user.update({
       where: { id: userId },
       data,
+      include: { room: { select: { id: true, ownerId: true } } },
     });
 
     return { updatedUser };

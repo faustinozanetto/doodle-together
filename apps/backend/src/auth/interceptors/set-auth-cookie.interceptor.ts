@@ -29,11 +29,16 @@ export class SetAuthCookieInterceptor implements NestInterceptor {
 
         this.logger.log(`Creating access token cookie for user with userId: ${user.id} and username: ${user.username}`);
 
+        const oneDayInSeconds = 24 * 60 * 60; // 1 day in seconds
+
+        const expirationDate = new Date();
+        expirationDate.setTime(expirationDate.getTime() + oneDayInSeconds * 1000);
+
         response.cookie(this.configService.get('JWT_COOKIE_NAME'), accessToken, {
+          expires: expirationDate,
           httpOnly: true,
-          sameSite: false,
           secure: true,
-          maxAge: 1000 * 60 * 60 * 24, // 1 day,
+          sameSite: 'none',
         });
 
         return { room, user };
