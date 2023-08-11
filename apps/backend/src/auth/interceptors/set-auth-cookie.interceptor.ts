@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Inject, Injectable, Logger, NestInterceptor } from '@nestjs/common';
 import { map } from 'rxjs';
 import { Services } from 'src/utils/constants';
 import { IAuthService } from '../interfaces/auth-service.interface';
@@ -8,6 +8,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SetAuthCookieInterceptor implements NestInterceptor {
+  private logger = new Logger(SetAuthCookieInterceptor.name);
+
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
     @Inject(Services.AUTH_SERVICE) private readonly authService: IAuthService
@@ -25,12 +27,13 @@ export class SetAuthCookieInterceptor implements NestInterceptor {
           username: user.username,
         });
 
+        this.logger.log(`Creating access token cookie for user with userId: ${user.id} and username: ${user.username}`);
+
         response.cookie(this.configService.get('JWT_COOKIE_NAME'), accessToken, {
           httpOnly: true,
-          sameSite: 'none',
+          sameSite: false,
           secure: true,
           maxAge: 1000 * 60 * 60 * 24, // 1 day,
-          path: '/',
         });
 
         return { room, user };

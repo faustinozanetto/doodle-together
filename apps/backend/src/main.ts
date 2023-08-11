@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SocketAdapter } from './gateway/gateway.adapter';
-
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
@@ -12,13 +11,12 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  app.useWebSocketAdapter(new SocketAdapter(app));
   app.setGlobalPrefix('api');
+  app.useWebSocketAdapter(new SocketAdapter(app));
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
     origin: configService.get('FRONTEND_ENDPOINT'),
-    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
     credentials: true,
   });
 
