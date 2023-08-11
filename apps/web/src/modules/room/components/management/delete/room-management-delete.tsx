@@ -1,15 +1,12 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LeaveRoomApiResponse } from '@doodle-together/shared';
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@modules/ui/components/alert-dialog/alert-dialog';
@@ -24,12 +21,20 @@ import RoomManagementDeleteForm, { DeleteRoomFormData } from './room-management-
 
 const RoomManagementDelete: React.FC = () => {
   const router = useRouter();
+  const { toast } = useToast();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-  const { fetchData } = useApiFetch<LeaveRoomApiResponse>(`/rooms/${roomState.room?.id ?? ''}`);
+  const { state, fetch } = useApiFetch<LeaveRoomApiResponse>({
+    endpoint: `/rooms/${roomState.room?.id ?? ''}`,
+    onDataFetched: (data) => {
+      const { left } = data;
+      if (!left) return;
 
-  const { toast } = useToast();
+      toast({ variant: 'success', content: 'Room deleted successfully!' });
+      router.push('/');
+    },
+  });
 
   const handleDeleteRoom = async (data: DeleteRoomFormData) => {
     const { room } = roomState;
@@ -37,12 +42,9 @@ const RoomManagementDelete: React.FC = () => {
 
     if (!room || !me) return;
 
-    await fetchData({
+    await fetch({
       method: 'DELETE',
     });
-
-    toast({ variant: 'success', content: 'Room deleted successfully!' });
-    router.replace('/');
   };
 
   const handleButtonClicked = () => {
@@ -64,7 +66,7 @@ const RoomManagementDelete: React.FC = () => {
           <AlertDialogDescription>
             Deleting the room will result in removing all current users. Keep in mind this is a irreversible event!
           </AlertDialogDescription>
-          <RoomManagementDeleteForm onSubmit={handleDeleteRoom} />
+          <RoomManagementDeleteForm onSubmit={handleDeleteRoom} isLoading={state.isLoading} />
         </AlertDialogContent>
       </AlertDialog>
     </RoomManagementTool>

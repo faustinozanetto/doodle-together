@@ -19,15 +19,17 @@ import { AlertDialogCancel, AlertDialogFooter } from '@modules/ui/components/ale
 import { z } from 'zod';
 import { Button } from '@modules/ui/components/button/button';
 import { roomState } from '@modules/state/room.slice';
+import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
 
 export type DeleteRoomFormData = z.infer<typeof deleteRoomValidationSchema>;
 
 type RoomManagementDeleteFormProps = {
+  isLoading: boolean;
   onSubmit: (data: DeleteRoomFormData) => void;
 };
 
 const RoomManagementDeleteForm: React.FC<RoomManagementDeleteFormProps> = (props) => {
-  const { onSubmit } = props;
+  const { isLoading, onSubmit } = props;
 
   const form = useForm({
     resolver: zodResolver(deleteRoomValidationSchema),
@@ -56,6 +58,7 @@ const RoomManagementDeleteForm: React.FC<RoomManagementDeleteFormProps> = (props
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button type="submit" variant="destructive">
+            {isLoading && <LoadingIcon className="stroke-current mr-2" />}
             Delete
           </Button>
         </AlertDialogFooter>

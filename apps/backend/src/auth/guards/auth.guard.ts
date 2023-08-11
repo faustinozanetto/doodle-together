@@ -3,7 +3,7 @@ import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedExceptio
 import cookie from 'cookie';
 import { ConfigService } from '@nestjs/config';
 import { Services } from 'src/utils/constants';
-import { IAuthService } from '../interfaces/auth-service.interface';
+import { type IAuthService } from '../interfaces/auth-service.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

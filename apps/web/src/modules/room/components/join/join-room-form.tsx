@@ -24,12 +24,12 @@ import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
 export type JoinRoomFormData = z.infer<typeof joinRoomValidationSchema>;
 
 type JoinRoomFormProps = {
-  isPending: boolean;
+  isLoading: boolean;
   onSubmit: (formData: JoinRoomFormData) => void;
 };
 
 const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
-  const { onSubmit, isPending } = props;
+  const { onSubmit, isLoading } = props;
 
   const searchParams = useSearchParams();
 
@@ -91,7 +91,7 @@ const JoinRoomForm: React.FC<JoinRoomFormProps> = (props) => {
         />
 
         <Button aria-label="Join Room" type="submit" className="w-full">
-          {isPending && <LoadingIcon />}
+          {isLoading && <LoadingIcon className="stroke-current mr-2" />}
           Join Room
         </Button>
       </form>

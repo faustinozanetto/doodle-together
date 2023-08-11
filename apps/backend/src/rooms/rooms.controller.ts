@@ -1,5 +1,6 @@
 import {
   ForbiddenException,
+  Get,
   Inject,
   Logger,
   Param,
@@ -9,17 +10,25 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { Body, Delete, Controller, Post } from '@nestjs/common';
-import { CreateRoomApiResponse, JoinRoomApiResponse, LeaveRoomApiResponse } from '@doodle-together/shared';
+import {
+  CreateRoomApiResponse,
+  GetRoomApiResponse,
+  JoinRoomApiResponse,
+  LeaveRoomApiResponse,
+} from '@doodle-together/shared';
 import { Services } from 'src/utils/constants';
-import { IRoomsService } from './interfaces/rooms-service.interface';
-import { IUsersService } from 'src/users/interfaces/users-service.interface';
+import { type IRoomsService } from './interfaces/rooms-service.interface';
+import { type IUsersService } from 'src/users/interfaces/users-service.interface';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
-import { User } from '@doodle-together/database';
+import { type User } from '@doodle-together/database';
 import { ServerGateway } from 'src/gateway/gateway';
 import { SetAuthCookieInterceptor } from 'src/auth/interceptors/set-auth-cookie.interceptor';
 import { ClearAuthCookieInterceptor } from 'src/auth/interceptors/clear-auth-cookie.interceptor';
+import { CreateRoomDto } from './dto/create-room.dto';
+import { JoinRoomDto } from './dto/join-room.dto';
+import { LeaveRoomDto } from './dto/leave-room.dto';
 
 @UsePipes(new ValidationPipe())
 @Controller('rooms')
@@ -33,9 +42,16 @@ export class RoomsController {
     @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService
   ) {}
 
+  @Get(':roomId')
+  async get(@Param('roomId') roomId: string): Promise<GetRoomApiResponse> {
+    const { room } = await this.roomsService.findRoom({ roomId });
+
+    return { room };
+  }
+
   @Post('/create')
   @UseInterceptors(SetAuthCookieInterceptor)
-  async create(@Body() body: { username: string; password: string }): Promise<CreateRoomApiResponse> {
+  async create(@Body() body: CreateRoomDto): Promise<CreateRoomApiResponse> {
     const { username, password } = body;
 
     const { user: roomOwner } = await this.usersService.createUser({ username });
@@ -49,7 +65,7 @@ export class RoomsController {
 
   @Post('/join')
   @UseInterceptors(SetAuthCookieInterceptor)
-  async join(@Body() body: { roomId: string; username: string; password: string }): Promise<JoinRoomApiResponse> {
+  async join(@Body() body: JoinRoomDto): Promise<JoinRoomApiResponse> {
     const { roomId, username, password } = body;
 
     const { user } = await this.usersService.createUser({ username });
@@ -61,7 +77,7 @@ export class RoomsController {
   @Post('/leave')
   @UseGuards(AuthGuard)
   @UseInterceptors(ClearAuthCookieInterceptor)
-  async leave(@Body() body: { roomId: string; userId: string; roomDeleted: boolean }): Promise<LeaveRoomApiResponse> {
+  async leave(@Body() body: LeaveRoomDto): Promise<LeaveRoomApiResponse> {
     const { roomId, userId, roomDeleted } = body;
 
     let left = true;

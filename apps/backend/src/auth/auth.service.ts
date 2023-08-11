@@ -7,7 +7,7 @@ import { GenerateAccessTokenResponse } from './responses/generate-access-token.r
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Services } from 'src/utils/constants';
-import { IUsersService } from 'src/users/interfaces/users-service.interface';
+import { type IUsersService } from 'src/users/interfaces/users-service.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {

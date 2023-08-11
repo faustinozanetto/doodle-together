@@ -1,7 +1,7 @@
 import { CallHandler, ExecutionContext, Inject, Injectable, Logger, NestInterceptor } from '@nestjs/common';
 import { map } from 'rxjs';
 import { Services } from 'src/utils/constants';
-import { IAuthService } from '../interfaces/auth-service.interface';
+import { type IAuthService } from '../interfaces/auth-service.interface';
 import { Response } from 'express';
 import { Room, User } from '@doodle-together/database';
 import { ConfigService } from '@nestjs/config';

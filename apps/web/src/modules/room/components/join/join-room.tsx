@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useTransition } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { JoinRoomApiResponse } from '@doodle-together/shared';
@@ -15,25 +15,23 @@ const JoinRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
-  const { fetchData } = useApiFetch<JoinRoomApiResponse>('/rooms/join');
 
-  const [isPending, startTransition] = useTransition();
-
-  const handleRoomJoin = (formData: JoinRoomFormData) => {
-    startTransition(async () => {
-      const response = await fetchData({
-        method: 'POST',
-        body: JSON.stringify(formData),
-      });
-
-      if (!response) return;
-
-      const { room } = response;
+  const { state, fetch } = useApiFetch<JoinRoomApiResponse>({
+    endpoint: '/rooms/join',
+    onDataFetched: (data) => {
+      const { room } = data;
 
       roomActions.setRoom(room);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
-      router.replace(`/room/${room.id}`);
+      router.push(`/room/${room.id}`);
+    },
+  });
+
+  const handleRoomJoin = async (formData: JoinRoomFormData) => {
+    await fetch({
+      method: 'POST',
+      data: { ...formData },
     });
   };
 
@@ -43,7 +41,7 @@ const JoinRoom: React.FC = () => {
         <h1 className="text-2xl font-semibold leading-none tracking-tight">Join Room</h1>
         <p className="text-sm text-muted-foreground">Unleash Your Artistic Bond. Doodle Together - Enter a Room!</p>
       </div>
-      <JoinRoomForm onSubmit={handleRoomJoin} isPending={isPending} />
+      <JoinRoomForm onSubmit={handleRoomJoin} isLoading={state.isLoading} />
       {/* Create Room */}
       <div className="flex flex-col gap-2 text-center">
         <span className="text-xs font-semibold">OR</span>

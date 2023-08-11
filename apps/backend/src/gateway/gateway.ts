@@ -1,4 +1,4 @@
-import { Inject, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Logger, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -10,29 +10,32 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { SocketWithAuth } from 'src/rooms/types';
+import { type SocketWithAuth } from 'src/rooms/types';
 import { Services } from 'src/utils/constants';
 
-import { IGatewaySessionManager } from './interfaces/gateway-session-manager.interface';
+import { type IGatewaySessionManager } from './interfaces/gateway-session-manager.interface';
 
-import { IRoomsService } from 'src/rooms/interfaces/rooms-service.interface';
+import { type IRoomsService } from 'src/rooms/interfaces/rooms-service.interface';
 import {
   SocketNames,
-  DrawPointSocketPayload,
-  UpdateCanvasStateSocketPayload,
-  RequestCanvasStateSocketPayload,
-  SendCanvasStateSocketPayload,
-  CanvasClearedSocketPayload,
-  SendNotificationSocketPayload,
-  UpdateRoomSocketPayload,
-  GetCanvasStateSocketPayload,
-  DispatchCanvasStateSocketPayload,
-  KickUserSocketPayload,
-  DrawEraserSocketPayload,
+  type DrawPointSocketPayload,
+  type UpdateCanvasStateSocketPayload,
+  type RequestCanvasStateSocketPayload,
+  type SendCanvasStateSocketPayload,
+  type CanvasClearedSocketPayload,
+  type SendNotificationSocketPayload,
+  type UpdateRoomSocketPayload,
+  type GetCanvasStateSocketPayload,
+  type DispatchCanvasStateSocketPayload,
+  type KickUserSocketPayload,
+  type DrawEraserSocketPayload,
 } from '@doodle-together/shared';
-import { IUsersService } from 'src/users/interfaces/users-service.interface';
-import { IGatewayRoomsManager } from './interfaces/gateway-rooms-manager.interface';
+import { type IUsersService } from 'src/users/interfaces/users-service.interface';
+import { type IGatewayRoomsManager } from './interfaces/gateway-rooms-manager.interface';
+import { GatewayExceptionsFilter } from './filters/gatway-exceptions.filter';
 
+@UsePipes(new ValidationPipe())
+@UseFilters(new GatewayExceptionsFilter())
 @WebSocketGateway({
   namespace: 'rooms',
 })
@@ -56,6 +59,9 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async handleConnection(socket: SocketWithAuth) {
     const { id, roomId, userId, username } = socket;
 
+    const { exists } = await this.roomsService.roomExists({ roomId });
+    if (!exists) return;
+
     this.logger.log(`Connection established to socketId: ${id} and username: ${username}`);
     this.sessionManager.addUserToSessions(userId, { socketId: id, username });
 
@@ -64,6 +70,10 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   async handleDisconnect(socket: SocketWithAuth) {
     const { id, roomId, userId, username } = socket;
+
+    const { exists } = await this.roomsService.roomExists({ roomId });
+    if (!exists) return;
+
     this.logger.log(`Connection terminated from socketId: ${id}`);
     this.sessionManager.removeUserFromSessions(userId);
 
@@ -96,8 +106,8 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   /* Room Gateway Section */
-  @SubscribeMessage(SocketNames.USER_JOINED)
-  async userJoined(@ConnectedSocket() socket: SocketWithAuth) {
+  @SubscribeMessage(SocketNames.CLIENT_READY)
+  async clientReady(@ConnectedSocket() socket: SocketWithAuth) {
     const { userId, username, roomId, id } = socket;
 
     const { exists } = await this.roomsService.roomExists({ roomId });
@@ -126,6 +136,9 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage(SocketNames.KICK_USER)
   async kickUser(@MessageBody() data: KickUserSocketPayload): Promise<void> {
     const { roomId, userId } = data;
+
+    const { exists } = await this.roomsService.roomExists({ roomId });
+    if (!exists) return;
 
     const { room } = await this.roomsService.findRoom({
       roomId,
@@ -191,12 +204,15 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       userId,
     };
 
+    const { exists } = await this.roomsService.roomExists({ roomId });
+    if (!exists) return;
+
     const { room } = await this.roomsService.findRoom({
       roomId,
     });
 
     // If there are no more users than the requestor return.
-    if (!room || room.users.length === 0) return;
+    if (room.users.length === 0) return;
 
     // Sort by owner priority
     const sortedUsers = room.users.sort((user) => {

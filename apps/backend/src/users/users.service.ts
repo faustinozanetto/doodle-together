@@ -1,7 +1,7 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 
 import { PrismaService } from 'src/prisma/prisma.service';
-import { IUsersService } from './interfaces/users-service.interface';
+import { type IUsersService } from './interfaces/users-service.interface';
 import { CreateUserInputParams } from './params/create-user-input.params';
 import { DeleteUserInputParams } from './params/delete-user-input.params';
 import { FindUserInputParams } from './params/find-user-input.params';
@@ -19,6 +19,7 @@ export class UsersService implements IUsersService {
 
   async createUser(input: CreateUserInputParams): Promise<CreateUserResponse> {
     const { username } = input;
+
     const user = await this.prismaService.user.create({
       data: {
         username,

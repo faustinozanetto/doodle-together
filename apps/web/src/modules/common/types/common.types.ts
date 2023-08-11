@@ -1,5 +1,3 @@
-export type ApiResponseData<T = unknown> = { data: T | null; message: string };
-
 export type ActionMap<M extends { [index: string]: unknown }> = {
   [Key in keyof M]: M[Key] extends undefined
     ? {

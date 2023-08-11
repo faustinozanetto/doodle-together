@@ -24,12 +24,21 @@ import RoomManagementTool from './room-management-tool';
 
 const RoomManagementLeave: React.FC = () => {
   const router = useRouter();
+  const { toast } = useToast();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-  const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
+  const { fetch } = useApiFetch<LeaveRoomApiResponse>({
+    endpoint: '/rooms/leave',
+    onDataFetched: (data) => {
+      const { left } = data;
+      if (!left) return;
 
-  const { toast } = useToast();
+      socketState.socket?.disconnect();
+      toast({ variant: 'success', content: 'Room left successfully!' });
+      router.push('/');
+    },
+  });
 
   const handleLeaveRoom = useCallback(async () => {
     const { room } = roomState;
@@ -37,19 +46,14 @@ const RoomManagementLeave: React.FC = () => {
 
     if (!room || !me) return;
 
-    await fetchData({
+    await fetch({
       method: 'POST',
-      body: JSON.stringify({
+      data: {
         roomId: room.id,
         userId: me.id,
         roomDeleted: false,
-      }),
+      },
     });
-
-    socketState.socket?.disconnect();
-
-    toast({ variant: 'success', content: 'Room left successfully!' });
-    router.replace('/');
   }, [roomState.room, meState.me]);
 
   const handleButtonClicked = () => {

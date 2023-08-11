@@ -9,7 +9,16 @@ import { useEffect } from 'react';
 export const useDeleteRoomSocket = () => {
   const router = useRouter();
 
-  const { fetchData } = useApiFetch<LeaveRoomApiResponse>('/rooms/leave');
+  const { fetch } = useApiFetch<LeaveRoomApiResponse>({
+    endpoint: '/rooms/leave',
+    onDataFetched: (data) => {
+      const { left } = data;
+      if (!left) return;
+
+      socketState.socket?.disconnect();
+      router.push('/');
+    },
+  });
 
   useEffect(() => {
     socketState.socket?.on(SocketNames.DELETE_ROOM, async () => {
@@ -18,19 +27,14 @@ export const useDeleteRoomSocket = () => {
 
       if (!room || !me) return;
 
-      const response = await fetchData({
+      await fetch({
         method: 'POST',
-        body: JSON.stringify({
+        data: {
           roomId: room.id,
           userId: me.id,
           roomDeleted: true,
-        }),
+        },
       });
-
-      if (!response) return;
-
-      socketState.socket?.disconnect();
-      router.push('/');
     });
 
     return () => {

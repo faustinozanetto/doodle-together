@@ -23,12 +23,12 @@ import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
 export type CreateRoomFormData = z.infer<typeof createRoomValidationSchema>;
 
 type CreateRoomFormProps = {
-  isPending: boolean;
+  isLoading: boolean;
   onSubmit: (data: CreateRoomFormData) => void;
 };
 
 const CreateRoomForm: React.FC<CreateRoomFormProps> = (props) => {
-  const { onSubmit, isPending } = props;
+  const { onSubmit, isLoading } = props;
 
   const form = useForm<CreateRoomFormData>({
     resolver: zodResolver(createRoomValidationSchema),
@@ -69,7 +69,7 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = (props) => {
         />
 
         <Button aria-label="Create Room" type="submit" className="w-full">
-          {isPending && <LoadingIcon />}
+          {isLoading && <LoadingIcon className="stroke-current mr-2" />}
           Create Room
         </Button>
       </form>

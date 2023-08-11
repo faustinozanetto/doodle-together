@@ -1,9 +1,6 @@
 import { Room, User } from '@doodle-together/database';
 import { CanvasPoint, RoomToolSize, RoomWithUsers } from '.';
 
-export type UserJoinedSocketPayload = {};
-export type UserLeftSocketPayload = {};
-
 export type CanvasClearedSocketPayload = {
   roomId: Room['id'];
 };
