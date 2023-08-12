@@ -30,6 +30,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { JoinRoomDto } from './dto/join-room.dto';
 import { LeaveRoomDto } from './dto/leave-room.dto';
 import { type IAuthService } from 'src/auth/interfaces/auth-service.interface';
+import { RoomOwnerGuard } from './guards/room-owner.guard';
 
 @UsePipes(new ValidationPipe())
 @Controller('rooms')
@@ -105,15 +106,9 @@ export class RoomsController {
   }
 
   @Delete(':roomId')
-  @UseGuards(AuthGuard)
-  async delete(@Param('roomId') roomId: string, @CurrentUser() user: User) {
-    const { room } = await this.roomsService.findRoom({ roomId });
-
-    if (room.ownerId !== user.id) {
-      throw new ForbiddenException('Not allowed!');
-    }
-
-    this.logger.log(`Deleting room with roomId: ${room.id}`);
+  @UseGuards(RoomOwnerGuard)
+  async delete(@Param('roomId') roomId: string) {
+    this.logger.log(`Deleting room with roomId: ${roomId}`);
 
     // Mark room as deleted.
     this.gateway.roomsManager.updateRoom(roomId, { isDeleted: true });

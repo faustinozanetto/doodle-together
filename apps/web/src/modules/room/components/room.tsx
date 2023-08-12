@@ -38,6 +38,8 @@ const Room: React.FC<RoomProps> = (props) => {
   useKickRequestRoomSocket();
 
   useEffect(() => {
+    if (!room) return router.push('/');
+
     const accessToken = localStorage.getItem('accessToken');
 
     if (!accessToken) {
@@ -46,34 +48,38 @@ const Room: React.FC<RoomProps> = (props) => {
       return router.push(joinRoomURL.toString());
     }
 
-    const { sub: userId, roomId, username, exp: accessTokenExpiry } = getDataFromToken(accessToken);
+    try {
+      const { sub: userId, roomId, username, exp: accessTokenExpiry } = getDataFromToken(accessToken);
 
-    const currentTimeInSeconds = Date.now() / 1000;
-    if (accessTokenExpiry <= currentTimeInSeconds) {
-      meActions.clearAccessToken();
+      const currentTimeInSeconds = Date.now() / 1000;
+      if (accessTokenExpiry <= currentTimeInSeconds) {
+        meActions.clearAccessToken();
+        return router.push('/');
+      }
+
+      const user: User = {
+        id: userId,
+        roomId,
+        username,
+      };
+
+      roomActions.setRoom(room);
+      meActions.setMe(user);
+      meActions.setAccessToken(accessToken);
+
+      socketActions.initializeSocket();
+
+      // Send a socket to request the current canvas state.
+      const requestCanvasStatePayload: RequestCanvasStateSocketPayload = {
+        roomId: room.id,
+        userId: user.id,
+      };
+
+      socketState.socket?.emit(SocketNames.CLIENT_READY);
+      socketState.socket?.emit(SocketNames.REQUEST_CANVAS_STATE, requestCanvasStatePayload);
+    } catch (err) {
       return router.push('/');
     }
-
-    const user: User = {
-      id: userId,
-      roomId,
-      username,
-    };
-
-    roomActions.setRoom(room);
-    meActions.setMe(user);
-    meActions.setAccessToken(accessToken);
-
-    socketActions.initializeSocket();
-
-    // Send a socket to request the current canvas state.
-    const requestCanvasStatePayload: RequestCanvasStateSocketPayload = {
-      roomId: room.id,
-      userId: user.id,
-    };
-
-    socketState.socket?.emit(SocketNames.CLIENT_READY);
-    socketState.socket?.emit(SocketNames.REQUEST_CANVAS_STATE, requestCanvasStatePayload);
   }, []);
 
   return (

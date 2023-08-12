@@ -27,3 +27,7 @@ export type GetRoomApiResponse = {
 export type LeaveRoomApiResponse = {
   left: boolean;
 };
+
+export type DeleteRoomApiResponse = {
+  deleted: boolean;
+};

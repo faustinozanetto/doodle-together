@@ -44,7 +44,7 @@ const RoomManagementLeave: React.FC = () => {
 
   const handleLeaveRoom = useCallback(async () => {
     const { room } = roomState;
-    const { me } = meState;
+    const { me, accessToken } = meState;
 
     if (!room || !me) return;
 
@@ -54,6 +54,9 @@ const RoomManagementLeave: React.FC = () => {
         roomId: room.id,
         userId: me.id,
         roomDeleted: false,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
     });
   }, [roomState.room, meState.me]);

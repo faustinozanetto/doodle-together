@@ -23,9 +23,12 @@ export const useDeleteRoomSocket = () => {
   useEffect(() => {
     socketState.socket?.on(SocketNames.DELETE_ROOM, async () => {
       const { room } = roomState;
-      const { me } = meState;
+      const { me, accessToken } = meState;
 
       if (!room || !me) return;
+
+      // Dont post to leave if is room owner.
+      if (room.ownerId === me.id) return;
 
       await fetch({
         method: 'POST',
@@ -33,6 +36,9 @@ export const useDeleteRoomSocket = () => {
           roomId: room.id,
           userId: me.id,
           roomDeleted: true,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
       });
     });

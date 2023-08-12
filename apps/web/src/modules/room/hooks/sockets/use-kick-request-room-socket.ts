@@ -23,7 +23,7 @@ export const useKickRequestRoomSocket = () => {
   useEffect(() => {
     socketState.socket?.on(SocketNames.KICK_REQUEST, async () => {
       const { room } = roomState;
-      const { me } = meState;
+      const { me, accessToken } = meState;
 
       if (!room || !me) return;
 
@@ -33,6 +33,9 @@ export const useKickRequestRoomSocket = () => {
           roomId: room.id,
           userId: me.id,
           roomDeleted: false,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
       });
     });

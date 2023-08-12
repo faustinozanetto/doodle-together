@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LeaveRoomApiResponse } from '@doodle-together/shared';
+import { DeleteRoomApiResponse } from '@doodle-together/shared';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -25,11 +25,12 @@ const RoomManagementDelete: React.FC = () => {
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-  const { state, fetch } = useApiFetch<LeaveRoomApiResponse>({
+  const { state, fetch } = useApiFetch<DeleteRoomApiResponse>({
     endpoint: `/rooms/${roomState.room?.id ?? ''}`,
     onDataFetched: (data) => {
-      const { left } = data;
-      if (!left) return;
+      const { deleted } = data;
+
+      if (!deleted) return;
 
       meActions.clearAccessToken();
 
@@ -39,14 +40,15 @@ const RoomManagementDelete: React.FC = () => {
   });
 
   const handleDeleteRoom = async (data: DeleteRoomFormData) => {
-    const { room } = roomState;
-    const { me } = meState;
+    const { me, accessToken } = meState;
 
-    if (!room || !me) return;
+    if (!me) return;
 
     await fetch({
       method: 'DELETE',
-      data: {},
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   };
 

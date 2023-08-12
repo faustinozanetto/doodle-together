@@ -8,6 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Services } from 'src/utils/constants';
 import { type IUsersService } from 'src/users/interfaces/users-service.interface';
+import { DecodeAccessTokenInputParams } from './params/decode-access-token-input.params';
+import { DecodeAccessTokenResponse } from './responses/decode-access-token.reseponse';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -43,6 +45,18 @@ export class AuthService implements IAuthService {
       return { user };
     } catch (error) {
       throw new UnauthorizedException();
+    }
+  }
+
+  async decodeAccessToken(input: DecodeAccessTokenInputParams): Promise<DecodeAccessTokenResponse> {
+    const { accessToken } = input;
+
+    try {
+      const { sub, roomId, exp } = await this.jwtService.verifyAsync(accessToken);
+
+      return { sub, roomId, exp };
+    } catch (err) {
+      throw new UnauthorizedException('Not authorized!');
     }
   }
 }
