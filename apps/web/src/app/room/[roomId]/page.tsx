@@ -18,22 +18,22 @@ type RoomPageProps = {
 const RoomPage: React.FC<RoomPageProps> = async (props) => {
   const { params } = props;
 
-  const reqCookies = cookies();
-  const authCookie = reqCookies.get('auth-cookie');
+  // const reqCookies = cookies();
+  // const authCookie = reqCookies.get('auth-cookie');
 
-  if (!authCookie) {
-    const joinRoomURL = new URL('/room/join', siteConfig.url);
-    joinRoomURL.searchParams.append('roomId', params.roomId);
-    return redirect(joinRoomURL.toString());
-  }
+  // if (!authCookie) {
+  //   const joinRoomURL = new URL('/room/join', siteConfig.url);
+  //   joinRoomURL.searchParams.append('roomId', params.roomId);
+  //   return redirect(joinRoomURL.toString());
+  // }
 
-  const { sub: userId, roomId, username } = getDataFromToken(authCookie.value);
+  // const { sub: userId, roomId, username } = getDataFromToken(authCookie.value);
 
-  const user: User = {
-    id: userId,
-    username,
-    roomId,
-  };
+  // const user: User = {
+  //   id: userId,
+  //   username,
+  //   roomId,
+  // };
 
   let room: RoomWithUsers;
   try {
@@ -44,7 +44,7 @@ const RoomPage: React.FC<RoomPageProps> = async (props) => {
     return notFound();
   }
 
-  return <Room user={user} room={room} />;
+  return <Room room={room} />;
 };
 
 export default RoomPage;

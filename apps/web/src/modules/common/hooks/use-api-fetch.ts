@@ -16,13 +16,13 @@ type UseApiFetchProps<TData> = {
 };
 
 export const useApiFetch = <TData>({ endpoint, onDataFetched }: UseApiFetchProps<TData>) => {
+  const { toast } = useToast();
+
   const [state, dispatch] = useReducer(reducer<TData>, {
     data: null,
     error: null,
     isLoading: false,
   });
-
-  const { toast } = useToast();
 
   useEffect(() => {
     if (!state.data) return;

@@ -20,10 +20,11 @@ const CreateRoom: React.FC = () => {
   const { state, fetch } = useApiFetch<CreateRoomApiResponse>({
     endpoint: '/rooms/create',
     onDataFetched: (data) => {
-      const { room, user } = data;
+      const { room, user, accessToken } = data;
 
       roomActions.setRoom(room);
       meActions.setMe(user);
+      meActions.setAccessToken(accessToken);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
       router.push(`/room/${room.id}`);

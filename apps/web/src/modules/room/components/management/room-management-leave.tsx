@@ -17,7 +17,7 @@ import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 
 import { roomState } from '@modules/state/room.slice';
-import { meState } from '@modules/state/me.slice';
+import { meActions, meState } from '@modules/state/me.slice';
 import { socketState } from '@modules/state/socket.slice';
 import { LeaveIcon } from '@modules/ui/components/icons/leave-icon';
 import RoomManagementTool from './room-management-tool';
@@ -34,7 +34,9 @@ const RoomManagementLeave: React.FC = () => {
       const { left } = data;
       if (!left) return;
 
+      meActions.clearAccessToken();
       socketState.socket?.disconnect();
+
       toast({ variant: 'success', content: 'Room left successfully!' });
       router.push('/');
     },

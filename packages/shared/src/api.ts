@@ -11,11 +11,13 @@ export type BackendErrorResponse = {
 export type CreateRoomApiResponse = {
   room: RoomWithUsers;
   user: User;
+  accessToken: string;
 };
 
 export type JoinRoomApiResponse = {
   room: RoomWithUsers;
   user: User;
+  accessToken: string;
 };
 
 export type GetRoomApiResponse = {

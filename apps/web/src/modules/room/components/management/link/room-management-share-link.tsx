@@ -44,7 +44,11 @@ const RoomManagementShareLink: React.FC = () => {
           <div className="p-2 border rounded-lg shadow-lg flex justify-between items-center">
             <span className="text-ellipsis overflow-hidden whitespace-nowrap w-[24rem]">{roomLink}</span>
 
-            <IconButton aria-label="Copy Room Link" icon={<CopyIcon />} onClick={handleCopyLink} />
+            <IconButton
+              aria-label="Copy Room Link"
+              icon={<CopyIcon className="stroke-current" />}
+              onClick={handleCopyLink}
+            />
           </div>
         </DialogContent>
       </Dialog>

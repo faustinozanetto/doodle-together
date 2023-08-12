@@ -16,15 +16,19 @@ import { useDeleteRoomSocket } from '../hooks/sockets/use-delete-room-socket';
 import { useKickRequestRoomSocket } from '../hooks/sockets/use-kick-request-room-socket';
 import { RequestCanvasStateSocketPayload, RoomWithUsers, SocketNames } from '@doodle-together/shared';
 import { roomActions } from '@modules/state/room.slice';
-import { meActions } from '@modules/state/me.slice';
+import { meActions, meState } from '@modules/state/me.slice';
+import { getDataFromToken } from '@modules/common/lib/common.lib';
+import { useRouter } from 'next/navigation';
+import { siteConfig } from '@config/config';
 
 type RoomProps = {
-  user: User;
   room: RoomWithUsers;
 };
 
 const Room: React.FC<RoomProps> = (props) => {
-  const { user, room } = props;
+  const { room } = props;
+
+  const router = useRouter();
 
   useRoomNotifications();
 
@@ -34,8 +38,31 @@ const Room: React.FC<RoomProps> = (props) => {
   useKickRequestRoomSocket();
 
   useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (!accessToken) {
+      const joinRoomURL = new URL('/room/join', siteConfig.url);
+      joinRoomURL.searchParams.append('roomId', room.id);
+      return router.push(joinRoomURL.toString());
+    }
+
+    const { sub: userId, roomId, username, exp: accessTokenExpiry } = getDataFromToken(accessToken);
+
+    const currentTimeInSeconds = Date.now() / 1000;
+    if (accessTokenExpiry <= currentTimeInSeconds) {
+      meActions.clearAccessToken();
+      return router.push('/');
+    }
+
+    const user: User = {
+      id: userId,
+      roomId,
+      username,
+    };
+
     roomActions.setRoom(room);
     meActions.setMe(user);
+    meActions.setAccessToken(accessToken);
 
     socketActions.initializeSocket();
 

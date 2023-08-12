@@ -1,10 +1,10 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSnapshot } from 'valtio';
-import { Separator } from '@modules/ui/components/separator/separator';
 import { useRoomUsers } from '@modules/room/hooks/use-room-users';
 import { meState } from '@modules/state/me.slice';
 import RoomUserEntry from './room-user-entry';
+import RoomPanel from '../room-panel';
 
 const RoomUsers: React.FC = () => {
   const meSnapshot = useSnapshot(meState);
@@ -12,9 +12,7 @@ const RoomUsers: React.FC = () => {
   const { users } = useRoomUsers({ sortUsers: true });
 
   return (
-    <div className="bg-background p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto min-w-[10rem]">
-      <span className="font-bold">Users</span>
-      <Separator />
+    <RoomPanel className="min-w-[10rem]" label="Users">
       <ul className="flex flex-col gap-2">
         <AnimatePresence>
           {users.map((user, index) => {
@@ -36,7 +34,7 @@ const RoomUsers: React.FC = () => {
           })}
         </AnimatePresence>
       </ul>
-    </div>
+    </RoomPanel>
   );
 };
 

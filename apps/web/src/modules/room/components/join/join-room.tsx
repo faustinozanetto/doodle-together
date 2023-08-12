@@ -10,6 +10,7 @@ import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 import { roomActions } from '@modules/state/room.slice';
 import JoinRoomForm, { JoinRoomFormData } from './join-room-form';
+import { meActions } from '@modules/state/me.slice';
 
 const JoinRoom: React.FC = () => {
   const router = useRouter();
@@ -19,9 +20,11 @@ const JoinRoom: React.FC = () => {
   const { state, fetch } = useApiFetch<JoinRoomApiResponse>({
     endpoint: '/rooms/join',
     onDataFetched: (data) => {
-      const { room } = data;
+      const { room, accessToken, user } = data;
 
       roomActions.setRoom(room);
+      meActions.setMe(user);
+      meActions.setAccessToken(accessToken);
 
       toast({ variant: 'success', content: 'Room joined successfully!' });
       router.push(`/room/${room.id}`);

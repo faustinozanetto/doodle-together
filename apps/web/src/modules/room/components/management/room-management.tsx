@@ -9,6 +9,7 @@ import RoomManagementShareLink from './link/room-management-share-link';
 import RoomManagementShareQR from './qr/room-management-share-qr';
 import RoomManagementDelete from './delete/room-management-delete';
 import { Separator } from '@modules/ui/components/separator/separator';
+import RoomPanel from '../room-panel';
 
 const RoomManagement: React.FC = () => {
   const meSnapshot = useSnapshot(meState);
@@ -16,9 +17,7 @@ const RoomManagement: React.FC = () => {
   const { isRoomOwner } = useIsRoomOwner(meSnapshot.me);
 
   return (
-    <div className="bg-background p-2 rounded-lg shadow-lg border gap-1 flex flex-col pointer-events-auto">
-      <span className="font-bold">Management</span>
-      <Separator />
+    <RoomPanel label="Management">
       <div className="flex gap-2">
         {isRoomOwner && <RoomManagementUsers />}
         <RoomManagementShareLink />
@@ -26,7 +25,7 @@ const RoomManagement: React.FC = () => {
         {isRoomOwner && <RoomManagementDelete />}
         <RoomManagementLeave />
       </div>
-    </div>
+    </RoomPanel>
   );
 };
 

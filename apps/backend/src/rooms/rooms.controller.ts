@@ -29,6 +29,7 @@ import { ClearAuthCookieInterceptor } from 'src/auth/interceptors/clear-auth-coo
 import { CreateRoomDto } from './dto/create-room.dto';
 import { JoinRoomDto } from './dto/join-room.dto';
 import { LeaveRoomDto } from './dto/leave-room.dto';
+import { type IAuthService } from 'src/auth/interfaces/auth-service.interface';
 
 @UsePipes(new ValidationPipe())
 @Controller('rooms')
@@ -39,7 +40,8 @@ export class RoomsController {
     @Inject(ConfigService) private readonly configService: ConfigService,
     @Inject(ServerGateway) private readonly gateway: ServerGateway,
     @Inject(Services.ROOMS_SERVICE) private readonly roomsService: IRoomsService,
-    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService
+    @Inject(Services.USERS_SERVICE) private readonly usersService: IUsersService,
+    @Inject(Services.AUTH_SERVICE) private readonly authService: IAuthService
   ) {}
 
   @Get(':roomId')
@@ -50,7 +52,7 @@ export class RoomsController {
   }
 
   @Post('/create')
-  @UseInterceptors(SetAuthCookieInterceptor)
+  // @UseInterceptors(SetAuthCookieInterceptor)
   async create(@Body() body: CreateRoomDto): Promise<CreateRoomApiResponse> {
     const { username, password } = body;
 
@@ -60,23 +62,35 @@ export class RoomsController {
 
     this.gateway.roomsManager.addRoomToManager(room.id, { isDeleted: false });
 
-    return { room, user: roomOwner };
+    const { accessToken } = await this.authService.generateAccessToken({
+      roomId: room.id,
+      userId: roomOwner.id,
+      username: roomOwner.username,
+    });
+
+    return { room, user: roomOwner, accessToken };
   }
 
   @Post('/join')
-  @UseInterceptors(SetAuthCookieInterceptor)
+  // @UseInterceptors(SetAuthCookieInterceptor)
   async join(@Body() body: JoinRoomDto): Promise<JoinRoomApiResponse> {
     const { roomId, username, password } = body;
 
     const { user } = await this.usersService.createUser({ username });
     const { room } = await this.roomsService.joinRoom({ roomId, password, userId: user.id });
 
-    return { room, user };
+    const { accessToken } = await this.authService.generateAccessToken({
+      roomId: room.id,
+      userId: user.id,
+      username: user.username,
+    });
+
+    return { room, user, accessToken };
   }
 
   @Post('/leave')
   @UseGuards(AuthGuard)
-  @UseInterceptors(ClearAuthCookieInterceptor)
+  // @UseInterceptors(ClearAuthCookieInterceptor)
   async leave(@Body() body: LeaveRoomDto): Promise<LeaveRoomApiResponse> {
     const { roomId, userId, roomDeleted } = body;
 
