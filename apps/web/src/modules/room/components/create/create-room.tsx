@@ -8,23 +8,26 @@ import { buttonVariants } from '@modules/ui/components/button/button';
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
-import { roomActions } from '@modules/state/room.slice';
+
 import CreateRoomForm, { CreateRoomFormData } from './create-room-form';
-import { meActions } from '@modules/state/me.slice';
+import { useMeStore } from '@modules/state/me.slice';
+import { useRoomStore } from '@modules/state/room.slice';
 
 const CreateRoom: React.FC = () => {
   const router = useRouter();
 
   const { toast } = useToast();
+  const { setRoom } = useRoomStore();
+  const { setMe, setAccessToken } = useMeStore();
 
   const { state, fetch } = useApiFetch<CreateRoomApiResponse>({
     endpoint: '/rooms/create',
     onDataFetched: (data) => {
       const { room, user, accessToken } = data;
 
-      roomActions.setRoom(room);
-      meActions.setMe(user);
-      meActions.setAccessToken(accessToken);
+      setRoom(room);
+      setMe(user);
+      setAccessToken(accessToken);
 
       toast({ variant: 'success', content: 'Room created successfully!' });
       router.push(`/room/${room.id}`);

@@ -1,8 +1,9 @@
 import { ElementRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { CanvasPoint } from '@doodle-together/shared';
-import { customizationState } from '@modules/state/customization.slice';
 import { drawEraser, drawPoint } from '../lib/room-draw.lib';
+import { useRoomStore } from '@modules/state/room.slice';
 import { RoomDrawEraserPayload, RoomDrawPointPayload } from '../types/room.types';
+import { useCustomizationStore } from '@modules/state/customization.slice';
 
 type UseRoomDrawProps = {
   onCanvasCleared: () => void;
@@ -13,10 +14,12 @@ type UseRoomDrawProps = {
 
 export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized, onEraserDraw }: UseRoomDrawProps) => {
   const [mouseDown, setMouseDown] = useState<boolean>(false);
-  const previousPoint = useRef<CanvasPoint | null>(null);
 
+  const previousPoint = useRef<CanvasPoint | null>(null);
   const wrapperRef = useRef<ElementRef<'div'>>(null);
-  const canvasRef = useRef<ElementRef<'canvas'>>(null);
+
+  const { canvasRef } = useRoomStore();
+  const customization = useCustomizationStore();
 
   const handleCanvasResize = () => {
     if (!wrapperRef.current || !canvasRef.current) return;
@@ -37,14 +40,14 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized, onE
     return context;
   };
 
-  const clearCanvas = useCallback(() => {
+  const clearCanvas = () => {
     if (!canvasRef.current) return;
 
     const context = getCanvasContext();
     if (!context) return;
 
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-  }, []);
+  };
 
   const handleCanvasDraw = (event: MouseEvent) => {
     if (!canvasRef.current) return;
@@ -52,7 +55,7 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized, onE
     const context = getCanvasContext();
     if (!context) return;
 
-    const { tool, color, size } = customizationState;
+    const { tool, color, size } = customization;
 
     // Create current point object from canvas ref element.
     const { clientX, clientY } = event;
@@ -95,14 +98,14 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized, onE
     handleCanvasDraw(event);
   };
 
-  const handleOnMouseDown = useCallback(() => {
+  const handleOnMouseDown = () => {
     setMouseDown(true);
-  }, []);
+  };
 
-  const handleOnMouseRelease = useCallback(() => {
+  const handleOnMouseRelease = () => {
     setMouseDown(false);
     previousPoint.current = null;
-  }, []);
+  };
 
   // Setup canvas size on ref change
   useEffect(() => {
@@ -114,7 +117,7 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized, onE
     window.addEventListener('resize', handleCanvasResize);
 
     return () => window.removeEventListener('resize', handleCanvasResize);
-  }, []);
+  }, [canvasRef]);
 
   // Mouse handling events
   useEffect(() => {
@@ -127,5 +130,5 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized, onE
     };
   }, [mouseDown]);
 
-  return { wrapperRef, canvasRef, handleOnMouseDown, clearCanvas };
+  return { wrapperRef, handleOnMouseDown, clearCanvas };
 };

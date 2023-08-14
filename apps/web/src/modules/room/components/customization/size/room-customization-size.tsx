@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useSnapshot } from 'valtio';
+
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
-import { customizationActions, customizationState } from '@modules/state/customization.slice';
+import { useCustomizationStore } from '@modules/state/customization.slice';
 import { RoomToolSize } from '@doodle-together/shared';
 import RoomCustomizationSection from '../room-customization-section';
 
@@ -87,16 +87,16 @@ type ToolSizeOptionProps = {
 const ToolSizeOption: React.FC<ToolSizeOptionProps> = (props) => {
   const { size, icon } = props;
 
-  const customizationSnapshot = useSnapshot(customizationState);
+  const { size: stateSize, setSize } = useCustomizationStore();
 
   const handleSelectSize = () => {
-    customizationActions.setSize(size);
+    setSize(size);
   };
 
   return (
     <IconButton
       aria-label={`${size} Size`}
-      variant={size === customizationSnapshot.size ? 'default' : 'ghost'}
+      variant={stateSize === size ? 'default' : 'ghost'}
       onClick={handleSelectSize}
       icon={icon}
     />

@@ -13,26 +13,29 @@ import {
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 
-import { roomState } from '@modules/state/room.slice';
-import { meActions, meState } from '@modules/state/me.slice';
 import RoomManagementTool from '../room-management-tool';
 import { DeleteIcon } from '@modules/ui/components/icons/delete-icon';
 import RoomManagementDeleteForm, { DeleteRoomFormData } from './room-management-delete-form';
 
+import { useMeStore } from '@modules/state/me.slice';
+import { useRoomStore } from '@modules/state/room.slice';
+
 const RoomManagementDelete: React.FC = () => {
   const router = useRouter();
   const { toast } = useToast();
+  const { room } = useRoomStore();
+  const { me, accessToken, clearAccessToken } = useMeStore();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const { state, fetch } = useApiFetch<DeleteRoomApiResponse>({
-    endpoint: `/rooms/${roomState.room?.id ?? ''}`,
+    endpoint: `/rooms/${room?.id ?? ''}`,
     onDataFetched: (data) => {
       const { deleted } = data;
 
       if (!deleted) return;
 
-      meActions.clearAccessToken();
+      clearAccessToken();
 
       toast({ variant: 'success', content: 'Room deleted successfully!' });
       router.push('/');
@@ -40,9 +43,7 @@ const RoomManagementDelete: React.FC = () => {
   });
 
   const handleDeleteRoom = async (data: DeleteRoomFormData) => {
-    const { me, accessToken } = meState;
-
-    if (!me) return;
+    if (!me || !accessToken) return;
 
     await fetch({
       method: 'DELETE',

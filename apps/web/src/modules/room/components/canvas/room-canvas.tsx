@@ -1,37 +1,37 @@
 'use client';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { ElementRef, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   CanvasClearedSocketPayload,
   DrawEraserSocketPayload,
   DrawPointSocketPayload,
   RequestCanvasStateSocketPayload,
   SocketNames,
-  UpdateCanvasStateSocketPayload,
 } from '@doodle-together/shared';
 import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
 import { RoomDrawEraserPayload, RoomDrawPointPayload } from '@modules/room/types/room.types';
-import { roomState } from '@modules/state/room.slice';
-import { socketState } from '@modules/state/socket.slice';
-import { meState } from '@modules/state/me.slice';
+import { useRoomStore } from '@modules/state/room.slice';
+
 import { useClearRoomCanvasSocket } from '@modules/room/hooks/sockets/use-clear-room-canvas-socket';
 import { useUpdateRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-update-room-canvas-state-socket';
 import { useGetRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-get-room-canvas-state-socket';
 import { useDispatchRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-dispatch-room-canvas-state-socket';
-import { drawEraser, drawPoint } from '@modules/room/lib/room-draw.lib';
-import { customizationState } from '@modules/state/customization.slice';
-import { useSnapshot } from 'valtio';
+
+import { useMeStore } from '@modules/state/me.slice';
+import socket from '@modules/socket/lib/socket.lib';
+import { useCustomizationStore } from '@modules/state/customization.slice';
 
 const RoomCanvas: React.FC = () => {
-  const customizationStateSnapshot = useSnapshot(customizationState);
+  const localCanvasRef = useRef<ElementRef<'canvas'>>(null);
+
+  const { room, setCanvasRef } = useRoomStore();
+  const { background } = useCustomizationStore();
+
+  const { me } = useMeStore();
 
   const onPointDraw = useCallback(
     (drawPointPayload: RoomDrawPointPayload) => {
-      const { room } = roomState;
-
-      if (!room) return;
-
       const payload: DrawPointSocketPayload = {
         data: {
           color: drawPointPayload.color,
@@ -39,47 +39,39 @@ const RoomCanvas: React.FC = () => {
           prevPoint: drawPointPayload.prevPoint,
           size: drawPointPayload.size,
         },
-        roomId: room.id,
+        roomId: room?.id!,
       };
 
-      socketState.socket?.emit(SocketNames.DRAW_POINT, payload);
+      socket.emit(SocketNames.DRAW_POINT, payload);
     },
-    [roomState.room]
+    [room]
   );
 
-  const onEraserDraw = useCallback(
-    (drawEraserPayload: RoomDrawEraserPayload) => {
-      const { room } = roomState;
+  const onEraserDraw = (drawEraserPayload: RoomDrawEraserPayload) => {
+    if (!room) return;
 
-      if (!room) return;
+    const payload: DrawEraserSocketPayload = {
+      data: {
+        point: drawEraserPayload.point,
+        prevPoint: drawEraserPayload.prevPoint,
+      },
+      roomId: room.id,
+    };
 
-      const payload: DrawEraserSocketPayload = {
-        data: {
-          point: drawEraserPayload.point,
-          prevPoint: drawEraserPayload.prevPoint,
-        },
-        roomId: room.id,
-      };
+    socket.emit(SocketNames.DRAW_ERASER, payload);
+  };
 
-      socketState.socket?.emit(SocketNames.DRAW_ERASER, payload);
-    },
-    [roomState.room]
-  );
-
-  const onCanvasCleared = useCallback(() => {
-    const { room } = roomState;
+  const onCanvasCleared = () => {
     if (!room) return;
 
     const payload: CanvasClearedSocketPayload = {
       roomId: room.id,
     };
 
-    socketState.socket?.emit(SocketNames.CANVAS_CLEARED, payload);
-  }, [roomState.room]);
+    socket.emit(SocketNames.CANVAS_CLEARED, payload);
+  };
 
-  const onCanvasResized = useCallback(() => {
-    const { room } = roomState;
-    const { me } = meState;
+  const onCanvasResized = () => {
     if (!room || !me) return;
 
     const payload: RequestCanvasStateSocketPayload = {
@@ -87,37 +79,29 @@ const RoomCanvas: React.FC = () => {
       userId: me.id,
     };
 
-    socketState.socket?.emit(SocketNames.REQUEST_CANVAS_STATE, payload);
-  }, [roomState, meState]);
+    socket.emit(SocketNames.REQUEST_CANVAS_STATE, payload);
+  };
 
-  const { wrapperRef, canvasRef, handleOnMouseDown, clearCanvas } = useRoomDraw({
+  const { wrapperRef, handleOnMouseDown, clearCanvas } = useRoomDraw({
     onPointDraw,
     onCanvasCleared,
     onCanvasResized,
     onEraserDraw,
   });
 
-  const onCanvasUpdated = (data: UpdateCanvasStateSocketPayload) => {
-    const canvasElement = canvasRef.current;
-    if (!canvasElement) return;
-
-    const context = canvasElement.getContext('2d');
-    if (!context) return;
-
-    if (data.tool === 'pencil') drawPoint({ ...data.data, context });
-    else if (data.tool === 'eraser') drawEraser({ ...data.data, context });
-  };
-
   /** Room Canvas Socket Hooks */
-  useClearRoomCanvasSocket({ canvasRef, onCanvasCleared: clearCanvas });
-  useUpdateRoomCanvasStateSocket({
-    onCanvasUpdated,
-  });
-  useGetRoomCanvasStateSocket({ canvasRef });
-  useDispatchRoomCanvasStateSocket({ canvasRef });
+  useClearRoomCanvasSocket({ onRequestCanvasClear: clearCanvas });
+  useUpdateRoomCanvasStateSocket();
+  useGetRoomCanvasStateSocket();
+  useDispatchRoomCanvasStateSocket();
+
+  useEffect(() => {
+    if (localCanvasRef.current) {
+      setCanvasRef(localCanvasRef);
+    }
+  }, [setCanvasRef]);
 
   const generateCanvasStyles = useMemo(() => {
-    const { background } = customizationStateSnapshot;
     const { enableGrid, gridSize } = background;
 
     const styles: React.CSSProperties = {
@@ -128,13 +112,13 @@ const RoomCanvas: React.FC = () => {
     };
 
     return styles;
-  }, [customizationStateSnapshot]);
+  }, [background]);
 
   return (
     <div ref={wrapperRef} className="h-full w-full">
       <canvas
         id="room-canvas"
-        ref={canvasRef}
+        ref={localCanvasRef}
         className="cursor-pointer"
         onMouseDown={handleOnMouseDown}
         width={0}

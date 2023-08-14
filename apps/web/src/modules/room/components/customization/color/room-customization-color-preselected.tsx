@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useSnapshot } from 'valtio';
 import { Button } from '@modules/ui/components/button/button';
-import { customizationActions, customizationState } from '@modules/state/customization.slice';
+import { useCustomizationStore } from '@modules/state/customization.slice';
 
 const PRESELECTED_COLORS: ToolColorOptionProps[] = [
   { color: '#FFB6C1', label: 'Light Pink' },
@@ -28,17 +27,16 @@ type ToolColorOptionProps = {
 const ToolColorOption: React.FC<ToolColorOptionProps> = (props) => {
   const { color, label } = props;
 
-  const customizationSnapshot = useSnapshot(customizationState);
-
+  const { color: stateColor, setColor } = useCustomizationStore();
   const handleSelectColor = () => {
-    customizationActions.setColor(color);
+    setColor(color);
   };
 
   return (
     <Button
       aria-label={`${label} Color`}
       className="!p-1 aspect-square"
-      variant={color === customizationSnapshot.color ? 'outline' : 'ghost'}
+      variant={stateColor === color ? 'outline' : 'ghost'}
       onClick={handleSelectColor}
     >
       <div className="h-5 w-5 rounded-xl" style={{ backgroundColor: color }} />

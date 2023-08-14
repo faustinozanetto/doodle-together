@@ -1,12 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useSnapshot } from 'valtio';
+
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
-import { Separator } from '@modules/ui/components/separator/separator';
-import { customizationActions, customizationState } from '@modules/state/customization.slice';
 import { RoomToolStyle } from '@doodle-together/shared';
 import RoomCustomizationSection from '../room-customization-section';
+import { useCustomizationStore } from '@modules/state/customization.slice';
 
 const TOOL_STYLES: ToolStyleOptionProps[] = [
   {
@@ -88,16 +87,16 @@ type ToolStyleOptionProps = {
 const ToolStyleOption: React.FC<ToolStyleOptionProps> = (props) => {
   const { style, icon } = props;
 
-  const customizationSnapshot = useSnapshot(customizationState);
+  const { style: stateStyle, setStyle } = useCustomizationStore();
 
   const handleSelectStyle = () => {
-    customizationActions.setStyle(style);
+    setStyle(style);
   };
 
   return (
     <IconButton
       aria-label={`${style} Style`}
-      variant={style === customizationSnapshot.style ? 'default' : 'ghost'}
+      variant={stateStyle === style ? 'default' : 'ghost'}
       onClick={handleSelectStyle}
       icon={icon}
     />

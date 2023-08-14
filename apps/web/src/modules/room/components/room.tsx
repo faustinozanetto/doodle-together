@@ -2,7 +2,6 @@
 
 import React, { useEffect } from 'react';
 
-import { socketActions, socketState } from '@modules/state/socket.slice';
 import { useRoomNotifications } from '../hooks/use-room-notifications';
 import RoomManagement from './management/room-management';
 import RoomUsers from './users/room-users';
@@ -15,11 +14,13 @@ import { useUpdateRoomSocket } from '../hooks/sockets/use-update-room-socket';
 import { useDeleteRoomSocket } from '../hooks/sockets/use-delete-room-socket';
 import { useKickRequestRoomSocket } from '../hooks/sockets/use-kick-request-room-socket';
 import { RequestCanvasStateSocketPayload, RoomWithUsers, SocketNames } from '@doodle-together/shared';
-import { roomActions } from '@modules/state/room.slice';
-import { meActions, meState } from '@modules/state/me.slice';
+
+import { useMeStore } from '@modules/state/me.slice';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
 import { useRouter } from 'next/navigation';
 import { siteConfig } from '@config/config';
+import socket from '@modules/socket/lib/socket.lib';
+import { useRoomStore } from '@modules/state/room.slice';
 
 type RoomProps = {
   room: RoomWithUsers;
@@ -29,6 +30,9 @@ const Room: React.FC<RoomProps> = (props) => {
   const { room } = props;
 
   const router = useRouter();
+  const { setRoom } = useRoomStore();
+
+  const { setMe, setAccessToken, clearAccessToken } = useMeStore();
 
   useRoomNotifications();
 
@@ -37,51 +41,48 @@ const Room: React.FC<RoomProps> = (props) => {
   useDeleteRoomSocket();
   useKickRequestRoomSocket();
 
-  console.log('room reenderer');
-
   useEffect(() => {
-    if (!room) return router.push('/');
+    if (!room) {
+      console.log('Invalid room!');
+      return router.push('/');
+    }
 
     const accessToken = localStorage.getItem('accessToken');
-
     if (!accessToken) {
+      console.log('Invalid access token!');
+
       const joinRoomURL = new URL('/room/join', siteConfig.url);
       joinRoomURL.searchParams.append('roomId', room.id);
       return router.push(joinRoomURL.toString());
     }
 
-    try {
-      const { sub: userId, roomId, username, exp: accessTokenExpiry } = getDataFromToken(accessToken);
+    const { sub: userId, roomId, username, exp: accessTokenExpiry } = getDataFromToken(accessToken);
 
-      const currentTimeInSeconds = Date.now() / 1000;
-      if (accessTokenExpiry <= currentTimeInSeconds) {
-        meActions.clearAccessToken();
-        return router.push('/');
-      }
-
-      const user: User = {
-        id: userId,
-        roomId,
-        username,
-      };
-
-      roomActions.setRoom(room);
-      meActions.setMe(user);
-      meActions.setAccessToken(accessToken);
-
-      socketActions.initializeSocket();
-
-      // Send a socket to request the current canvas state.
-      const requestCanvasStatePayload: RequestCanvasStateSocketPayload = {
-        roomId: room.id,
-        userId: user.id,
-      };
-
-      socketState.socket?.emit(SocketNames.CLIENT_READY);
-      socketState.socket?.emit(SocketNames.REQUEST_CANVAS_STATE, requestCanvasStatePayload);
-    } catch (err) {
+    if (roomId !== room.id) {
+      console.log('Room ids do not match!');
+      clearAccessToken();
       return router.push('/');
     }
+
+    const currentTimeInSeconds = Date.now() / 1000;
+    if (accessTokenExpiry <= currentTimeInSeconds) {
+      console.log('Access token expired!');
+
+      clearAccessToken();
+      return router.push('/');
+    }
+
+    const user: User = {
+      id: userId,
+      roomId,
+      username,
+    };
+
+    setRoom(room);
+    setMe(user);
+    setAccessToken(accessToken);
+
+    socket.emit(SocketNames.CLIENT_READY);
   }, []);
 
   return (

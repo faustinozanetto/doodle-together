@@ -1,9 +1,11 @@
 import { SendNotificationSocketPayload, SocketNames, SocketNotificationType } from '@doodle-together/shared';
 import { useEffect } from 'react';
-import { meState } from '@modules/state/me.slice';
-import { socketState } from '@modules/state/socket.slice';
+
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { Toast } from '@modules/ui/components/toasts/types/toasts.types';
+
+import { useMeStore } from '@modules/state/me.slice';
+import socket from '@modules/socket/lib/socket.lib';
 
 const getNotificationLevel = (notificationType: SocketNotificationType): Toast['variant'] => {
   switch (notificationType) {
@@ -20,25 +22,26 @@ const getNotificationLevel = (notificationType: SocketNotificationType): Toast['
 
 export const useRoomNotifications = () => {
   const { toast } = useToast();
+  const { me } = useMeStore();
 
   useEffect(() => {
-    socketState.socket?.on(SocketNames.SEND_NOTIFICATION, (data: SendNotificationSocketPayload) => {
+    socket.on(SocketNames.SEND_NOTIFICATION, (data: SendNotificationSocketPayload) => {
       const { type, broadcast, userId, content } = data;
 
       const level = getNotificationLevel(type);
 
       let toastCondition = true;
       if (broadcast === 'self') {
-        toastCondition = (meState.me && meState.me.id === userId) ?? false;
+        toastCondition = (me && me.id === userId) ?? false;
       } else if (broadcast === 'except') {
-        toastCondition = (meState.me && meState.me.id !== userId) ?? false;
+        toastCondition = (me && me.id !== userId) ?? false;
       }
 
       if (toastCondition) toast({ variant: level, content });
     });
 
     return () => {
-      socketState.socket?.off(SocketNames.SEND_NOTIFICATION);
+      socket.off(SocketNames.SEND_NOTIFICATION);
     };
-  }, []);
+  }, [me]);
 };

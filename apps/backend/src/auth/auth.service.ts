@@ -52,9 +52,9 @@ export class AuthService implements IAuthService {
     const { accessToken } = input;
 
     try {
-      const { sub, roomId, exp } = await this.jwtService.verifyAsync(accessToken);
+      const { sub, roomId, exp, username } = await this.jwtService.verifyAsync(accessToken);
 
-      return { sub, roomId, exp };
+      return { sub, roomId, exp, username };
     } catch (err) {
       throw new UnauthorizedException('Not authorized!');
     }

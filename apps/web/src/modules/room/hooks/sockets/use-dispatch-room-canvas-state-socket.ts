@@ -1,22 +1,20 @@
-import React, { ElementRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { DispatchCanvasStateSocketPayload, SocketNames } from '@doodle-together/shared';
-import { socketState } from '@modules/state/socket.slice';
 
-type UseDispatchRoomCanvasStateSocketProps = {
-  canvasRef: React.RefObject<ElementRef<'canvas'>>;
-};
+import socket from '@modules/socket/lib/socket.lib';
+import { useRoomStore } from '@modules/state/room.slice';
 
-export const useDispatchRoomCanvasStateSocket = ({ canvasRef }: UseDispatchRoomCanvasStateSocketProps) => {
+export const useDispatchRoomCanvasStateSocket = () => {
+  const { canvasRef } = useRoomStore();
+
   useEffect(() => {
     const canvasElement = canvasRef.current;
-    if (!canvasElement) return;
+    const context = canvasElement?.getContext('2d')!;
 
-    const context = canvasElement.getContext('2d');
-
-    socketState.socket?.on(SocketNames.DISPATCH_CANVAS_STATE, (data: DispatchCanvasStateSocketPayload) => {
+    socket.on(SocketNames.DISPATCH_CANVAS_STATE, (data: DispatchCanvasStateSocketPayload) => {
       const { canvasState } = data;
 
-      if (!canvasElement || !context) return;
+      if (!canvasElement) return;
 
       const canvasStateImage = new Image();
       canvasStateImage.src = canvasState;
@@ -27,7 +25,7 @@ export const useDispatchRoomCanvasStateSocket = ({ canvasRef }: UseDispatchRoomC
     });
 
     return () => {
-      socketState.socket?.off(SocketNames.DISPATCH_CANVAS_STATE);
+      socket.off(SocketNames.DISPATCH_CANVAS_STATE);
     };
   }, [canvasRef]);
 };

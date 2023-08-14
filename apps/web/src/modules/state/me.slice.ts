@@ -1,31 +1,29 @@
 import { User } from '@doodle-together/database';
-import { proxy } from 'valtio';
-import { subscribeKey } from 'valtio/utils';
+import { create } from 'zustand';
 
 export type MeSliceState = {
   me: User | null;
   accessToken: string | null;
 };
 
-export const meState = proxy<MeSliceState>({ me: null, accessToken: null });
-
-export const meActions = {
-  setMe: (me: User): void => {
-    meState.me = me;
-  },
-  setAccessToken: (accessToken: string) => {
-    meState.accessToken = accessToken;
-  },
-  clearAccessToken: () => {
-    meState.accessToken = null;
-    localStorage.removeItem('accessToken');
-  },
+export type MeSliceActions = {
+  setMe: (me: User) => void;
+  setAccessToken: (accessToken: string) => void;
+  clearAccessToken: () => void;
 };
 
-subscribeKey(meState, 'accessToken', () => {
-  if (meState.accessToken) {
-    localStorage.setItem('accessToken', meState.accessToken);
-  }
-});
-
-export type MeActions = typeof meActions;
+export const useMeStore = create<MeSliceState & MeSliceActions>((set) => ({
+  me: null,
+  accessToken: null,
+  setAccessToken: (accessToken) => {
+    localStorage.setItem('accessToken', accessToken);
+    set({ accessToken });
+  },
+  setMe: (me) => {
+    set({ me });
+  },
+  clearAccessToken: () => {
+    localStorage.removeItem('accessToken');
+    set({ accessToken: null });
+  },
+}));

@@ -1,27 +1,23 @@
-import React, { ElementRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { SocketNames } from '@doodle-together/shared';
-import { socketState } from '@modules/state/socket.slice';
+
+import socket from '@modules/socket/lib/socket.lib';
+import { useRoomStore } from '@modules/state/room.slice';
 
 type UseClearRoomCanvasSocketProps = {
-  canvasRef: React.RefObject<ElementRef<'canvas'>>;
-  onCanvasCleared: () => void;
+  onRequestCanvasClear: () => void;
 };
 
-export const useClearRoomCanvasSocket = ({ canvasRef, onCanvasCleared }: UseClearRoomCanvasSocketProps) => {
+export const useClearRoomCanvasSocket = ({ onRequestCanvasClear }: UseClearRoomCanvasSocketProps) => {
+  const { room, canvasRef } = useRoomStore();
+
   useEffect(() => {
-    const canvasElement = canvasRef.current;
-    if (!canvasElement) return;
-
-    const context = canvasElement.getContext('2d');
-
-    socketState.socket?.on(SocketNames.CLEAR_CANVAS, () => {
-      if (!context) return;
-
-      onCanvasCleared();
+    socket.on(SocketNames.CLEAR_CANVAS, () => {
+      onRequestCanvasClear();
     });
 
     return () => {
-      socketState.socket?.off(SocketNames.CLEAR_CANVAS);
+      socket.off(SocketNames.CLEAR_CANVAS);
     };
-  }, [canvasRef]);
+  }, [canvasRef, room]);
 };

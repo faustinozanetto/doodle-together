@@ -6,9 +6,10 @@ import { ConfigModule } from '@nestjs/config';
 import { RoomModule } from 'src/rooms/rooms.module';
 import { UsersModule } from 'src/users/users.module';
 import { GatewayRoomsManager } from './gateway.rooms';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [ConfigModule, RoomModule, UsersModule],
+  imports: [ConfigModule, AuthModule, RoomModule, UsersModule],
   providers: [
     ServerGateway,
     {
