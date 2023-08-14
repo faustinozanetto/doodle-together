@@ -7,6 +7,7 @@ import {
   DrawPointSocketPayload,
   RequestCanvasStateSocketPayload,
   SocketNames,
+  UpdateCanvasStateSocketPayload,
 } from '@doodle-together/shared';
 import { useRoomDraw } from '@modules/room/hooks/use-room-draw';
 
@@ -18,7 +19,7 @@ import { useClearRoomCanvasSocket } from '@modules/room/hooks/sockets/use-clear-
 import { useUpdateRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-update-room-canvas-state-socket';
 import { useGetRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-get-room-canvas-state-socket';
 import { useDispatchRoomCanvasStateSocket } from '@modules/room/hooks/sockets/use-dispatch-room-canvas-state-socket';
-import { drawEraser } from '@modules/room/lib/room-draw.lib';
+import { drawEraser, drawPoint } from '@modules/room/lib/room-draw.lib';
 import { customizationState } from '@modules/state/customization.slice';
 import { useSnapshot } from 'valtio';
 
@@ -89,21 +90,28 @@ const RoomCanvas: React.FC = () => {
     socketState.socket?.emit(SocketNames.REQUEST_CANVAS_STATE, payload);
   }, [roomState, meState]);
 
-  const { wrapperRef, canvasRef, handleOnMouseDown, drawPoint, clearCanvas } = useRoomDraw({
+  const { wrapperRef, canvasRef, handleOnMouseDown, clearCanvas } = useRoomDraw({
     onPointDraw,
     onCanvasCleared,
     onCanvasResized,
     onEraserDraw,
   });
 
+  const onCanvasUpdated = (data: UpdateCanvasStateSocketPayload) => {
+    const canvasElement = canvasRef.current;
+    if (!canvasElement) return;
+
+    const context = canvasElement.getContext('2d');
+    if (!context) return;
+
+    if (data.tool === 'pencil') drawPoint({ ...data.data, context });
+    else if (data.tool === 'eraser') drawEraser({ ...data.data, context });
+  };
+
   /** Room Canvas Socket Hooks */
   useClearRoomCanvasSocket({ canvasRef, onCanvasCleared: clearCanvas });
   useUpdateRoomCanvasStateSocket({
-    canvasRef,
-    onCanvasUpdated: (data, context) => {
-      if (data.tool === 'pencil') drawPoint({ ...data.data, context });
-      else if (data.tool === 'eraser') drawEraser({ ...data.data, context });
-    },
+    onCanvasUpdated,
   });
   useGetRoomCanvasStateSocket({ canvasRef });
   useDispatchRoomCanvasStateSocket({ canvasRef });

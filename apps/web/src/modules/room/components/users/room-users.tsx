@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+
 import { useSnapshot } from 'valtio';
 import { useRoomUsers } from '@modules/room/hooks/use-room-users';
 import { meState } from '@modules/state/me.slice';
@@ -14,25 +14,15 @@ const RoomUsers: React.FC = () => {
   return (
     <RoomPanel className="min-w-[10rem]" label="Users">
       <ul className="flex flex-col gap-2">
-        <AnimatePresence>
-          {users.map((user, index) => {
-            const isCurrentUser = (meSnapshot && meSnapshot.me && meSnapshot.me.id === user.id) ?? false;
+        {users.map((user) => {
+          const isCurrentUser = (meSnapshot.me && meSnapshot.me.id === user.id) ?? false;
 
-            return (
-              <motion.li
-                key={user.id}
-                initial={{ opacity: 0, translateY: -10 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                exit={{ opacity: 0, translateY: -10 }}
-                transition={{
-                  delay: 0.15 * index,
-                }}
-              >
-                <RoomUserEntry user={user} isCurrentUser={isCurrentUser} />
-              </motion.li>
-            );
-          })}
-        </AnimatePresence>
+          return (
+            <li key={user.id} className="animate-in fade-in">
+              <RoomUserEntry user={user} isCurrentUser={isCurrentUser} />
+            </li>
+          );
+        })}
       </ul>
     </RoomPanel>
   );

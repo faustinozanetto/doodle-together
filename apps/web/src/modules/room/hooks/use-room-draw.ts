@@ -127,5 +127,5 @@ export const useRoomDraw = ({ onPointDraw, onCanvasCleared, onCanvasResized, onE
     };
   }, [mouseDown]);
 
-  return { wrapperRef, canvasRef, handleOnMouseDown, drawPoint, clearCanvas };
+  return { wrapperRef, canvasRef, handleOnMouseDown, clearCanvas };
 };

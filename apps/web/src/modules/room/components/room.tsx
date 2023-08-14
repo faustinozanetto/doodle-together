@@ -37,6 +37,8 @@ const Room: React.FC<RoomProps> = (props) => {
   useDeleteRoomSocket();
   useKickRequestRoomSocket();
 
+  console.log('room reenderer');
+
   useEffect(() => {
     if (!room) return router.push('/');
 

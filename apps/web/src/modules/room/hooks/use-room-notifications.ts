@@ -1,4 +1,4 @@
-import { SendNotificationSocketPayload, SocketNotificationType } from '@doodle-together/shared/dist';
+import { SendNotificationSocketPayload, SocketNames, SocketNotificationType } from '@doodle-together/shared';
 import { useEffect } from 'react';
 import { meState } from '@modules/state/me.slice';
 import { socketState } from '@modules/state/socket.slice';
@@ -22,24 +22,23 @@ export const useRoomNotifications = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    socketState.socket?.on('send_notification', (data: SendNotificationSocketPayload) => {
-      const { me } = meState;
+    socketState.socket?.on(SocketNames.SEND_NOTIFICATION, (data: SendNotificationSocketPayload) => {
       const { type, broadcast, userId, content } = data;
 
       const level = getNotificationLevel(type);
 
       let toastCondition = true;
       if (broadcast === 'self') {
-        toastCondition = (me && me.id === userId) ?? false;
+        toastCondition = (meState.me && meState.me.id === userId) ?? false;
       } else if (broadcast === 'except') {
-        toastCondition = (me && me.id !== userId) ?? false;
+        toastCondition = (meState.me && meState.me.id !== userId) ?? false;
       }
 
       if (toastCondition) toast({ variant: level, content });
     });
 
     return () => {
-      socketState.socket?.off('send_notification');
+      socketState.socket?.off(SocketNames.SEND_NOTIFICATION);
     };
-  }, [meState.me]);
+  }, []);
 };
