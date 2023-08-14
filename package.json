@@ -28,7 +28,7 @@
     "lint-staged": "13.3.0",
     "prettier": "3.0.1",
     "prettier-plugin-tailwindcss": "0.4.0",
-    "turbo": "1.9.3"
+    "turbo": "1.10.12"
   },
   "lint-staged": {
     "extends": "./lint-staged.config.ts"
