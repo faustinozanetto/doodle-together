@@ -25,7 +25,7 @@
     "eslint": "8.45.0",
     "eslint-config-doodle-together": "*",
     "husky": "8.0.3",
-    "lint-staged": "13.2.3",
+    "lint-staged": "13.3.0",
     "prettier": "3.0.1",
     "prettier-plugin-tailwindcss": "0.4.0",
     "turbo": "1.9.3"
