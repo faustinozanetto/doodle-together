@@ -17,7 +17,8 @@
     "dev": "turbo dev --parallel",
     "lint": "turbo lint",
     "clean": "turbo clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "generate": "turbo run generate"
   },
   "devDependencies": {
     "@commitlint/cli": "17.7.1",
@@ -32,6 +33,9 @@
   },
   "lint-staged": {
     "extends": "./lint-staged.config.ts"
+  },
+  "prisma": {
+    "schema": "packages/database/prisma/schema.prisma"
   },
   "engines": {
     "node": ">=17.0.0",

@@ -2,7 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": ["^db:generate", "^build"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "env": ["NODE_ENV", "NEXT_PUBLIC_URL", "NEXT_PUBLIC_BACKEND_ENDPOINT"]
     },
@@ -15,8 +15,10 @@
     "db:push": {
       "cache": false
     },
+    "generate": {
+      "dependsOn": ["^generate"]
+    },
     "dev": {
-      "dependsOn": ["^db:generate"],
       "cache": false,
       "persistent": true
     },
