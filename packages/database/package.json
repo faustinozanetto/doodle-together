@@ -21,7 +21,7 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:push": "prisma db push --skip-generate",
     "db:seed": "tsx src/seed.ts",
-    "db:generate": "yarn pnpify prisma generate",
+    "db:generate": "yarn pnpify prisma generate --schema=../../packages/database/prisma/schema.prisma",
     "dev": "tsup --watch",
     "format": "prisma format",
     "lint": "eslint \"src/**/*.ts\"",
