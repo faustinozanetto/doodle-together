@@ -21,7 +21,7 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:push": "prisma db push --skip-generate",
     "db:seed": "tsx src/seed.ts",
-    "db:generate": "prisma generate",
+    "db:generate": "yarn pnpify prisma generate",
     "dev": "tsup --watch",
     "format": "prisma format",
     "lint": "eslint \"src/**/*.ts\"",
@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@doodle-together/typescript-config": "*",
+    "@yarnpkg/pnpify": "4.0.0-rc.48",
     "eslint": "^8.45.0",
     "prisma": "^5.0.0",
     "rimraf": "^5.0.1",
