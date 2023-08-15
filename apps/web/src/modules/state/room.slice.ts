@@ -1,16 +1,25 @@
 import { RoomWithUsers } from '@doodle-together/shared';
-import { proxy } from 'valtio';
+import { RefObject } from 'react';
+import { create } from 'zustand';
 
 export type RoomSliceState = {
   room: RoomWithUsers | null;
+  canvasRef: RefObject<HTMLCanvasElement>;
+  setCanvasRef: (canvasRef: RefObject<HTMLCanvasElement>) => void;
 };
 
-export const roomState = proxy<RoomSliceState>({ room: null });
+export type RoomSliceActions = {
+  setRoom: (room: RoomWithUsers) => void;
+  setCanvasRef: (canvasRef: RefObject<HTMLCanvasElement>) => void;
+};
 
-export const roomActions = {
-  setRoom: (room: RoomWithUsers): void => {
-    roomState.room = room;
+export const useRoomStore = create<RoomSliceState & RoomSliceActions>((set) => ({
+  room: null,
+  canvasRef: { current: null },
+  setRoom: (room) => {
+    set({ room });
   },
-};
-
-export type RoomActions = typeof roomActions;
+  setCanvasRef: (canvasRef) => {
+    set({ canvasRef });
+  },
+}));

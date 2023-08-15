@@ -1,5 +1,5 @@
 import { RoomToolSize, RoomToolStyle, RoomTool } from '@doodle-together/shared';
-import { proxy } from 'valtio';
+import { create } from 'zustand';
 
 export type CustomizationBackground = {
   enableGrid: boolean;
@@ -14,7 +14,16 @@ export type CustomizationSliceState = {
   background: CustomizationBackground;
 };
 
-const initialState: CustomizationSliceState = {
+export type CustomizationSliceActions = {
+  setTool: (tool: RoomTool) => void;
+  setSize: (size: RoomToolSize) => void;
+  setStyle: (style: RoomToolStyle) => void;
+  setColor: (color: string) => void;
+  setBackgroundGridEnabled: (enableGrid: boolean) => void;
+  setBackgroundGridSize: (gridSize: number) => void;
+};
+
+export const useCustomizationStore = create<CustomizationSliceState & CustomizationSliceActions>((set, get) => ({
   tool: 'pencil',
   color: '#ababab',
   size: 'medium',
@@ -23,29 +32,23 @@ const initialState: CustomizationSliceState = {
     enableGrid: true,
     gridSize: 20,
   },
-};
-
-export const customizationState = proxy<CustomizationSliceState>(initialState);
-
-export const customizationActions = {
-  setTool: (tool: RoomTool): void => {
-    customizationState.tool = tool;
+  // Actions
+  setTool: (tool) => {
+    set({ tool });
   },
-  setSize: (size: RoomToolSize): void => {
-    customizationState.size = size;
+  setSize: (size) => {
+    set({ size });
   },
-  setStyle: (style: RoomToolStyle): void => {
-    customizationState.style = style;
+  setStyle: (style) => {
+    set({ style });
   },
-  setColor: (color: string): void => {
-    customizationState.color = color;
+  setColor: (color) => {
+    set({ color });
   },
-  setBackgroundGridEnabled: (enableGrid: boolean) => {
-    customizationState.background.enableGrid = enableGrid;
+  setBackgroundGridEnabled: (enableGrid) => {
+    set({ background: { enableGrid, gridSize: get().background.gridSize } });
   },
-  setBackgroundGridSize: (gridSize: number) => {
-    customizationState.background.gridSize = gridSize;
+  setBackgroundGridSize: (gridSize) => {
+    set({ background: { gridSize, enableGrid: get().background.enableGrid } });
   },
-};
-
-export type CustomizationActions = typeof customizationActions;
+}));

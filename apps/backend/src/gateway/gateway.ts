@@ -1,12 +1,12 @@
-import { Inject, Logger, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Inject, Logger, UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
+  OnGatewayInit,
   WebSocketGateway,
-  WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
-  MessageBody,
+  WebSocketServer,
   SubscribeMessage,
+  MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
@@ -134,7 +134,7 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   @SubscribeMessage(SocketNames.KICK_USER)
-  async kickUser(@MessageBody() data: KickUserSocketPayload): Promise<void> {
+  async kickUser(@MessageBody() data: KickUserSocketPayload, @ConnectedSocket() socket: SocketWithAuth): Promise<void> {
     const { roomId, userId } = data;
 
     const { exists } = await this.roomsService.roomExists({ roomId });
@@ -143,6 +143,9 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const { room } = await this.roomsService.findRoom({
       roomId,
     });
+
+    // Only room owner is allowed to perform user kicks.
+    if (socket.userId !== room.ownerId) return;
 
     const userExists = room.users.findIndex((user) => user.id === userId);
     if (userExists === -1) return;
@@ -204,6 +207,8 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       userId,
     };
 
+    this.logger.log(`User with userId: ${userId} requested canvas state!`);
+
     const { exists } = await this.roomsService.roomExists({ roomId });
     if (!exists) return;
 
@@ -211,16 +216,17 @@ export class ServerGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       roomId,
     });
 
-    // If there are no more users than the requestor return.
-    if (room.users.length === 0) return;
+    // Sort users by owner priority and then remove the requestor user from the list.
+    const parsedUsers = [...room.users]
+      .sort((user) => {
+        if (user.id === room.ownerId) return -1;
+        return 1;
+      })
+      .filter((user) => user.id !== userId);
 
-    // Sort by owner priority
-    const sortedUsers = room.users.sort((user) => {
-      if (user.id === room.ownerId) return -1;
-      return 1;
-    });
+    if (!parsedUsers.length) return;
 
-    const highestPriorityUser = sortedUsers[0];
+    const highestPriorityUser = parsedUsers[0];
     const targetUser = this.sessionManager.getUserSession(highestPriorityUser.id);
     if (!targetUser) return;
 

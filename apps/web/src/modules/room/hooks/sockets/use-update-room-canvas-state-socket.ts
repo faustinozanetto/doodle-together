@@ -1,19 +1,28 @@
 import { useEffect } from 'react';
 import { SocketNames, UpdateCanvasStateSocketPayload } from '@doodle-together/shared';
-import { socketState } from '@modules/state/socket.slice';
 
-type UseUpdateRoomCanvasStateSocketProps = {
-  onCanvasUpdated: (data: UpdateCanvasStateSocketPayload) => void;
-};
+import { drawPoint, drawEraser } from '@modules/room/lib/room-draw.lib';
+import socket from '@modules/socket/lib/socket.lib';
+import { useRoomStore } from '@modules/state/room.slice';
 
-export const useUpdateRoomCanvasStateSocket = ({ onCanvasUpdated }: UseUpdateRoomCanvasStateSocketProps) => {
+export const useUpdateRoomCanvasStateSocket = () => {
+  const { canvasRef } = useRoomStore();
+
   useEffect(() => {
-    socketState.socket?.on(SocketNames.UPDATE_CANVAS_STATE, (data: UpdateCanvasStateSocketPayload) => {
-      onCanvasUpdated(data);
+    const canvasElement = canvasRef.current;
+    const context = canvasElement?.getContext('2d')!;
+
+    socket.on(SocketNames.UPDATE_CANVAS_STATE, (data: UpdateCanvasStateSocketPayload) => {
+      const { data: updateData, tool } = data;
+
+      if (!canvasElement) return;
+
+      if (tool === 'pencil') drawPoint({ ...updateData, context });
+      else if (tool === 'eraser') drawEraser({ ...updateData, context });
     });
 
     return () => {
-      socketState.socket?.off(SocketNames.UPDATE_CANVAS_STATE);
+      socket.off(SocketNames.UPDATE_CANVAS_STATE);
     };
-  }, []);
+  }, [canvasRef]);
 };

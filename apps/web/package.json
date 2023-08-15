@@ -28,7 +28,7 @@
     "bufferutil": "4.0.7",
     "class-variance-authority": "0.7.0",
     "framer-motion": "10.15.2",
-    "next": "13.4.13",
+    "next": "13.4.16",
     "next-theme-kit": "0.2.1",
     "qrcode": "1.5.3",
     "react": "18.2.0",
@@ -38,7 +38,8 @@
     "tailwind-merge": "1.14.0",
     "utf-8-validate": "6.0.3",
     "valtio": "1.11.2",
-    "zod": "3.21.4"
+    "zod": "3.22.0",
+    "zustand": "4.4.1"
   },
   "devDependencies": {
     "@doodle-together/database": "*",

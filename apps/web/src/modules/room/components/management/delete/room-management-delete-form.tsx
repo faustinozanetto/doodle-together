@@ -5,21 +5,14 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { deleteRoomValidationSchema } from '@modules/room/lib/room.validations';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@modules/ui/components/forms/forms';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@modules/ui/components/forms/forms';
 import { Input } from '@modules/ui/components/forms/input';
 import { AlertDialogCancel, AlertDialogFooter } from '@modules/ui/components/alert-dialog/alert-dialog';
 import { z } from 'zod';
 import { Button } from '@modules/ui/components/button/button';
-import { roomState } from '@modules/state/room.slice';
+
 import { LoadingIcon } from '@modules/ui/components/icons/loading-icon';
+import { useRoomStore } from '@modules/state/room.slice';
 
 export type DeleteRoomFormData = z.infer<typeof deleteRoomValidationSchema>;
 
@@ -30,6 +23,7 @@ type RoomManagementDeleteFormProps = {
 
 const RoomManagementDeleteForm: React.FC<RoomManagementDeleteFormProps> = (props) => {
   const { isLoading, onSubmit } = props;
+  const { room } = useRoomStore();
 
   const form = useForm({
     resolver: zodResolver(deleteRoomValidationSchema),
@@ -45,7 +39,7 @@ const RoomManagementDeleteForm: React.FC<RoomManagementDeleteFormProps> = (props
           render={({ field }) => (
             <FormItem className="w-full">
               <FormLabel>
-                Type <span className="font-bold">{roomState.room?.id}</span> to confirm
+                Type <span className="font-bold">{room?.id}</span> to confirm
               </FormLabel>
               <FormControl>
                 <Input placeholder="3DA243K" {...field} />

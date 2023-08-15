@@ -17,7 +17,8 @@
     "dev": "turbo dev --parallel",
     "lint": "turbo lint",
     "clean": "turbo clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "generate": "turbo run generate"
   },
   "devDependencies": {
     "@commitlint/cli": "17.7.1",
@@ -25,13 +26,16 @@
     "eslint": "8.45.0",
     "eslint-config-doodle-together": "*",
     "husky": "8.0.3",
-    "lint-staged": "13.3.0",
+    "lint-staged": "14.0.0",
     "prettier": "3.0.1",
     "prettier-plugin-tailwindcss": "0.4.0",
     "turbo": "1.10.12"
   },
   "lint-staged": {
     "extends": "./lint-staged.config.ts"
+  },
+  "prisma": {
+    "schema": "packages/database/prisma/schema.prisma"
   },
   "engines": {
     "node": ">=17.0.0",

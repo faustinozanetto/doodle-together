@@ -1,9 +1,9 @@
 import React from 'react';
 import { useSnapshot } from 'valtio';
-import { meState } from '@modules/state/me.slice';
 import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 import RoomTool, { RoomToolProps } from './room-tool';
 import RoomPanel from '../room-panel';
+import { useMeStore } from '@modules/state/me.slice';
 
 type ToolData = RoomToolProps & { requiresOwner: boolean };
 
@@ -71,9 +71,9 @@ const TOOLS: ToolData[] = [
 ];
 
 const RoomTools: React.FC = () => {
-  const meSnapshot = useSnapshot(meState);
+  const { me } = useMeStore();
 
-  const { isRoomOwner } = useIsRoomOwner(meSnapshot.me);
+  const { isRoomOwner } = useIsRoomOwner(me);
 
   // Only render the tools the user has access to.
   const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isRoomOwner));

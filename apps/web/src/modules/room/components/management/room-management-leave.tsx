@@ -16,15 +16,17 @@ import {
 import { useToast } from '@modules/ui/components/toasts/hooks/use-toast';
 import { useApiFetch } from '@modules/common/hooks/use-api-fetch';
 
-import { roomState } from '@modules/state/room.slice';
-import { meActions, meState } from '@modules/state/me.slice';
-import { socketState } from '@modules/state/socket.slice';
 import { LeaveIcon } from '@modules/ui/components/icons/leave-icon';
 import RoomManagementTool from './room-management-tool';
+import { useMeStore } from '@modules/state/me.slice';
+import socket from '@modules/socket/lib/socket.lib';
+import { useRoomStore } from '@modules/state/room.slice';
 
 const RoomManagementLeave: React.FC = () => {
   const router = useRouter();
   const { toast } = useToast();
+  const { room } = useRoomStore();
+  const { me, accessToken, clearAccessToken } = useMeStore();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -34,8 +36,8 @@ const RoomManagementLeave: React.FC = () => {
       const { left } = data;
       if (!left) return;
 
-      meActions.clearAccessToken();
-      socketState.socket?.disconnect();
+      clearAccessToken();
+      socket.disconnect();
 
       toast({ variant: 'success', content: 'Room left successfully!' });
       router.push('/');
@@ -43,10 +45,7 @@ const RoomManagementLeave: React.FC = () => {
   });
 
   const handleLeaveRoom = useCallback(async () => {
-    const { room } = roomState;
-    const { me, accessToken } = meState;
-
-    if (!room || !me) return;
+    if (!room || !me || !accessToken) return;
 
     await fetch({
       method: 'POST',
@@ -59,7 +58,7 @@ const RoomManagementLeave: React.FC = () => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  }, [roomState.room, meState.me]);
+  }, [room, me, accessToken]);
 
   const handleButtonClicked = () => {
     setDialogOpen(true);

@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { useSnapshot } from 'valtio';
 import { siteConfig } from '@config/config';
 import { useCopyText } from '@modules/common/hooks/use-copy-text';
-import { roomState } from '@modules/state/room.slice';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@modules/ui/components/dialog';
 import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { CopyIcon } from '@modules/ui/components/icons/copy-icon';
 import { ShareIcon } from '@modules/ui/components/icons/share-icon';
 import RoomManagementTool from '../room-management-tool';
+import { useRoomStore } from '@modules/state/room.slice';
 
 const RoomManagementShareLink: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  const roomSnapshot = useSnapshot(roomState);
+  const { room } = useRoomStore();
   const { copy } = useCopyText();
 
-  const roomLink = `${siteConfig.url}/room/${roomSnapshot.room?.id}`;
+  const roomLink = `${siteConfig.url}/room/${room?.id}`;
 
   const handleToolClicked = () => {
     setModalOpen(true);
