@@ -27,7 +27,7 @@
     "axios": "1.4.0",
     "bufferutil": "4.0.7",
     "class-variance-authority": "0.7.0",
-    "framer-motion": "10.15.1",
+    "framer-motion": "10.15.2",
     "next": "13.4.16",
     "next-theme-kit": "0.2.1",
     "qrcode": "1.5.3",
