@@ -1,0 +1,5 @@
+{
+  "extends": "@doodle-together/typescript-config/ui-library.json",
+  "include": ["."],
+  "exclude": ["dist", "build", "node_modules"]
+}

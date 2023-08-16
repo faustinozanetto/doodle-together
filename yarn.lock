@@ -404,6 +404,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@doodle-together/canvas-renderer@workspace:packages/canvas-renderer":
+  version: 0.0.0-use.local
+  resolution: "@doodle-together/canvas-renderer@workspace:packages/canvas-renderer"
+  dependencies:
+    "@doodle-together/typescript-config": "*"
+    "@types/react": ^18.2.14
+    "@types/react-dom": 18.2.7
+    eslint: ^8.45.0
+    tsup: ^7.1.0
+    typescript: ^5.1.6
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: 18.2.0
+  languageName: unknown
+  linkType: soft
+
 "@doodle-together/database@*, @doodle-together/database@workspace:packages/database":
   version: 0.0.0-use.local
   resolution: "@doodle-together/database@workspace:packages/database"
@@ -2608,7 +2624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.2.20":
+"@types/react@npm:*, @types/react@npm:18.2.20, @types/react@npm:^18.2.14":
   version: 18.2.20
   resolution: "@types/react@npm:18.2.20"
   dependencies:
