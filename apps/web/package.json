@@ -14,6 +14,7 @@
     "lint": "next lint --fix"
   },
   "dependencies": {
+    "@doodle-together/canvas-renderer": "*",
     "@doodle-together/shared": "*",
     "@hookform/resolvers": "3.2.0",
     "@radix-ui/react-alert-dialog": "1.0.4",

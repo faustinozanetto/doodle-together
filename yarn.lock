@@ -404,7 +404,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@doodle-together/canvas-renderer@workspace:packages/canvas-renderer":
+"@doodle-together/canvas-renderer@*, @doodle-together/canvas-renderer@workspace:packages/canvas-renderer":
   version: 0.0.0-use.local
   resolution: "@doodle-together/canvas-renderer@workspace:packages/canvas-renderer"
   dependencies:
@@ -464,6 +464,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@doodle-together/web@workspace:apps/web"
   dependencies:
+    "@doodle-together/canvas-renderer": "*"
     "@doodle-together/database": "*"
     "@doodle-together/shared": "*"
     "@doodle-together/tailwind-config": "*"
