@@ -1,7 +1,7 @@
 export enum CanvasShapeTypes {
-  Draw,
-  Box,
-  Circle,
+  Draw = 'Draw',
+  Box = 'Box',
+  Circle = 'Circle',
 }
 
 export type CanvasShapeSize = 'small' | 'medium' | 'large' | 'extra-large';
@@ -16,7 +16,7 @@ export interface ICanvasShapeCustomization {
 
 export interface ICanvasBaseShape {
   id: string;
-  parentId: string;
+  parentId: string | null;
   children: string[];
 }
 
@@ -25,7 +25,10 @@ export interface ICanvasShape extends ICanvasBaseShape {
   customization: ICanvasShapeCustomization;
 }
 
-export interface ICanvasDrawShape extends ICanvasShape {}
+export interface ICanvasDrawShape extends ICanvasShape {
+  points: number[][];
+}
+
 export interface ICanvasBoxShape extends ICanvasShape {}
 
 export type CanvasShapes = ICanvasDrawShape | ICanvasBoxShape;

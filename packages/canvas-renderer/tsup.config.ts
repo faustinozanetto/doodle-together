@@ -6,7 +6,7 @@ export default defineConfig((options: Options) => ({
   entry: ['src/index.tsx'],
   format: ['esm', 'cjs'],
   dts: true,
-  minify: true,
+  minify: false,
   clean: true,
   external: ['react', 'react-dom'],
   ...options,

@@ -14,7 +14,7 @@ import { useUpdateRoomSocket } from '../hooks/sockets/use-update-room-socket';
 import { useDeleteRoomSocket } from '../hooks/sockets/use-delete-room-socket';
 import { useKickRequestRoomSocket } from '../hooks/sockets/use-kick-request-room-socket';
 import { RequestCanvasStateSocketPayload, RoomWithUsers, SocketNames } from '@doodle-together/shared';
-import { Canvas } from '@doodle-together/canvas-renderer';
+import { Canvas, CanvasProvider } from '@doodle-together/canvas-renderer';
 
 import { useMeStore } from '@modules/state/me.slice';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
@@ -87,25 +87,27 @@ const Room: React.FC<RoomProps> = (props) => {
   }, []);
 
   return (
-    <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
-      {/* <RoomCanvas /> */}
-      <Canvas />
+    <CanvasProvider>
+      <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
+        {/* <RoomCanvas /> */}
+        <Canvas />
 
-      {/* Panels */}
-      <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
-        {/* Top */}
-        <div className="flex justify-between items-start">
-          <RoomUsers />
-          <RoomCustomization />
-        </div>
+        {/* Panels */}
+        <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
+          {/* Top */}
+          <div className="flex justify-between items-start">
+            <RoomUsers />
+            <RoomCustomization />
+          </div>
 
-        {/* Bottom  */}
-        <div className="flex justify-between items-end">
-          <RoomTools />
-          <RoomManagement />
+          {/* Bottom  */}
+          <div className="flex justify-between items-end">
+            <RoomTools />
+            <RoomManagement />
+          </div>
         </div>
       </div>
-    </div>
+    </CanvasProvider>
   );
 };
 

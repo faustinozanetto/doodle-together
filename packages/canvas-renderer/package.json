@@ -16,6 +16,10 @@
     "dev": "tsup --watch",
     "lint": "eslint \"src/**/*.{ts,tsx}\""
   },
+  "dependencies": {
+    "nanoid": "4.0.2",
+    "perfect-freehand": "1.2.0"
+  },
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "18.2.0"
