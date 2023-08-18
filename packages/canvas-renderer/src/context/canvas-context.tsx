@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useMemo, useReducer } from 'react';
 import { reducer } from './reducer';
 import { CanvasContextData } from './types';
 
@@ -20,5 +20,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = (props) => {
 
   const [state, dispatch] = useReducer(reducer, initialState.state);
 
-  return <CanvasContext.Provider value={{ state, dispatch }}>{children}</CanvasContext.Provider>;
+  const memoized = useMemo(() => {
+    return { state, dispatch };
+  }, [state]);
+
+  return <CanvasContext.Provider value={memoized}>{children}</CanvasContext.Provider>;
 };

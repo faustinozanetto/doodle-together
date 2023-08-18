@@ -1,4 +1,4 @@
-import { ActionMap, DeepPartial } from '../common/types';
+import { ActionMap } from '../common/types';
 import { CanvasShapeTypes, CanvasShapes } from '../shapes';
 
 export type CanvasNode = CanvasShapes;

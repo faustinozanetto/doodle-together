@@ -1,87 +1,55 @@
-import React, { ElementRef, useEffect, useRef, useState } from 'react';
-import { useCanvasContext } from '../hooks';
+import React, { ElementRef, useRef, useState } from 'react';
 
 import { CanvasNode } from './canvas-node';
-import { CanvasShapeTypes } from '../shapes';
-import { CanvasActionType } from '../context/types';
+import { CanvasPoint, CanvasShapeTypes, ICanvasBoxShape, ICanvasDrawShape } from '../shapes';
+import { useCanvas } from '../hooks/use-canvas';
 
 export const Canvas: React.FC = () => {
   const canvasRef = useRef<ElementRef<'svg'>>(null);
 
-  const { state, dispatch } = useCanvasContext();
+  const { addNode, updateNode, getLastNode, getNodes } = useCanvas();
 
   const [mouseDown, setMouseDown] = useState<boolean>(false);
-  const points = useRef<number[][]>([]);
+
+  const points = useRef<CanvasPoint[]>([]);
 
   const handleOnMouseDown = () => {
     setMouseDown(true);
-    dispatch({
-      type: CanvasActionType.ADD_NODE,
-      payload: {
-        type: CanvasShapeTypes.Draw,
-      },
-    });
+    addNode(CanvasShapeTypes.Box);
 
-    console.log('Created nodee');
+    const handleOnMouseRelease = () => {
+      setMouseDown(false);
+
+      points.current = [];
+    };
+
+    window.addEventListener('mouseup', handleOnMouseRelease);
   };
 
-  const handleOnMouseRelease = () => {
-    setMouseDown(false);
-
-    points.current = [];
-  };
-
-  const handlePointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
+  const handleOnMouseMove = (event: React.MouseEvent<SVGSVGElement>) => {
     const { clientX, clientY } = event;
 
     if (!mouseDown || !canvasRef.current) return;
 
     const { left, top } = canvasRef.current.getBoundingClientRect();
-    const currentPoint = {
+    const point = {
       x: clientX - left,
       y: clientY - top,
     };
 
-    points.current.push([currentPoint.x, currentPoint.y]);
-    const shape = state.nodes[state.nodes.length - 1];
-    if (!shape) return;
+    points.current.push({ x: point.x, y: point.y });
 
-    dispatch({
-      type: CanvasActionType.UPDATE_NODE,
-      payload: {
-        id: shape.id,
-        data: {
-          ...shape,
-          points: points.current,
-        },
-      },
+    const lastNode = getLastNode<ICanvasBoxShape>();
+    if (!lastNode) return;
+
+    const firstPoint = points.current[0];
+    const lastPoint = points.current[points.current.length - 1];
+
+    updateNode<ICanvasBoxShape>(lastNode.id, {
+      ...lastNode,
+      props: { ...lastNode.props, leftTop: firstPoint, bottomRight: lastPoint },
     });
-    /*
-    const shape = tree.children[tree.children.length - 1].node as ICanvasDrawShape | undefined;
-    if (!shape) return;
-
-    setTree((prev) => {
-      const updatedTree = structuredClone(prev);
-      const current = updatedTree.children.findIndex((child) => child.node.id === shape.id);
-      if (current === -1) return prev;
-
-      const updatedPoints = [...updatedTree.children[current].node.points, [currentPoint.x, currentPoint.y]];
-      updatedTree.children[current].node.points = updatedPoints;
-      return updatedTree;
-    });
-
-    console.log({ points: shape.points });*/
-
-    // shape.setPoints(updatedPoints);
   };
-
-  useEffect(() => {
-    window.addEventListener('mouseup', handleOnMouseRelease);
-
-    return () => {
-      window.removeEventListener('mouseup', handleOnMouseRelease);
-    };
-  }, [mouseDown]);
 
   return (
     <svg
@@ -90,13 +58,14 @@ export const Canvas: React.FC = () => {
       className="absolute overflow-hidden top-0 left-0 w-full h-full z-100"
       style={{
         pointerEvents: 'all',
+        transformOrigin: 'center center',
+        contain: 'layout style size',
       }}
-      // onPointerMove={handlePointerMove}
-      onMouseMove={handlePointerMove}
+      onMouseMove={handleOnMouseMove}
       onMouseDown={handleOnMouseDown}
     >
       <g id="canvas-shapes" transform="scale(1)">
-        {state.nodes.map((node) => {
+        {getNodes().map((node) => {
           return <CanvasNode key={node.id} node={node} />;
         })}
       </g>

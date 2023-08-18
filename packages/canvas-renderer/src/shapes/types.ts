@@ -1,3 +1,8 @@
+export type CanvasPoint = {
+  x: number;
+  y: number;
+};
+
 export enum CanvasShapeTypes {
   Draw = 'Draw',
   Box = 'Box',
@@ -16,10 +21,8 @@ export interface ICanvasShapeCustomization {
 
 export interface ICanvasBaseShape {
   id: string;
-  position: {
-    x: number;
-    y: number;
-  };
+  position: CanvasPoint;
+  rotation: number;
 }
 
 export interface ICanvasShape extends ICanvasBaseShape {
@@ -28,9 +31,16 @@ export interface ICanvasShape extends ICanvasBaseShape {
 }
 
 export interface ICanvasDrawShape extends ICanvasShape {
-  points: number[][];
+  props: {
+    points: CanvasPoint[];
+  };
 }
 
-export interface ICanvasBoxShape extends ICanvasShape {}
+export interface ICanvasBoxShape extends ICanvasShape {
+  props: {
+    leftTop: CanvasPoint;
+    bottomRight: CanvasPoint;
+  };
+}
 
 export type CanvasShapes = ICanvasDrawShape | ICanvasBoxShape;
