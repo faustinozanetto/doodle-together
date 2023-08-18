@@ -1,11 +1,15 @@
-import React, { createContext, useState } from 'react';
-import { RendererTree } from '../renderer/renderer-tree';
+import React, { createContext, useReducer } from 'react';
+import { reducer } from './reducer';
+import { CanvasContextData } from './types';
 
-type CanvasContextData = {
-  rendererTree: RendererTree | null;
+const initialState: CanvasContextData = {
+  state: {
+    nodes: [],
+  },
+  dispatch: () => {},
 };
 
-export const CanvasContext = createContext<CanvasContextData>({ rendererTree: null });
+export const CanvasContext = createContext<CanvasContextData>(initialState);
 
 type CanvasProviderProps = {
   children: React.ReactNode;
@@ -14,7 +18,7 @@ type CanvasProviderProps = {
 export const CanvasProvider: React.FC<CanvasProviderProps> = (props) => {
   const { children } = props;
 
-  const [rendererTree, setRendererTree] = useState<RendererTree>(() => new RendererTree());
+  const [state, dispatch] = useReducer(reducer, initialState.state);
 
-  return <CanvasContext.Provider value={{ rendererTree }}>{children}</CanvasContext.Provider>;
+  return <CanvasContext.Provider value={{ state, dispatch }}>{children}</CanvasContext.Provider>;
 };

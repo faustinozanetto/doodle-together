@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "nanoid": "4.0.2",
-    "perfect-freehand": "1.2.0"
+    "perfect-freehand": "1.2.0",
+    "zustand": "4.4.1"
   },
   "peerDependencies": {
     "react": "^18.2.0",

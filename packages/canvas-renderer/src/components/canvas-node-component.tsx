@@ -1,20 +1,22 @@
-import React from 'react';
-import { ICanvasShape, ShapeUtils } from '../shapes';
+import React, { useEffect } from 'react';
+import { CanvasShapes, ShapeUtils } from '../shapes';
 
 type CanvasNodeComponentProps = {
-  node: ICanvasShape;
+  node: CanvasShapes;
 };
 
 export const CanvasNodeComponent: React.FC<CanvasNodeComponentProps> = (props) => {
   const { node } = props;
-  const { id, type } = node;
 
-  const shapeClass = ShapeUtils.getShapeTypeClass(type);
-  const transform = `matrix(1, 0, 0, 1, 400, 300)`;
+  const transform = `matrix(1, 0, 0, 1, ${node.position.x}px, ${node.position.y}px)`;
+
+  useEffect(() => {
+    console.log('Node updated!');
+  }, [node]);
 
   return (
-    <g id={id} className="" transform={transform}>
-      {shapeClass.render(node)}
+    <g id={node.id} transform={transform}>
+      {ShapeUtils.getShapeClass(node.type).render(node)}
     </g>
   );
 };

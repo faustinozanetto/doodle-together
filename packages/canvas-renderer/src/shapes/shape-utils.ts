@@ -1,6 +1,12 @@
+import { DrawShape } from './draw-shape';
 import { Shape } from './shape';
 import { CanvasShapeTypes, CanvasShapes, ICanvasShapeCustomization } from './types';
-import { SHAPES_CLASSES } from './shapes-factory';
+
+export const SHAPE_CLASSES: Record<CanvasShapeTypes, Shape<CanvasShapes>> = {
+  Box: new DrawShape(),
+  Draw: new DrawShape(),
+  Circle: new DrawShape(),
+};
 
 const average = (a: number, b: number) => (a + b) / 2;
 
@@ -13,8 +19,8 @@ export class ShapeUtils {
     };
   }
 
-  static getShapeTypeClass(shapeType: CanvasShapeTypes): Shape<CanvasShapes> {
-    return SHAPES_CLASSES[shapeType];
+  static getShapeClass(shapeType: CanvasShapeTypes): Shape<CanvasShapes> {
+    return SHAPE_CLASSES[shapeType];
   }
 
   static getShapePathFromStroke(stroke: number[][]): string {

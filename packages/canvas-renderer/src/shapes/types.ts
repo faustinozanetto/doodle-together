@@ -16,8 +16,10 @@ export interface ICanvasShapeCustomization {
 
 export interface ICanvasBaseShape {
   id: string;
-  parentId: string | null;
-  children: string[];
+  position: {
+    x: number;
+    y: number;
+  };
 }
 
 export interface ICanvasShape extends ICanvasBaseShape {
