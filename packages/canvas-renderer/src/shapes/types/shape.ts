@@ -1,4 +1,10 @@
-import { CanvasPoint, CanvasShapes, ICanvasBounds, ICanvasShapeDimensions } from '../types';
+import {
+  CanvasPoint,
+  CanvasShapes,
+  ICanvasBounds,
+  ICanvasMouseEvenetsUpdatePayload,
+  ICanvasShapeDimensions,
+} from '../types';
 
 export abstract class Shape<T extends CanvasShapes> {
   /**
@@ -7,6 +13,8 @@ export abstract class Shape<T extends CanvasShapes> {
    * @returns The react jsx svg element.
    */
   abstract render(data: T): React.JSX.Element;
+
+  abstract mouseUpdate(data: T, updatePayload: ICanvasMouseEvenetsUpdatePayload): T;
 
   abstract shouldRender(prev: T, next: T): boolean;
 

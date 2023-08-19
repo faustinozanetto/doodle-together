@@ -18,6 +18,14 @@ export interface ICanvasBounds {
   max: CanvasPoint;
 }
 
+export interface ICanvasMouseEvenetsUpdatePayload {
+  cursorPoint: CanvasPoint;
+  originPoint: CanvasPoint;
+  topLeftPoint: CanvasPoint;
+  points: CanvasPoint[];
+  translatedPoints: CanvasPoint[];
+}
+
 export interface ICanvasShapeDimensions {
   width: number;
   height: number;

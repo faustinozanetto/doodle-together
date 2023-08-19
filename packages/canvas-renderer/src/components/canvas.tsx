@@ -1,11 +1,10 @@
-import React, { ElementRef, useEffect, useRef, useState } from 'react';
+import React, { ElementRef, useEffect, useRef } from 'react';
 
 import { CanvasNode } from './canvas-node';
-import { CanvasPoint, CanvasShapeTypes, ICanvasBoxShape, ICanvasCircleShape, ICanvasDrawShape } from '../shapes';
+import { CanvasShapeTypes, ICanvasBoxShape, ICanvasCircleShape, ICanvasDrawShape, ShapeUtils } from '../shapes';
 import { useCanvas } from '../hooks/use-canvas';
 import { useCanvasContext } from '../hooks';
 import { CanvasActionType } from '../context/types';
-import { useCanvasBounds } from '../hooks/use-canvas-bounds';
 import { useCanvasMouseEvents } from '../hooks/use-canvas-mouse-events';
 
 export const Canvas: React.FC = () => {
@@ -14,15 +13,39 @@ export const Canvas: React.FC = () => {
   const { dispatch } = useCanvasContext();
   const { addNode, updateNode, getLastNode, getNodes } = useCanvas();
 
-  const [mouseDown, setMouseDown] = useState<boolean>(false);
+  const {
+    onPointerMove,
+    onPointerDown,
+    onPointerUp,
+    isMouseDown,
+    cursorPoint,
+    originPoint,
+    points,
+    topLeftPoint,
+    translatedPoints,
+  } = useCanvasMouseEvents({
+    onPointerUpCallback() {},
+    onPointerDownCallback() {
+      addNode(CanvasShapeTypes.Circle);
+    },
+    onPointerMoveCallback() {
+      const lastNode = getLastNode<ICanvasCircleShape>();
+      if (!lastNode || !topLeftPoint.current || !originPoint.current) return;
 
-  const origin = useRef<CanvasPoint | null>();
-  const topLeft = useRef<CanvasPoint>({ x: 0, y: 0 });
-  const points = useRef<CanvasPoint[]>([]);
-  const shiftedPoints = useRef<CanvasPoint[]>([]);
+      // Get the shape class and call the mouseUpdate method to get the updated shape data and pass to state.
+      const shapeClass = ShapeUtils.getShapeClass(CanvasShapeTypes.Circle);
 
-  const { bounds } = useCanvasBounds();
-  const { onPointerMove, cursorPoint } = useCanvasMouseEvents();
+      const updatedData = shapeClass.mouseUpdate(lastNode, {
+        cursorPoint: cursorPoint.current,
+        originPoint: originPoint.current,
+        points: points.current,
+        topLeftPoint: topLeftPoint.current,
+        translatedPoints: translatedPoints.current,
+      }) as ICanvasCircleShape;
+
+      updateNode<ICanvasCircleShape>(lastNode.id, updatedData);
+    },
+  });
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -35,148 +58,13 @@ export const Canvas: React.FC = () => {
     }
   }, [canvasRef]);
 
-  const handleOnMouseDown = () => {
-    setMouseDown(true);
-    addNode(CanvasShapeTypes.Circle);
-
-    // Initialize origin
-    origin.current = cursorPoint;
-    topLeft.current = cursorPoint;
-
-    const handleOnMouseRelease = () => {
-      setMouseDown(false);
-
-      origin.current = null;
-      points.current = [];
-      shiftedPoints.current = [];
-    };
-
-    window.addEventListener('mouseup', handleOnMouseRelease);
-  };
-
-  const handleOnMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!mouseDown || !origin.current) return;
-
-    // The new adjusted point
-    const newPoint = {
-      x: cursorPoint.x - origin.current?.x!,
-      y: cursorPoint.y - origin.current?.y!,
-    };
-
-    // Don't add duplicate points.
-    if (cursorPoint.x === newPoint.x && cursorPoint.y === newPoint.y) return;
-
-    // Add the new adjusted point to the points array
-    points.current.push(newPoint);
-
-    // Does the input point create a new top left?
-    const prevTopLeft = topLeft;
-
-    const newTopLeft = {
-      x: Math.min(topLeft.current.x, cursorPoint.x),
-      y: Math.min(topLeft.current.y, cursorPoint.y),
-    };
-
-    const delta = {
-      x: newTopLeft.x - origin.current?.x!,
-      y: newTopLeft.y - origin.current?.y!,
-    };
-
-    let temppoints: CanvasPoint[];
-
-    if (prevTopLeft.current.x !== newTopLeft.x || prevTopLeft.current.y !== newTopLeft.y) {
-      topLeft.current = newTopLeft;
-
-      temppoints = points.current.map((pt) => {
-        return {
-          x: pt.x - delta.x,
-          y: pt.y - delta.y,
-        };
-      });
-    } else {
-      const sub = {
-        x: topLeft.current.x - origin.current?.x!,
-        y: topLeft.current.y - origin.current?.y!,
-      };
-      const newP = {
-        x: newPoint.x - sub.x,
-        y: newPoint.y - sub.y,
-      };
-      temppoints = [...shiftedPoints.current, newP];
-    }
-
-    shiftedPoints.current = temppoints;
-
-    const lastNode = getLastNode<ICanvasCircleShape>();
-    if (!lastNode) return;
-
-    /*
-    updateNode<ICanvasDrawShape>(lastNode.id, {
-      ...lastNode,
-      position: topLeft.current,
-      props: {
-        ...lastNode.props,
-        points: temppoints,
-      },
-    });*/
-
-    const radius = Math.max(Math.abs(origin.current.x - cursorPoint.x), Math.abs(origin.current.y - cursorPoint.y));
-
-    updateNode<ICanvasCircleShape>(lastNode.id, {
-      ...lastNode,
-      position: origin.current,
-      props: {
-        ...lastNode.props,
-        radius,
-      },
-    });
-
-    /*
-    const width = Math.abs(cursor.current.x - origin.current.x);
-    const height = Math.abs(cursor.current.y - origin.current.y);
-
-    let finalPoint: CanvasPoint = origin.current;
-
-    if (origin.current.x < cursor.current.x && origin.current.y > cursor.current.y) {
-      finalPoint = {
-        x: origin.current.x,
-        y: cursor.current.y,
-      };
-    } else if (origin.current.x > cursor.current.x && origin.current.y > cursor.current.y) {
-      finalPoint = {
-        x: cursor.current.x,
-        y: cursor.current.y,
-      };
-    } else if (origin.current.x > cursor.current.x && origin.current.y < cursor.current.y) {
-      finalPoint = {
-        x: cursor.current.x,
-        y: origin.current.y,
-      };
-    } else if (origin.current.x < cursor.current.x && origin.current.y < cursor.current.y) {
-    }
-
-    updateNode<ICanvasBoxShape>(lastNode.id, {
-      ...lastNode,
-      position: finalPoint,
-      props: {
-        ...lastNode.props,
-        size: {
-          width,
-          height,
-        },
-      },
-    })*/
-  };
-
   return (
     <div
       ref={canvasRef}
-      onMouseMove={handleOnMouseMove}
-      onMouseDown={handleOnMouseDown}
+      className="absolute inset-0 w-full h-full"
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerDown={onPointerDown}
-      className="absolute inset-0 w-full h-full"
       style={{
         transformOrigin: 'center center',
       }}
@@ -184,25 +72,19 @@ export const Canvas: React.FC = () => {
       <div
         className="absolute inset-0 bg-red-500 h-6 w-6 rounded-lg z-[800] pointer-events-none"
         style={{
-          transform: `translate(${origin.current?.x}px, ${origin.current?.y}px)`,
+          transform: `translate(${originPoint.current?.x}px, ${originPoint.current?.y}px)`,
         }}
       />
       <div
         className="absolute inset-0 bg-blue-500 h-6 w-6 rounded-lg z-[800] pointer-events-none"
         style={{
-          transform: `translate(${topLeft.current?.x}px, ${topLeft.current?.y}px)`,
+          transform: `translate(${topLeftPoint.current?.x}px, ${topLeftPoint.current?.y}px)`,
         }}
       />
-      {/* <div
-        className="absolute inset-0 bg-green-500 h-6 w-6 rounded-lg z-[800] pointer-events-none"
-        style={{
-          transform: `translate(${last.current?.x}px, ${last.current?.y}px)`,
-        }}
-      /> */}
       <div
         className="absolute inset-0 bg-violet-500 h-6 w-6 rounded-lg z-[800] pointer-events-none"
         style={{
-          transform: `translate(${cursorPoint.x}px, ${cursorPoint.y}px)`,
+          transform: `translate(${cursorPoint.current?.x}px, ${cursorPoint.current?.y}px)`,
         }}
       />
       <div

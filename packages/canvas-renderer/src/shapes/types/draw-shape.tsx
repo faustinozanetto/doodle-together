@@ -1,7 +1,7 @@
 import { Shape } from './shape';
 
 import getStroke from 'perfect-freehand';
-import { ICanvasBounds, ICanvasDrawShape, ICanvasShapeDimensions } from '../types';
+import { ICanvasBounds, ICanvasDrawShape, ICanvasMouseEvenetsUpdatePayload, ICanvasShapeDimensions } from '../types';
 import { ShapeUtils } from '../shape-utils';
 import SVGContainer from '../../components/svg-container';
 
@@ -12,24 +12,35 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
     const stroke = getStroke(props.points, {
       size: ShapeUtils.getShapeMappedSize(customization.size),
       thinning: 0.6,
-      streamline: 0.7,
+      streamline: 0.85,
       smoothing: 0.5,
       end: { taper: 6.5 * 4 },
       start: { taper: 8.5 * 2.5 },
-      last: true,
     });
 
     const path = ShapeUtils.getShapePathFromStroke(stroke);
 
     return (
       <SVGContainer id={data.id}>
-        <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" />
+        <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" fill={customization.color} />
       </SVGContainer>
     );
   }
 
+  mouseUpdate(data: ICanvasDrawShape, updatePayload: ICanvasMouseEvenetsUpdatePayload): ICanvasDrawShape {
+    const { topLeftPoint, translatedPoints } = updatePayload;
+
+    const updatedData: ICanvasDrawShape = {
+      ...data,
+      position: topLeftPoint,
+      props: { ...data.props, points: translatedPoints },
+    };
+
+    return updatedData;
+  }
+
   shouldRender(prev: ICanvasDrawShape, next: ICanvasDrawShape): boolean {
-    return prev.props.points !== next.props.points;
+    return prev.customization !== next.customization || prev.props.points !== next.props.points;
   }
 
   calculateBounds(data: ICanvasDrawShape): ICanvasBounds {

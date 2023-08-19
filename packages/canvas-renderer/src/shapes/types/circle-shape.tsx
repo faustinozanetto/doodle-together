@@ -1,13 +1,19 @@
 import { Shape } from './shape';
 
 import getStroke from 'perfect-freehand';
-import { CanvasPoint, ICanvasBounds, ICanvasCircleShape, ICanvasShapeDimensions } from '../types';
+import {
+  CanvasPoint,
+  ICanvasBounds,
+  ICanvasCircleShape,
+  ICanvasMouseEvenetsUpdatePayload,
+  ICanvasShapeDimensions,
+} from '../types';
 import { ShapeUtils } from '../shape-utils';
 import SVGContainer from '../../components/svg-container';
 
 export class CircleShape extends Shape<ICanvasCircleShape> {
   render(data: ICanvasCircleShape): JSX.Element {
-    const { props, position, customization } = data;
+    const { props, customization } = data;
     const { radius } = props;
 
     const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
@@ -44,6 +50,20 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
         <path d={path} />
       </SVGContainer>
     );
+  }
+
+  mouseUpdate(data: ICanvasCircleShape, updatePayload: ICanvasMouseEvenetsUpdatePayload): ICanvasCircleShape {
+    const { originPoint, cursorPoint } = updatePayload;
+
+    const radius = Math.max(Math.abs(originPoint.x - cursorPoint.x), Math.abs(originPoint.y - cursorPoint.y));
+
+    const updatedData: ICanvasCircleShape = {
+      ...data,
+      position: updatePayload.originPoint,
+      props: { ...data.props, radius },
+    };
+
+    return updatedData;
   }
 
   shouldRender(prev: ICanvasCircleShape, next: ICanvasCircleShape): boolean {

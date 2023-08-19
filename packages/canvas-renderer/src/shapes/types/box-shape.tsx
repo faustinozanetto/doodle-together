@@ -1,6 +1,12 @@
 import { Shape } from './shape';
 import getStroke from 'perfect-freehand';
-import { CanvasPoint, ICanvasBounds, ICanvasBoxShape, ICanvasShapeDimensions } from '../types';
+import {
+  CanvasPoint,
+  ICanvasBounds,
+  ICanvasBoxShape,
+  ICanvasMouseEvenetsUpdatePayload,
+  ICanvasShapeDimensions,
+} from '../types';
 import { ShapeUtils } from '../shape-utils';
 import SVGContainer from '../../components/svg-container';
 
@@ -57,6 +63,47 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
         <path d={path} />
       </SVGContainer>
     );
+  }
+
+  mouseUpdate(data: ICanvasBoxShape, updatePayload: ICanvasMouseEvenetsUpdatePayload): ICanvasBoxShape {
+    const { cursorPoint, originPoint } = updatePayload;
+
+    const width = Math.abs(cursorPoint.x - originPoint.x);
+    const height = Math.abs(cursorPoint.y - originPoint.y);
+
+    let finalPoint: CanvasPoint = originPoint;
+
+    if (originPoint.x < cursorPoint.x && originPoint.y > cursorPoint.y) {
+      finalPoint = {
+        x: originPoint.x,
+        y: cursorPoint.y,
+      };
+    } else if (originPoint.x > cursorPoint.x && originPoint.y > cursorPoint.y) {
+      finalPoint = {
+        x: cursorPoint.x,
+        y: cursorPoint.y,
+      };
+    } else if (originPoint.x > cursorPoint.x && originPoint.y < cursorPoint.y) {
+      finalPoint = {
+        x: cursorPoint.x,
+        y: originPoint.y,
+      };
+    } else if (originPoint.x < cursorPoint.x && originPoint.y < cursorPoint.y) {
+    }
+
+    const updatedData: ICanvasBoxShape = {
+      ...data,
+      position: finalPoint,
+      props: {
+        ...data.props,
+        size: {
+          width,
+          height,
+        },
+      },
+    };
+
+    return updatedData;
   }
 
   shouldRender(prev: ICanvasBoxShape, next: ICanvasBoxShape): boolean {
