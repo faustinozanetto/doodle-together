@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { CanvasNode as CanvasNodeData } from '../context/types';
-import { ShapeUtils } from '../shapes';
+import { ShapeUtils } from '../../shapes';
+import { type CanvasNode as CanvasNodeData } from '../../context/canvas/types';
 
 type CanvasNodeProps = {
   node: CanvasNodeData;
@@ -12,8 +12,9 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
 
     const shapeClass = ShapeUtils.getShapeClass(node.type);
 
-    const dimensions = shapeClass.calculateDimensions(node);
+    // const dimensions = shapeClass.calculateDimensions(node);
     const bounds = shapeClass.calculateBounds(node);
+    const dimensions = ShapeUtils.getBoundsDimensions(bounds);
 
     const padding = '24px';
     const transform = `translate(calc(${bounds.min.x}px - ${padding}),

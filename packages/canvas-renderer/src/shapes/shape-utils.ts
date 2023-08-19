@@ -1,8 +1,16 @@
 import { Shape } from './types/shape';
-import { CanvasPoint, CanvasShapeTypes, CanvasShapes, ICanvasShapeCustomization } from './types';
+import {
+  CanvasShapeTypes,
+  CanvasShapes,
+  ICanvasBounds,
+  ICanvasShapeCustomization,
+  ICanvasShapeDimensions,
+} from './types';
 import { DrawShape } from './types/draw-shape';
 import { BoxShape } from './types/box-shape';
 import { CircleShape } from './types/circle-shape';
+import { CameraContextState } from '../context/camera/types';
+import { ICanvasPoint } from '../common/canvas-point';
 
 const SHAPE_CLASSES: Record<CanvasShapeTypes, Shape<CanvasShapes>> = {
   Box: new BoxShape(),
@@ -34,13 +42,49 @@ export class ShapeUtils {
     return SHAPE_CLASSES[shapeType];
   }
 
-  static lerpCanvasPoints(start: CanvasPoint, end: CanvasPoint, t: number) {
+  static getBoundsCenter(bounds: ICanvasBounds): ICanvasPoint {
+    const centerX = (bounds.min.x + bounds.max.x) / 2;
+    const centerY = (bounds.min.y + bounds.max.y) / 2;
+    return { x: centerX, y: centerY };
+  }
+
+  static getBoundsDimensions(bounds: ICanvasBounds): ICanvasShapeDimensions {
+    const { min, max } = bounds;
+    const width = max.x - min.x;
+    const height = max.y - min.y;
+    return { width, height };
+  }
+
+  static getCameraTransformedPoint(point: ICanvasPoint, camera: CameraContextState): ICanvasPoint {
+    const { zoom, position } = camera;
+    const zoomMapped: ICanvasPoint = {
+      x: point.x / zoom,
+      y: point.y / zoom,
+    };
+    const translated: ICanvasPoint = {
+      x: zoomMapped.x - position.x,
+      y: zoomMapped.y - position.y,
+    };
+    return translated;
+  }
+
+  static random(id: string): number {
+    let seed = 0;
+    for (let i = 0; i < id.length; i++) {
+      seed = (seed * 31 + id.charCodeAt(i)) % 1000000;
+    }
+
+    const seededRandom = (seed / 1000000 + Math.random()) % 1;
+    return seededRandom;
+  }
+
+  static lerpCanvasPoints(start: ICanvasPoint, end: ICanvasPoint, t: number) {
     const lerpedX = start.x + t * (end.x - start.x);
     const lerpedY = start.y + t * (end.y - start.y);
     return { x: lerpedX, y: lerpedY };
   }
 
-  static getPointsInBetween(start: CanvasPoint, end: CanvasPoint, amount: number = 4) {
+  static getPointsInBetween(start: ICanvasPoint, end: ICanvasPoint, amount: number = 4) {
     return Array.from({ length: amount }, (_, index) => {
       const t = index / (amount - 1);
       return this.lerpCanvasPoints(start, end, t);

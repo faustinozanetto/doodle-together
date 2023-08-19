@@ -1,5 +1,5 @@
+import { ShapesFactory } from '../../../shapes';
 import { CanvasContextState, CanvasActions, CanvasActionType, CanvasNode } from '../types';
-import { ShapesFactory } from '../../shapes';
 
 export const reducer = (state: CanvasContextState, action: CanvasActions): CanvasContextState => {
   switch (action.type) {

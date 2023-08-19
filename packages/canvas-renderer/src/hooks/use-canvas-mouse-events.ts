@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
-import { CanvasPoint } from '../shapes';
+import { ShapeUtils } from '../shapes';
 import { useCanvasBounds } from './use-canvas-bounds';
+import { useCamera } from './use-camera';
+import { CanvasPoint, ICanvasPoint } from '../common/canvas-point';
 
 type UseCanvasMouseEventsProps = {
   onPointerUpCallback: () => void;
@@ -14,23 +16,29 @@ export const useCanvasMouseEvents = ({
   onPointerMoveCallback,
 }: UseCanvasMouseEventsProps) => {
   const { bounds } = useCanvasBounds();
+  const { zoom, position } = useCamera();
 
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
 
-  const originPoint = useRef<CanvasPoint | null>(null);
-  const topLeftPoint = useRef<CanvasPoint | null>(null);
-  const cursorPoint = useRef<CanvasPoint>({ x: 0, y: 0 });
+  const originPoint = useRef<ICanvasPoint | null>(null);
+  const topLeftPoint = useRef<ICanvasPoint | null>(null);
+  const cursorPoint = useRef<ICanvasPoint>({ x: 0, y: 0 });
 
-  const points = useRef<CanvasPoint[]>([]);
-  const translatedPoints = useRef<CanvasPoint[]>([]);
+  const points = useRef<ICanvasPoint[]>([]);
+  const translatedPoints = useRef<ICanvasPoint[]>([]);
 
   const updateCursorPoint = (clientX: number, clientY: number) => {
-    const point: CanvasPoint = {
-      x: +clientX.toFixed(2) - bounds.min.x,
-      y: +clientY.toFixed(2) - bounds.min.y,
+    const clientPoint: ICanvasPoint = {
+      x: +clientX.toFixed(2),
+      y: +clientY.toFixed(2),
     };
 
-    cursorPoint.current = point;
+    const point = CanvasPoint.sub(clientPoint, bounds.min);
+
+    cursorPoint.current = ShapeUtils.getCameraTransformedPoint(point, {
+      zoom,
+      position,
+    });
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -40,47 +48,31 @@ export const useCanvasMouseEvents = ({
 
     if (!isMouseDown || !originPoint.current || !topLeftPoint.current) return;
 
-    const translatedPoint: CanvasPoint = {
-      x: cursorPoint.current.x - originPoint.current.x,
-      y: cursorPoint.current.y - originPoint.current.y,
-    };
+    const translatedPoint = CanvasPoint.sub(cursorPoint.current, originPoint.current);
 
     points.current = [...points.current, translatedPoint];
 
-    const previousTopLeftPoint: CanvasPoint = topLeftPoint.current;
-    const newTopLeftPoint: CanvasPoint = {
+    const previousTopLeftPoint = topLeftPoint.current;
+    const newTopLeftPoint: ICanvasPoint = {
       x: Math.min(topLeftPoint.current.x, cursorPoint.current.x),
       y: Math.min(topLeftPoint.current.y, cursorPoint.current.y),
     };
 
-    const deltaPoint: CanvasPoint = {
-      x: newTopLeftPoint.x - originPoint.current.x,
-      y: newTopLeftPoint.y - originPoint.current.y,
-    };
+    const deltaPoint = CanvasPoint.sub(newTopLeftPoint, originPoint.current);
 
-    let tempPoints: CanvasPoint[] = [];
+    let tempPoints: ICanvasPoint[] = [];
     // Top left point changed
     if (previousTopLeftPoint.x !== newTopLeftPoint.x || previousTopLeftPoint.y !== newTopLeftPoint.y) {
       topLeftPoint.current = newTopLeftPoint;
 
       tempPoints = points.current.map((point) => {
-        return {
-          x: point.x - deltaPoint.x,
-          y: point.y - deltaPoint.y,
-        };
+        return CanvasPoint.sub(point, deltaPoint);
       });
     } else {
-      const subtracted: CanvasPoint = {
-        x: topLeftPoint.current.x - originPoint.current.x,
-        y: topLeftPoint.current.y - originPoint.current.y,
-      };
-
-      const newPoint: CanvasPoint = {
-        x: translatedPoint.x - subtracted.x,
-        y: translatedPoint.y - subtracted.y,
-      };
-
-      tempPoints = [...translatedPoints.current, newPoint];
+      tempPoints = [
+        ...translatedPoints.current,
+        CanvasPoint.sub(translatedPoint, CanvasPoint.sub(topLeftPoint.current, originPoint.current)),
+      ];
     }
 
     translatedPoints.current = tempPoints;

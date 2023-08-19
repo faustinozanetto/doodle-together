@@ -1,14 +1,9 @@
 import { Shape } from './shape';
 import getStroke from 'perfect-freehand';
-import {
-  CanvasPoint,
-  ICanvasBounds,
-  ICanvasBoxShape,
-  ICanvasMouseEvenetsUpdatePayload,
-  ICanvasShapeDimensions,
-} from '../types';
+import { ICanvasBounds, ICanvasBoxShape, ICanvasMouseEvenetsUpdatePayload, ICanvasShapeDimensions } from '../types';
 import { ShapeUtils } from '../shape-utils';
-import SVGContainer from '../../components/svg-container';
+import SVGContainer from '../../components/svg/svg-container';
+import { CanvasPoint, ICanvasPoint } from '../../common/canvas-point';
 
 export class BoxShape extends Shape<ICanvasBoxShape> {
   render(data: ICanvasBoxShape): JSX.Element {
@@ -21,26 +16,28 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const width = Math.max(0, size.width - strokeWidth / 2);
     const heigth = Math.max(0, size.height - strokeWidth / 2);
 
+    const rand = ShapeUtils.random(data.id);
+
     // Corners
     const corners = {
-      topLeft: { x: strokeWidth / 2, y: strokeWidth / 2 },
-      topRight: { x: width, y: strokeWidth / 2 },
-      bottomRight: { x: width, y: heigth },
-      bottomLeft: { x: strokeWidth / 2, y: heigth },
+      topLeft: CanvasPoint.add({ x: strokeWidth / 2, y: strokeWidth / 2 }, { x: 0, y: 0 }),
+      topRight: CanvasPoint.add({ x: width, y: strokeWidth / 2 }, { x: 0, y: 0 }),
+      bottomRight: CanvasPoint.add({ x: width, y: heigth }, { x: 0, y: 0 }),
+      bottomLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth }, { x: 0, y: 0 }),
     };
 
     // Points between corners
     const topBottomPoints = Math.max(8, Math.floor(width / 12));
     const leftRightPoints = Math.max(8, Math.floor(heigth / 12));
 
-    const sides: CanvasPoint[][] = [
+    const sides: ICanvasPoint[][] = [
       ShapeUtils.getPointsInBetween(corners.topLeft, corners.topRight, topBottomPoints), // Top Side
       ShapeUtils.getPointsInBetween(corners.topRight, corners.bottomRight, leftRightPoints), // Right Side
       ShapeUtils.getPointsInBetween(corners.bottomRight, corners.bottomLeft, topBottomPoints), // Bottom Side
       ShapeUtils.getPointsInBetween(corners.bottomLeft, corners.topLeft, leftRightPoints), // Left Side
     ];
 
-    const closedPathPoints: CanvasPoint[] = [...sides.flat(), ...sides[0], ...sides[1]].slice(
+    const closedPathPoints: ICanvasPoint[] = [...sides.flat(), ...sides[0], ...sides[1]].slice(
       4,
       Math.floor(topBottomPoints / -2) + 2
     );
@@ -71,7 +68,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const width = Math.abs(cursorPoint.x - originPoint.x);
     const height = Math.abs(cursorPoint.y - originPoint.y);
 
-    let finalPoint: CanvasPoint = originPoint;
+    let finalPoint: ICanvasPoint = originPoint;
 
     if (originPoint.x < cursorPoint.x && originPoint.y > cursorPoint.y) {
       finalPoint = {

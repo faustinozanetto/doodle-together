@@ -1,7 +1,4 @@
-export type CanvasPoint = {
-  x: number;
-  y: number;
-};
+import { ICanvasPoint } from '../common/canvas-point';
 
 export enum CanvasShapeTypes {
   Draw = 'Draw',
@@ -14,16 +11,16 @@ export type CanvasShapeSize = 'small' | 'medium' | 'large' | 'extra-large';
 export type CanvasShapeStyle = 'solid' | 'dashed' | 'dotted';
 
 export interface ICanvasBounds {
-  min: CanvasPoint;
-  max: CanvasPoint;
+  min: ICanvasPoint;
+  max: ICanvasPoint;
 }
 
 export interface ICanvasMouseEvenetsUpdatePayload {
-  cursorPoint: CanvasPoint;
-  originPoint: CanvasPoint;
-  topLeftPoint: CanvasPoint;
-  points: CanvasPoint[];
-  translatedPoints: CanvasPoint[];
+  cursorPoint: ICanvasPoint;
+  originPoint: ICanvasPoint;
+  topLeftPoint: ICanvasPoint;
+  points: ICanvasPoint[];
+  translatedPoints: ICanvasPoint[];
 }
 
 export interface ICanvasShapeDimensions {
@@ -39,7 +36,7 @@ export interface ICanvasShapeCustomization {
 
 export interface ICanvasBaseShape {
   id: string;
-  position: CanvasPoint;
+  position: ICanvasPoint;
   rotation: number;
 }
 
@@ -50,7 +47,7 @@ export interface ICanvasShape extends ICanvasBaseShape {
 
 export interface ICanvasDrawShape extends ICanvasShape {
   props: {
-    points: CanvasPoint[];
+    points: ICanvasPoint[];
   };
 }
 

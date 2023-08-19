@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { CanvasActionType } from '../context/types';
+import { CanvasActionType } from '../context/canvas/types';
 import { ICanvasBounds } from '../shapes';
 import { useCanvasContext } from './use-canvas-context';
 
@@ -32,8 +32,11 @@ export const useCanvasBounds = () => {
   }, [state.canvasRef]);
 
   useEffect(() => {
+    window.addEventListener('scroll', handleBoundsResize);
     window.addEventListener('resize', handleBoundsResize);
+
     return () => {
+      window.removeEventListener('scroll', handleBoundsResize);
       window.removeEventListener('resize', handleBoundsResize);
     };
   }, []);

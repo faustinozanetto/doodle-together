@@ -3,7 +3,7 @@ import { Shape } from './shape';
 import getStroke from 'perfect-freehand';
 import { ICanvasBounds, ICanvasDrawShape, ICanvasMouseEvenetsUpdatePayload, ICanvasShapeDimensions } from '../types';
 import { ShapeUtils } from '../shape-utils';
-import SVGContainer from '../../components/svg-container';
+import SVGContainer from '../../components/svg/svg-container';
 
 export class DrawShape extends Shape<ICanvasDrawShape> {
   render(data: ICanvasDrawShape): JSX.Element {

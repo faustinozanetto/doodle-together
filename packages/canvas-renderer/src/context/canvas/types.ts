@@ -1,6 +1,6 @@
 import { ElementRef } from 'react';
-import { ActionMap } from '../common/types';
-import { CanvasShapeTypes, CanvasShapes, ICanvasBounds } from '../shapes';
+import { ActionMap } from '../../common/types';
+import { CanvasShapeTypes, CanvasShapes, ICanvasBounds } from '../../shapes';
 
 export type CanvasNode = CanvasShapes;
 

@@ -1,10 +1,4 @@
-import {
-  CanvasPoint,
-  CanvasShapes,
-  ICanvasBounds,
-  ICanvasMouseEvenetsUpdatePayload,
-  ICanvasShapeDimensions,
-} from '../types';
+import { CanvasShapes, ICanvasBounds, ICanvasMouseEvenetsUpdatePayload, ICanvasShapeDimensions } from '../types';
 
 export abstract class Shape<T extends CanvasShapes> {
   /**
@@ -14,8 +8,19 @@ export abstract class Shape<T extends CanvasShapes> {
    */
   abstract render(data: T): React.JSX.Element;
 
+  /**
+   * Method that is executed while creating the shape on mouse move.
+   * @param data Current shape data.
+   * @param updatePayload Mouse move update payload.
+   * @returns Updated shape data.
+   */
   abstract mouseUpdate(data: T, updatePayload: ICanvasMouseEvenetsUpdatePayload): T;
 
+  /**
+   * Method that checks if the shape should re-render or not.
+   * @param prev Prev shape data.
+   * @param next Next shape data.
+   */
   abstract shouldRender(prev: T, next: T): boolean;
 
   abstract calculateBounds(data: T): ICanvasBounds;

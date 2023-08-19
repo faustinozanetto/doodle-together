@@ -79,7 +79,7 @@ const RoomTools: React.FC = () => {
   const filteredTools = TOOLS.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isRoomOwner));
 
   return (
-    <RoomPanel label="Tools">
+    <RoomPanel>
       <div className="flex gap-2">
         {filteredTools.map((tool) => {
           return <RoomTool key={`tool-${tool.tool}`} {...tool} />;

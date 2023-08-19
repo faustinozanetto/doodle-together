@@ -3,7 +3,7 @@ import { cn } from '@modules/ui/lib/ui.lib';
 import React from 'react';
 
 type RoomPanelProps = {
-  label: string;
+  label?: string;
   className?: string;
   children: React.ReactNode;
 };
@@ -18,8 +18,12 @@ const RoomPanel: React.FC<RoomPanelProps> = (props) => {
         className
       )}
     >
-      <span className="font-bold">{label}</span>
-      <Separator />
+      {label ? (
+        <>
+          <span className="font-bold">{label}</span>
+          <Separator />
+        </>
+      ) : null}
       {children}
     </div>
   );

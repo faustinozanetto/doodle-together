@@ -1,4 +1,4 @@
-import { CanvasActionType } from '../context/types';
+import { CanvasActionType } from '../context/canvas/types';
 import { CanvasShapeTypes, CanvasShapes } from '../shapes';
 import { useCanvasContext } from './use-canvas-context';
 

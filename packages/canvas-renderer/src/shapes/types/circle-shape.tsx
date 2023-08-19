@@ -1,15 +1,10 @@
 import { Shape } from './shape';
 
 import getStroke from 'perfect-freehand';
-import {
-  CanvasPoint,
-  ICanvasBounds,
-  ICanvasCircleShape,
-  ICanvasMouseEvenetsUpdatePayload,
-  ICanvasShapeDimensions,
-} from '../types';
+import { ICanvasBounds, ICanvasCircleShape, ICanvasMouseEvenetsUpdatePayload, ICanvasShapeDimensions } from '../types';
 import { ShapeUtils } from '../shape-utils';
-import SVGContainer from '../../components/svg-container';
+import SVGContainer from '../../components/svg/svg-container';
+import { ICanvasPoint } from '../../common/canvas-point';
 
 export class CircleShape extends Shape<ICanvasCircleShape> {
   render(data: ICanvasCircleShape): JSX.Element {
@@ -22,7 +17,7 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
     const center = { x: radius, y: radius };
     const mappedRadius = radius - strokeWidth;
 
-    const points: CanvasPoint[] = Array.from({ length: segments }).map((v, index) => {
+    const points: ICanvasPoint[] = Array.from({ length: segments }).map((v, index) => {
       const angle = (Math.PI * 2 * index) / segments;
       const x = center.x + mappedRadius * Math.cos(angle);
       const y = center.y + mappedRadius * Math.sin(angle);
