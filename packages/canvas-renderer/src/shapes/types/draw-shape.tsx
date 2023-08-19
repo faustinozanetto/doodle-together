@@ -1,7 +1,7 @@
 import { Shape } from './shape';
 
 import getStroke from 'perfect-freehand';
-import { ICanvasDrawShape } from '../types';
+import { ICanvasBounds, ICanvasDrawShape } from '../types';
 import { ShapeUtils } from '../shape-utils';
 
 export class DrawShape extends Shape<ICanvasDrawShape> {
@@ -24,8 +24,11 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
 
   shouldRender(prev: ICanvasDrawShape, next: ICanvasDrawShape): boolean {
     const should = prev.props.points !== next.props.points;
-    //console.log(`prev len: ${prev.points.length} | next len: ${next.points.length}`);
 
     return true;
+  }
+
+  calculateBounds(data: ICanvasDrawShape): ICanvasBounds {
+    throw new Error('Method not implemented.');
   }
 }

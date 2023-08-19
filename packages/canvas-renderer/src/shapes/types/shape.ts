@@ -1,4 +1,4 @@
-import { CanvasShapes } from '../types';
+import { CanvasPoint, CanvasShapes, ICanvasBounds, ICanvasShapeDimensions } from '../types';
 
 export abstract class Shape<T extends CanvasShapes> {
   /**
@@ -9,4 +9,8 @@ export abstract class Shape<T extends CanvasShapes> {
   abstract render(data: T): React.JSX.Element;
 
   abstract shouldRender(prev: T, next: T): boolean;
+
+  abstract calculateBounds(data: T): ICanvasBounds;
+
+  abstract calculateDimensions(data: T): ICanvasShapeDimensions;
 }

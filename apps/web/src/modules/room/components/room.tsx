@@ -35,12 +35,13 @@ const Room: React.FC<RoomProps> = (props) => {
 
   const { setMe, setAccessToken, clearAccessToken } = useMeStore();
 
+  /*
   useRoomNotifications();
 
   // Socket hooks
   useUpdateRoomSocket();
   useDeleteRoomSocket();
-  useKickRequestRoomSocket();
+  useKickRequestRoomSocket();*/
 
   useEffect(() => {
     if (!room) {

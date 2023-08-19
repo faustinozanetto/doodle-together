@@ -2,11 +2,12 @@ import { Shape } from './types/shape';
 import { CanvasPoint, CanvasShapeTypes, CanvasShapes, ICanvasShapeCustomization } from './types';
 import { DrawShape } from './types/draw-shape';
 import { BoxShape } from './types/box-shape';
+import { CircleShape } from './types/circle-shape';
 
 const SHAPE_CLASSES: Record<CanvasShapeTypes, Shape<CanvasShapes>> = {
   Box: new BoxShape(),
   Draw: new DrawShape(),
-  Circle: new DrawShape(),
+  Circle: new CircleShape(),
 };
 
 const SHAPE_SIZES: Record<ICanvasShapeCustomization['size'], number> = {

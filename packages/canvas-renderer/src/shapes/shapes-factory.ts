@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { CanvasShapeTypes, CanvasShapes, ICanvasBoxShape, ICanvasDrawShape } from './types';
+import { CanvasShapeTypes, CanvasShapes, ICanvasBoxShape, ICanvasCircleShape, ICanvasDrawShape } from './types';
 import { ShapeUtils } from './shape-utils';
 
 export class ShapesFactory {
@@ -9,8 +9,9 @@ export class ShapesFactory {
         return this.createDrawShape();
       case CanvasShapeTypes.Box:
         return this.createBoxShape();
+      case CanvasShapeTypes.Circle:
+        return this.createCircleShape();
     }
-    throw new Error('Could not create shape!');
   }
 
   static createDrawShape(): ICanvasDrawShape {
@@ -42,8 +43,25 @@ export class ShapesFactory {
       rotation: 0,
       customization: ShapeUtils.getShapeBaseCustomization(),
       props: {
-        leftTop: { x: 0, y: 0 },
-        bottomRight: { x: 0, y: 0 },
+        point: { x: 0, y: 0 },
+        size: { width: 1, height: 1 },
+      },
+    };
+    return shape;
+  }
+
+  static createCircleShape(): ICanvasCircleShape {
+    const shape: ICanvasCircleShape = {
+      id: nanoid(),
+      type: CanvasShapeTypes.Circle,
+      position: {
+        x: 0,
+        y: 0,
+      },
+      rotation: 0,
+      customization: ShapeUtils.getShapeBaseCustomization(),
+      props: {
+        radius: 1,
       },
     };
     return shape;

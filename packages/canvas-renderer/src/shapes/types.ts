@@ -13,6 +13,16 @@ export type CanvasShapeSize = 'small' | 'medium' | 'large' | 'extra-large';
 
 export type CanvasShapeStyle = 'solid' | 'dashed' | 'dotted';
 
+export interface ICanvasBounds {
+  min: CanvasPoint;
+  max: CanvasPoint;
+}
+
+export interface ICanvasShapeDimensions {
+  width: number;
+  height: number;
+}
+
 export interface ICanvasShapeCustomization {
   color: string;
   size: CanvasShapeSize;
@@ -38,9 +48,15 @@ export interface ICanvasDrawShape extends ICanvasShape {
 
 export interface ICanvasBoxShape extends ICanvasShape {
   props: {
-    leftTop: CanvasPoint;
-    bottomRight: CanvasPoint;
+    point: CanvasPoint;
+    size: ICanvasShapeDimensions;
   };
 }
 
-export type CanvasShapes = ICanvasDrawShape | ICanvasBoxShape;
+export interface ICanvasCircleShape extends ICanvasShape {
+  props: {
+    radius: number;
+  };
+}
+
+export type CanvasShapes = ICanvasDrawShape | ICanvasBoxShape | ICanvasCircleShape;

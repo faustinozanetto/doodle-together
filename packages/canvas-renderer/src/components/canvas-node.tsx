@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { CanvasNode as CanvasNodeData } from '../context/types';
 import { ShapeUtils } from '../shapes';
 
@@ -10,12 +10,28 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
   (props) => {
     const { node } = props;
 
-    const transform = `matrix(1, 0, 0, 1, ${node.position.x}px, ${node.position.y}px)`;
+    const shapeClass = ShapeUtils.getShapeClass(node.type);
+
+    const dimensions = shapeClass.calculateDimensions(node);
+
+    const bounds = shapeClass.calculateBounds(node);
+
+    // const position = shapeClass.calculateCenter(node);
+
+    const transform = `translate(${bounds.min.x}px, ${bounds.min.y}px)`;
 
     return (
-      <g id={node.id} transform={transform}>
-        {ShapeUtils.getShapeClass(node.type).render(node)}
-      </g>
+      <div
+        className="absolute top-0 left-0 flex items-center justify-center"
+        style={{
+          width: `${dimensions.width}px`,
+          height: `${dimensions.height}px`,
+          transformOrigin: 'center center',
+          transform,
+        }}
+      >
+        {shapeClass.render(node)}
+      </div>
     );
   },
   (prev, next) => {
