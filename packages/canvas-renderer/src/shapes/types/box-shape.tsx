@@ -8,7 +8,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
   render(data: ICanvasBoxShape): JSX.Element {
     const { props, customization } = data;
 
-    const { point, size } = props;
+    const { size } = props;
 
     const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
 
@@ -41,8 +41,12 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
 
     const stroke = getStroke(closedPathPoints, {
       size: ShapeUtils.getShapeMappedSize(customization.size),
-      thinning: 0.5,
+      thinning: 0.55,
       simulatePressure: false,
+      smoothing: 0.65,
+      streamline: 0.75,
+      end: { taper: strokeWidth * 2.5 },
+      start: { taper: strokeWidth * 2.5 },
       last: true,
     });
 
@@ -56,27 +60,25 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
   }
 
   shouldRender(prev: ICanvasBoxShape, next: ICanvasBoxShape): boolean {
-    return prev.props.point !== next.props.point || prev.props.size !== next.props.size;
+    return prev.position !== next.position || prev.props.size !== next.props.size;
   }
 
   calculateBounds(data: ICanvasBoxShape): ICanvasBounds {
-    const { props } = data;
-    const { size, point } = props;
+    const { props, position } = data;
+    const { size } = props;
 
     const bounds: ICanvasBounds = { min: { x: 0, y: 0 }, max: { x: size.width, y: size.height } };
 
     const translatedBounds: ICanvasBounds = {
       min: {
-        x: bounds.min.x + point.x,
-        y: bounds.min.y + point.y,
+        x: bounds.min.x + position.x,
+        y: bounds.min.y + position.y,
       },
       max: {
-        x: bounds.max.x + point.x,
-        y: bounds.max.y + point.y,
+        x: bounds.max.x + position.x,
+        y: bounds.max.y + position.y,
       },
     };
-
-    console.log('bounds calculated');
 
     return translatedBounds;
   }

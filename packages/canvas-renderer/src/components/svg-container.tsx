@@ -1,5 +1,4 @@
 import React from 'react';
-import { CanvasPoint } from '../shapes';
 
 type SVGContainerProps = React.SVGProps<SVGSVGElement> & {
   id: string;
@@ -11,7 +10,9 @@ const SVGContainer: React.FC<SVGContainerProps> = (props) => {
 
   return (
     <svg id={`svg:${id}`} className="w-full h-full overflow-clip" {...rest}>
-      <g id={id}>{children}</g>
+      <g id={id} style={{ transform: 'translate(24px, 24px)' }}>
+        {children}
+      </g>
     </svg>
   );
 };

@@ -43,7 +43,6 @@ export class ShapesFactory {
       rotation: 0,
       customization: ShapeUtils.getShapeBaseCustomization(),
       props: {
-        point: { x: 0, y: 0 },
         size: { width: 1, height: 1 },
       },
     };

@@ -1,8 +1,9 @@
 import { Shape } from './shape';
 
 import getStroke from 'perfect-freehand';
-import { ICanvasBounds, ICanvasDrawShape } from '../types';
+import { ICanvasBounds, ICanvasDrawShape, ICanvasShapeDimensions } from '../types';
 import { ShapeUtils } from '../shape-utils';
+import SVGContainer from '../../components/svg-container';
 
 export class DrawShape extends Shape<ICanvasDrawShape> {
   render(data: ICanvasDrawShape): JSX.Element {
@@ -10,25 +11,63 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
 
     const stroke = getStroke(props.points, {
       size: ShapeUtils.getShapeMappedSize(customization.size),
-      thinning: 0.5,
+      thinning: 0.6,
+      streamline: 0.7,
       smoothing: 0.5,
-      streamline: 0.5,
-      end: { taper: 6.5 * 10 },
-      start: { taper: 8.5 * 10 },
+      end: { taper: 6.5 * 4 },
+      start: { taper: 8.5 * 2.5 },
+      last: true,
     });
 
     const path = ShapeUtils.getShapePathFromStroke(stroke);
 
-    return <path d={path} />;
+    return (
+      <SVGContainer id={data.id}>
+        <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" />
+      </SVGContainer>
+    );
   }
 
   shouldRender(prev: ICanvasDrawShape, next: ICanvasDrawShape): boolean {
-    const should = prev.props.points !== next.props.points;
-
-    return true;
+    return prev.props.points !== next.props.points;
   }
 
   calculateBounds(data: ICanvasDrawShape): ICanvasBounds {
-    throw new Error('Method not implemented.');
+    const { props, position } = data;
+    const { points } = props;
+
+    const bounds: ICanvasBounds = {
+      min: { x: Infinity, y: Infinity },
+      max: { x: -Infinity, y: -Infinity },
+    };
+
+    for (const point of points) {
+      bounds.min.x = Math.min(bounds.min.x, point.x);
+      bounds.min.y = Math.min(bounds.min.y, point.y);
+      bounds.max.x = Math.max(bounds.max.x, point.x);
+      bounds.max.y = Math.max(bounds.max.y, point.y);
+    }
+
+    const translatedBounds: ICanvasBounds = {
+      min: {
+        x: bounds.min.x + position.x,
+        y: bounds.min.y + position.y,
+      },
+      max: {
+        x: bounds.max.x + position.x,
+        y: bounds.max.y + position.y,
+      },
+    };
+
+    return translatedBounds;
+  }
+
+  calculateDimensions(data: ICanvasDrawShape): ICanvasShapeDimensions {
+    const bounds = this.calculateBounds(data);
+
+    const width = Math.max(1, bounds.max.x - bounds.min.x);
+    const height = Math.max(1, bounds.max.y - bounds.min.y);
+
+    return { width, height };
   }
 }

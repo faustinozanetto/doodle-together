@@ -34,6 +34,30 @@ export const reducer = (state: CanvasContextState, action: CanvasActions): Canva
         nodes: updatedNodes,
       };
     }
+    case CanvasActionType.SELECT_NODE: {
+      return {
+        ...state,
+        selectedNodeId: action.payload.id,
+      };
+    }
+    case CanvasActionType.DESELECT_NODE: {
+      return {
+        ...state,
+        selectedNodeId: '',
+      };
+    }
+    case CanvasActionType.SET_BOUNDS: {
+      return {
+        ...state,
+        bounds: action.payload.bounds,
+      };
+    }
+    case CanvasActionType.SET_CANVAS_REF: {
+      return {
+        ...state,
+        canvasRef: action.payload.ref,
+      };
+    }
     default:
       throw new Error('The action you requested does not exists!');
   }

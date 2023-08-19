@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { CanvasNode as CanvasNodeData } from '../context/types';
 import { ShapeUtils } from '../shapes';
 
@@ -13,21 +13,20 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
     const shapeClass = ShapeUtils.getShapeClass(node.type);
 
     const dimensions = shapeClass.calculateDimensions(node);
-
     const bounds = shapeClass.calculateBounds(node);
 
-    // const position = shapeClass.calculateCenter(node);
-
-    const transform = `translate(${bounds.min.x}px, ${bounds.min.y}px)`;
+    const padding = '24px';
+    const transform = `translate(calc(${bounds.min.x}px - ${padding}),
+    calc(${bounds.min.y}px - ${padding}))`;
 
     return (
       <div
-        className="absolute top-0 left-0 flex items-center justify-center"
+        className="absolute top-0 left-0 border-2 flex items-center justify-center overflow-clip hover:border-red-500"
         style={{
-          width: `${dimensions.width}px`,
-          height: `${dimensions.height}px`,
-          transformOrigin: 'center center',
+          width: `calc(${dimensions.width}px + 2 * ${padding})`,
+          height: `calc(${dimensions.height}px  + 2* ${padding})`,
           transform,
+          transformOrigin: 'center center',
         }}
       >
         {shapeClass.render(node)}

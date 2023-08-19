@@ -5,6 +5,12 @@ import { CanvasContextData } from './types';
 const initialState: CanvasContextData = {
   state: {
     nodes: [],
+    selectedNodeId: '',
+    bounds: {
+      min: { x: Infinity, y: Infinity },
+      max: { x: -Infinity, y: -Infinity },
+    },
+    canvasRef: null,
   },
   dispatch: () => {},
 };

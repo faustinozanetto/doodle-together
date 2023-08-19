@@ -48,7 +48,6 @@ export interface ICanvasDrawShape extends ICanvasShape {
 
 export interface ICanvasBoxShape extends ICanvasShape {
   props: {
-    point: CanvasPoint;
     size: ICanvasShapeDimensions;
   };
 }

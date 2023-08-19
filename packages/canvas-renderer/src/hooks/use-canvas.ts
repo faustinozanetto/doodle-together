@@ -19,6 +19,10 @@ export const useCanvas = () => {
     return node as T;
   };
 
+  const getSelectedNode = <T extends CanvasShapes>() => {
+    return getNode<T>(state.selectedNodeId);
+  };
+
   const getFirstNode = <T extends CanvasShapes>() => {
     if (nodesIsEmpty()) return null;
     return state.nodes[0] as T;
@@ -27,6 +31,14 @@ export const useCanvas = () => {
   const getLastNode = <T extends CanvasShapes>() => {
     if (nodesIsEmpty()) return null;
     return state.nodes[state.nodes.length - 1] as T;
+  };
+
+  const setSelectedNode = (id: string) => {
+    dispatch({ type: CanvasActionType.SELECT_NODE, payload: { id } });
+  };
+
+  const clearSelectedNode = (id: string) => {
+    dispatch({ type: CanvasActionType.DESELECT_NODE, payload: {} });
   };
 
   const addNode = (type: CanvasShapeTypes) => {
@@ -41,5 +53,16 @@ export const useCanvas = () => {
     dispatch({ type: CanvasActionType.REMOVE_NODE, payload: { id } });
   };
 
-  return { addNode, updateNode, removeNode, getNode, getNodes, getFirstNode, getLastNode };
+  return {
+    addNode,
+    updateNode,
+    removeNode,
+    setSelectedNode,
+    clearSelectedNode,
+    getNode,
+    getNodes,
+    getSelectedNode,
+    getFirstNode,
+    getLastNode,
+  };
 };
