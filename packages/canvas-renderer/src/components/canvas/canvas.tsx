@@ -1,21 +1,28 @@
-import React, { ElementRef, useEffect, useRef } from 'react';
+import { ElementRef, useEffect, useRef } from 'react';
 import { useCanvasCore } from '@hooks/core/use-canvas-core';
 import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
 import { useCanvasMouseEvents } from '@hooks/use-canvas-mouse-events';
 import { ShapeUtils } from '@shapes/shape-utils';
 import { CanvasNodesContainer } from './canvas-nodes-container';
 import { CanvasNode } from './canvas-node';
+import { useCanvasCustomization } from '@hooks/customization/use-canvas-customization';
+import { CanvasDebugIndicators } from './canvas-debug-indicators';
+import { CanvasState } from '@state/canvas-core.slice';
+import { CanvasShapeToolTypes } from '@shapes/types';
 
 export const Canvas = () => {
   const canvasRef = useRef<ElementRef<'div'>>(null);
 
-  const { setCanvasRef, selectedShapeType } = useCanvasCore();
-  const { addNode, updateNode, getLastNode, nodes } = useCanvasTree();
+  const { customization } = useCanvasCustomization();
+  const { setCanvasRef, setCurrentState, currentState, selectedToolType } = useCanvasCore();
+  const { addNode, updateNode, getLastNode, setActiveNodeId, clearActiveNode, clearSelectedNode, nodes } =
+    useCanvasTree();
 
   const {
     onPointerMove,
     onPointerDown,
     onPointerUp,
+    onClick,
     isMouseDown,
     cursorPoint,
     originPoint,
@@ -23,11 +30,23 @@ export const Canvas = () => {
     topLeftPoint,
     translatedPoints,
   } = useCanvasMouseEvents({
-    onPointerUpCallback() {},
+    onPointerUpCallback() {
+      if (currentState === CanvasState.Editing) return;
+
+      clearActiveNode();
+      setCurrentState(CanvasState.Idling);
+    },
     onPointerDownCallback() {
-      addNode(selectedShapeType);
+      clearSelectedNode();
+      setCurrentState(CanvasState.Drawing);
+
+      // Create a node with selected shape type global customization and set as active one.
+      const addedNode = addNode(selectedToolType as CanvasShapeToolTypes, customization);
+      setActiveNodeId(addedNode.id);
     },
     onPointerMoveCallback() {
+      if (currentState === CanvasState.Editing) return;
+
       const lastNode = getLastNode();
       if (!lastNode || !topLeftPoint.current || !originPoint.current) return;
 
@@ -44,6 +63,7 @@ export const Canvas = () => {
 
       updateNode(lastNode.id, updatedData);
     },
+    onClickCallback() {},
   });
 
   // Canvas ref passed to context
@@ -60,28 +80,17 @@ export const Canvas = () => {
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerDown={onPointerDown}
+      onClick={onClick}
       style={{
         transformOrigin: 'center center',
       }}
     >
-      <div
-        className="absolute inset-0 bg-red-500 h-6 w-6 rounded-lg z-[800] pointer-events-none"
-        style={{
-          transform: `translate(${originPoint.current?.x}px, ${originPoint.current?.y}px)`,
-        }}
-      />
-      <div
-        className="absolute inset-0 bg-blue-500 h-6 w-6 rounded-lg z-[800] pointer-events-none"
-        style={{
-          transform: `translate(${topLeftPoint.current?.x}px, ${topLeftPoint.current?.y}px)`,
-        }}
-      />
-      <div
-        className="absolute inset-0 bg-violet-500 h-6 w-6 rounded-lg z-[800] pointer-events-none"
-        style={{
-          transform: `translate(${cursorPoint.current?.x}px, ${cursorPoint.current?.y}px)`,
-        }}
-      />
+      <span className="absolute left-1/2 top-0 pointer-events-none">{currentState}</span>
+      {/* <CanvasDebugIndicators
+        cursorPoint={cursorPoint.current}
+        originPoint={originPoint.current}
+        topLeftPoint={topLeftPoint.current}
+      /> */}
       <CanvasNodesContainer>
         {nodes.map((node) => {
           return <CanvasNode key={node.id} node={node} />;

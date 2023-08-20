@@ -2,15 +2,15 @@ import React from 'react';
 import { SquareIcon } from '@modules/ui/components/icons/square-icon';
 import { CircleIcon } from '@modules/ui/components/icons/circle-icon';
 import RoomTool, { RoomToolProps } from '../room-tool';
-import { CanvasShapeTypes, useCanvasCore } from '@doodle-together/canvas-renderer';
+import { CanvasShapeToolTypes, useCanvasCore } from '@doodle-together/canvas-renderer';
 
 type RoomToolShapeOption = Pick<RoomToolProps, 'icon'> & {
-  shape: CanvasShapeTypes;
+  shape: CanvasShapeToolTypes;
 };
 
 const TOOL_SHAPES: RoomToolShapeOption[] = [
   {
-    shape: CanvasShapeTypes.Draw,
+    shape: 'draw',
     icon: (
       <svg
         className="h-5 w-5 stroke-current"
@@ -28,23 +28,23 @@ const TOOL_SHAPES: RoomToolShapeOption[] = [
     ),
   },
   {
-    shape: CanvasShapeTypes.Box,
+    shape: 'box',
     icon: <SquareIcon className="stroke-current" />,
   },
   {
-    shape: CanvasShapeTypes.Circle,
+    shape: 'circle',
     icon: <CircleIcon className="stroke-current" />,
   },
 ];
 
 const RoomToolsShapes: React.FC = () => {
-  const { setSelectedShapeType, selectedShapeType } = useCanvasCore();
+  const { setSelectedToolType, selectedToolType } = useCanvasCore();
 
   return (
     <div className="flex gap-2">
       {TOOL_SHAPES.map((shape) => {
         const shapeLabel = `${shape.shape} Shape`;
-        const isSelected = selectedShapeType === shape.shape;
+        const isSelected = selectedToolType === shape.shape;
 
         return (
           <RoomTool
@@ -53,7 +53,7 @@ const RoomToolsShapes: React.FC = () => {
             icon={shape.icon}
             isSelected={isSelected}
             onToolClicked={() => {
-              setSelectedShapeType(shape.shape);
+              setSelectedToolType(shape.shape);
             }}
           />
         );

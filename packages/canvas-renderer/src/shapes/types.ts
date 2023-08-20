@@ -1,10 +1,10 @@
 import { ICanvasPoint } from '@common/canvas-point';
 
-export enum CanvasShapeTypes {
-  Draw = 'Draw',
-  Box = 'Box',
-  Circle = 'Circle',
-}
+export type CanvasShapeToolTypes = 'draw' | 'box' | 'circle';
+
+export type CanvasUtilityToolTypes = 'select';
+
+export type CanvasToolTypes = CanvasShapeToolTypes | CanvasUtilityToolTypes;
 
 export type CanvasShapeSize = 'small' | 'medium' | 'large' | 'extra-large';
 
@@ -41,7 +41,7 @@ export interface ICanvasBaseShape {
 }
 
 export interface ICanvasShape extends ICanvasBaseShape {
-  type: CanvasShapeTypes;
+  type: CanvasShapeToolTypes;
   customization: ICanvasShapeCustomization;
 }
 

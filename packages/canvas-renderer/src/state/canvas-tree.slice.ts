@@ -1,5 +1,5 @@
 import { ShapesFactory } from '@shapes/shapes-factory';
-import { CanvasShapeTypes, CanvasShapes } from '@shapes/types';
+import { CanvasShapeToolTypes, CanvasShapes, ICanvasShapeCustomization } from '@shapes/types';
 import { create } from 'zustand';
 
 export type CanvasTreeNode = CanvasShapes;
@@ -7,23 +7,30 @@ export type CanvasTreeNode = CanvasShapes;
 export type CanvasTreeSliceState = {
   nodes: CanvasTreeNode[];
   selectedNodeId: string | null;
+  activeNodeId: string | null;
 };
 
 export type CanvasTreeSliceActions = {
-  addNode: (type: CanvasShapeTypes) => void;
+  addNode: (type: CanvasShapeToolTypes, customization?: ICanvasShapeCustomization) => CanvasTreeNode;
   removeNode: (id: string) => void;
   updateNode: (id: string, data: CanvasShapes) => void;
-  selectNode: (id: string) => void;
-  deselectNode: () => void;
+  setSelectedNodeId: (id: string) => void;
+  clearSelectedNode: () => void;
+  setActiveNodeId: (id: string) => void;
+  clearActiveNode: () => void;
 };
 
 export const useCanvasTreeStore = create<CanvasTreeSliceState & CanvasTreeSliceActions>((set, get) => ({
   nodes: [],
   selectedNodeId: null,
-  addNode: (type) => {
+  activeNodeId: null,
+  addNode: (type, customization) => {
     const node = ShapesFactory.createShape(type);
-    const nodes = [...get().nodes, node];
-    set({ nodes });
+    if (customization) node.customization = customization;
+
+    const updatedNodes = [...get().nodes, node];
+    set({ nodes: updatedNodes });
+    return node;
   },
   removeNode: (id) => {
     const updatedNodes: CanvasTreeNode[] = get().nodes.filter((node) => node.id !== id);
@@ -40,10 +47,16 @@ export const useCanvasTreeStore = create<CanvasTreeSliceState & CanvasTreeSliceA
     });
     set({ nodes: updatedNodes });
   },
-  selectNode: (id) => {
+  setSelectedNodeId: (id) => {
     set({ selectedNodeId: id });
   },
-  deselectNode: () => {
+  clearSelectedNode: () => {
     set({ selectedNodeId: null });
+  },
+  setActiveNodeId: (id) => {
+    set({ activeNodeId: id });
+  },
+  clearActiveNode: () => {
+    set({ activeNodeId: null });
   },
 }));

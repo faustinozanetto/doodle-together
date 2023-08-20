@@ -115,7 +115,11 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
   }
 
   shouldRender(prev: ICanvasBoxShape, next: ICanvasBoxShape): boolean {
-    return prev.position !== next.position || prev.props.size !== next.props.size;
+    return (
+      prev.position !== next.position ||
+      prev.props.size !== next.props.size ||
+      prev.customization !== next.customization
+    );
   }
 
   calculateBounds(data: ICanvasBoxShape): ICanvasBounds {

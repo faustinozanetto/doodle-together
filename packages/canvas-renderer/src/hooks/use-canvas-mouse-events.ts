@@ -5,15 +5,24 @@ import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { ShapeUtils } from '@shapes/shape-utils';
 
 type UseCanvasMouseEventsProps = {
+  /** Callback function executed when the mouse is released */
   onPointerUpCallback: () => void;
+  /** Callback function executed when the mouse is pressed */
   onPointerDownCallback: () => void;
+  /** Callback function executed when the mouse moves */
   onPointerMoveCallback: () => void;
+  onClickCallback: () => void;
 };
 
+/**
+ * Main hook responsible for the mouse interactions and points registrations.
+ * @param Callback Set of callback functions.
+ */
 export const useCanvasMouseEvents = ({
   onPointerUpCallback,
   onPointerDownCallback,
   onPointerMoveCallback,
+  onClickCallback,
 }: UseCanvasMouseEventsProps) => {
   const { bounds } = useCanvasBounds();
   const { zoom, position } = useCanvasCamera();
@@ -80,10 +89,9 @@ export const useCanvasMouseEvents = ({
   };
 
   const onPointerUp = (_event: React.PointerEvent<HTMLDivElement>) => {
-    // Reset state
     setIsMouseDown(false);
-    originPoint.current = null;
 
+    originPoint.current = null;
     points.current = [];
     translatedPoints.current = [];
 
@@ -91,7 +99,6 @@ export const useCanvasMouseEvents = ({
   };
 
   const onPointerDown = (_event: React.PointerEvent<HTMLDivElement>) => {
-    // Initialize state
     setIsMouseDown(true);
 
     topLeftPoint.current = cursorPoint.current;
@@ -100,10 +107,15 @@ export const useCanvasMouseEvents = ({
     onPointerDownCallback();
   };
 
+  const onClick = () => {
+    onClickCallback();
+  };
+
   return {
     onPointerMove,
     onPointerUp,
     onPointerDown,
+    onClick,
     isMouseDown,
     originPoint,
     cursorPoint,

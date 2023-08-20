@@ -1,14 +1,25 @@
 import { useCanvasCoreStore } from '@state/canvas-core.slice';
 
 export const useCanvasCore = () => {
-  const { setCanvasRef, setBounds, setSelectedShapeType, bounds, canvasRef, selectedShapeType } = useCanvasCoreStore();
+  const {
+    setCanvasRef,
+    setBounds,
+    setSelectedToolType,
+    bounds,
+    canvasRef,
+    selectedToolType,
+    setCurrentState,
+    currentState,
+  } = useCanvasCoreStore();
 
   return {
     setCanvasRef,
     setBounds,
-    setSelectedShapeType,
+    setSelectedToolType,
+    setCurrentState,
+    currentState,
     canvasRef,
     bounds,
-    selectedShapeType,
+    selectedToolType,
   };
 };

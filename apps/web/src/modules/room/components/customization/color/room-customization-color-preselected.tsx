@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Button } from '@modules/ui/components/button/button';
-import { useCustomizationStore } from '@modules/state/customization.slice';
 import { useCanvasCustomization } from '@doodle-together/canvas-renderer';
 
 const PRESELECTED_COLORS: ToolColorOptionProps[] = [
@@ -28,8 +27,7 @@ type ToolColorOptionProps = {
 const ToolColorOption: React.FC<ToolColorOptionProps> = (props) => {
   const { color, label } = props;
 
-  // const { color: stateColor, setColor } = useCustomizationStore();
-  const { setColor } = useCanvasCustomization();
+  const { setColor, getSelectedNodeCustomization } = useCanvasCustomization();
   const handleSelectColor = () => {
     setColor(color);
   };
@@ -38,7 +36,7 @@ const ToolColorOption: React.FC<ToolColorOptionProps> = (props) => {
     <Button
       aria-label={`${label} Color`}
       className="!p-1 aspect-square"
-      // variant={getColor() === color ? 'outline' : 'ghost'}
+      variant={getSelectedNodeCustomization().color === color ? 'outline' : 'ghost'}
       onClick={handleSelectColor}
     >
       <div className="h-5 w-5 rounded-xl" style={{ backgroundColor: color }} />

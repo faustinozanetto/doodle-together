@@ -1,6 +1,6 @@
 import { ICanvasPoint } from '@common/canvas-point';
 import {
-  CanvasShapeTypes,
+  CanvasShapeToolTypes,
   CanvasShapes,
   ICanvasShapeCustomization,
   ICanvasBounds,
@@ -12,17 +12,17 @@ import { DrawShape } from './types/draw-shape';
 import { Shape } from './types/shape';
 import { CanvasCameraSliceState } from '@state/canvas-camera.slice';
 
-const SHAPE_CLASSES: Record<CanvasShapeTypes, Shape<CanvasShapes>> = {
-  Box: new BoxShape(),
-  Draw: new DrawShape(),
-  Circle: new CircleShape(),
+const SHAPE_CLASSES: Record<CanvasShapeToolTypes, Shape<CanvasShapes>> = {
+  box: new BoxShape(),
+  draw: new DrawShape(),
+  circle: new CircleShape(),
 };
 
 const SHAPE_SIZES: Record<ICanvasShapeCustomization['size'], number> = {
-  small: 6,
-  medium: 8,
-  large: 10,
-  'extra-large': 14,
+  small: 8,
+  medium: 12,
+  large: 14,
+  'extra-large': 18,
 };
 
 export class ShapeUtils {
@@ -38,7 +38,7 @@ export class ShapeUtils {
     return SHAPE_SIZES[size];
   }
 
-  static getShapeClass(shapeType: CanvasShapeTypes): Shape<CanvasShapes> {
+  static getShapeClass(shapeType: CanvasShapeToolTypes): Shape<CanvasShapes> {
     return SHAPE_CLASSES[shapeType];
   }
 

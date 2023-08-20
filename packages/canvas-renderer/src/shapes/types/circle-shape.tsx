@@ -68,7 +68,11 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
   }
 
   shouldRender(prev: ICanvasCircleShape, next: ICanvasCircleShape): boolean {
-    return prev.position !== next.position || prev.props.radius !== next.props.radius;
+    return (
+      prev.position !== next.position ||
+      prev.props.radius !== next.props.radius ||
+      prev.customization !== next.customization
+    );
   }
 
   calculateBounds(data: ICanvasCircleShape): ICanvasBounds {

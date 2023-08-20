@@ -1,25 +1,38 @@
-import { CanvasShapeTypes, ICanvasBounds } from '@shapes/types';
+import { CanvasToolTypes, ICanvasBounds } from '@shapes/types';
 import { ElementRef } from 'react';
 import { create } from 'zustand';
+
+export enum CanvasState {
+  Idling = 'Idling',
+  Editing = 'Editing',
+  Drawing = 'Drawing',
+  Hovering = 'Hovering',
+}
 
 export type CanvasCoreSliceState = {
   canvasRef: ElementRef<'div'> | null;
   bounds: ICanvasBounds;
-  selectedShapeType: CanvasShapeTypes;
+  selectedToolType: CanvasToolTypes;
+  currentState: CanvasState;
 };
 
 export type CanvasCoreSliceActions = {
+  setCurrentState: (currentState: CanvasState) => void;
   setBounds: (bounds: ICanvasBounds) => void;
   setCanvasRef: (canvasRef: ElementRef<'div'>) => void;
-  setSelectedShapeType: (type: CanvasShapeTypes) => void;
+  setSelectedToolType: (type: CanvasToolTypes) => void;
 };
 
 export const useCanvasCoreStore = create<CanvasCoreSliceState & CanvasCoreSliceActions>((set) => ({
   canvasRef: null,
-  selectedShapeType: CanvasShapeTypes.Draw,
+  currentState: CanvasState.Idling,
+  selectedToolType: 'draw',
   bounds: {
     min: { x: Infinity, y: Infinity },
     max: { x: -Infinity, y: -Infinity },
+  },
+  setCurrentState: (currentState) => {
+    set({ currentState });
   },
   setBounds: (bounds) => {
     set({ bounds });
@@ -27,7 +40,7 @@ export const useCanvasCoreStore = create<CanvasCoreSliceState & CanvasCoreSliceA
   setCanvasRef: (canvasRef) => {
     set({ canvasRef });
   },
-  setSelectedShapeType: (type) => {
-    set({ selectedShapeType: type });
+  setSelectedToolType: (type) => {
+    set({ selectedToolType: type });
   },
 }));

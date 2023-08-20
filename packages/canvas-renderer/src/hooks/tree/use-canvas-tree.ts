@@ -2,7 +2,18 @@ import { CanvasShapes } from '@shapes/types';
 import { useCanvasTreeStore } from '@state/canvas-tree.slice';
 
 export const useCanvasTree = () => {
-  const { addNode, deselectNode, removeNode, selectNode, updateNode, nodes, selectedNodeId } = useCanvasTreeStore();
+  const {
+    addNode,
+    removeNode,
+    setSelectedNodeId,
+    clearSelectedNode,
+    updateNode,
+    setActiveNodeId,
+    clearActiveNode,
+    nodes,
+    selectedNodeId,
+    activeNodeId,
+  } = useCanvasTreeStore();
 
   const nodesIsEmpty = () => {
     return nodes.length === 0;
@@ -11,6 +22,7 @@ export const useCanvasTree = () => {
   const getNode = <T extends CanvasShapes>(id: string): CanvasShapes | null => {
     const node = nodes.find((node) => node.id === id);
     if (!node) return null;
+
     return node as T;
   };
 
@@ -18,6 +30,11 @@ export const useCanvasTree = () => {
     if (!selectedNodeId) return null;
 
     return getNode<T>(selectedNodeId);
+  };
+
+  const getActiveNode = <T extends CanvasShapes>() => {
+    if (!activeNodeId) return null;
+    return getNode<T>(activeNodeId);
   };
 
   const getFirstNode = <T extends CanvasShapes>() => {
@@ -34,12 +51,15 @@ export const useCanvasTree = () => {
     addNode,
     updateNode,
     removeNode,
-    selectNode,
-    deselectNode,
+    setSelectedNodeId,
+    clearSelectedNode,
     getNode,
     getSelectedNode,
     getFirstNode,
     getLastNode,
+    getActiveNode,
+    setActiveNodeId,
+    clearActiveNode,
     nodes,
   };
 };

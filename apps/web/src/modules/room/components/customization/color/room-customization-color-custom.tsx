@@ -3,10 +3,10 @@
 import React, { ChangeEvent } from 'react';
 import { ColorInput } from '@modules/ui/components/forms/color-input';
 import { Label } from '@modules/ui/components/label/label';
-import { useCustomizationStore } from '@modules/state/customization.slice';
+import { useCanvasCustomization } from '@doodle-together/canvas-renderer';
 
 const RoomCustomizationColorCustom: React.FC = () => {
-  const { setColor } = useCustomizationStore();
+  const { setColor } = useCanvasCustomization();
 
   const handleColoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;

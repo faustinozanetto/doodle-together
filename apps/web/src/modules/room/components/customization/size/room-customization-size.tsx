@@ -2,12 +2,10 @@
 
 import React from 'react';
 
-import { IconButton } from '@modules/ui/components/icon-button/icon-button';
-import { useCustomizationStore } from '@modules/state/customization.slice';
-import { RoomToolSize } from '@doodle-together/shared';
 import RoomCustomizationSection from '../room-customization-section';
+import RoomCustomizationSizeOption, { RoomCustomizationSizeOptionProps } from './room-customization-size-option';
 
-const TOOL_SIZES: ToolSizeOptionProps[] = [
+const TOOL_SIZES: RoomCustomizationSizeOptionProps[] = [
   {
     size: 'small',
     icon: (
@@ -79,36 +77,12 @@ const TOOL_SIZES: ToolSizeOptionProps[] = [
   },
 ];
 
-type ToolSizeOptionProps = {
-  icon: React.ReactNode;
-  size: RoomToolSize;
-};
-
-const ToolSizeOption: React.FC<ToolSizeOptionProps> = (props) => {
-  const { size, icon } = props;
-
-  const { size: stateSize, setSize } = useCustomizationStore();
-
-  const handleSelectSize = () => {
-    setSize(size);
-  };
-
-  return (
-    <IconButton
-      aria-label={`${size} Size`}
-      variant={stateSize === size ? 'default' : 'ghost'}
-      onClick={handleSelectSize}
-      icon={icon}
-    />
-  );
-};
-
 const RoomCustomizationSize: React.FC = () => {
   return (
     <RoomCustomizationSection name="Size">
       <div className="flex gap-1 mx-auto">
         {TOOL_SIZES.map((size) => {
-          return <ToolSizeOption key={size.size} {...size} />;
+          return <RoomCustomizationSizeOption key={size.size} {...size} />;
         })}
       </div>
     </RoomCustomizationSection>
