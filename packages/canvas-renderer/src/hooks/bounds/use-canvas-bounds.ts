@@ -1,14 +1,11 @@
 import { useCallback, useEffect } from 'react';
-import { CanvasActionType } from '../context/canvas/types';
-import { ICanvasBounds } from '../shapes';
-import { useCanvasContext } from './use-canvas-context';
+import { useCanvasCore } from '../core/use-canvas-core';
+import { ICanvasBounds } from '@shapes/types';
 
 export const useCanvasBounds = () => {
-  const { state, dispatch } = useCanvasContext();
+  const { setBounds, canvasRef, bounds } = useCanvasCore();
 
   const handleBoundsResize = useCallback(() => {
-    const { canvasRef } = state;
-
     if (!canvasRef) return;
 
     const { left, top, width, height } = canvasRef.getBoundingClientRect();
@@ -23,13 +20,12 @@ export const useCanvasBounds = () => {
         y: top + height,
       },
     };
-
-    dispatch({ type: CanvasActionType.SET_BOUNDS, payload: { bounds: updatedBounds } });
-  }, [state.canvasRef]);
+    setBounds(updatedBounds);
+  }, [canvasRef]);
 
   useEffect(() => {
     handleBoundsResize();
-  }, [state.canvasRef]);
+  }, [canvasRef]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleBoundsResize);
@@ -42,6 +38,6 @@ export const useCanvasBounds = () => {
   }, []);
 
   return {
-    bounds: state.bounds,
+    bounds,
   };
 };

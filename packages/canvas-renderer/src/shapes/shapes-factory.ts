@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
-import { CanvasShapeTypes, CanvasShapes, ICanvasBoxShape, ICanvasCircleShape, ICanvasDrawShape } from './types';
 import { ShapeUtils } from './shape-utils';
+import { CanvasShapeTypes, CanvasShapes, ICanvasDrawShape, ICanvasBoxShape, ICanvasCircleShape } from './types';
 
 export class ShapesFactory {
   static createShape(shapeType: CanvasShapeTypes): CanvasShapes {

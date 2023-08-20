@@ -1,12 +1,12 @@
 import React from 'react';
 import RoomPanel from '../room-panel';
-import { useCamera } from '@doodle-together/canvas-renderer';
+import { useCanvasCamera } from '@doodle-together/canvas-renderer';
 import RoomCameraZoom from './room-camera-zoom';
 import { ZoomInIcon } from '@modules/ui/components/icons/zoom-in-icon';
 import { ZoomOutIcon } from '@modules/ui/components/icons/zoom-in-out';
 
 const RoomCamera: React.FC = () => {
-  const { zoomIn, zoomOut } = useCamera();
+  const { zoomIn, zoomOut } = useCanvasCamera();
 
   return (
     <RoomPanel label="Camera">

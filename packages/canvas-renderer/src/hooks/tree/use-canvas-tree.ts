@@ -1,9 +1,9 @@
-import { CanvasActionType } from '../context/canvas/types';
-import { CanvasShapeTypes, CanvasShapes } from '../shapes';
-import { useCanvasContext } from './use-canvas-context';
+import { CanvasShapeTypes, CanvasShapes } from '@shapes/types';
+import { useCanvasTreeContext } from './use-canvas-tree-context';
+import { CanvasTreeActionType } from '@context/canvas-tree/types';
 
-export const useCanvas = () => {
-  const { state, dispatch } = useCanvasContext();
+export const useCanvasTree = () => {
+  const { state, dispatch } = useCanvasTreeContext();
 
   const nodesIsEmpty = () => {
     return state.nodes.length === 0;
@@ -34,23 +34,23 @@ export const useCanvas = () => {
   };
 
   const setSelectedNode = (id: string) => {
-    dispatch({ type: CanvasActionType.SELECT_NODE, payload: { id } });
+    dispatch({ type: CanvasTreeActionType.SELECT_NODE, payload: { id } });
   };
 
-  const clearSelectedNode = (id: string) => {
-    dispatch({ type: CanvasActionType.DESELECT_NODE, payload: {} });
+  const clearSelectedNode = () => {
+    dispatch({ type: CanvasTreeActionType.DESELECT_NODE, payload: {} });
   };
 
   const addNode = (type: CanvasShapeTypes) => {
-    dispatch({ type: CanvasActionType.ADD_NODE, payload: { type } });
+    dispatch({ type: CanvasTreeActionType.ADD_NODE, payload: { type } });
   };
 
   const updateNode = <T extends CanvasShapes>(id: string, data: T) => {
-    dispatch({ type: CanvasActionType.UPDATE_NODE, payload: { id, data } });
+    dispatch({ type: CanvasTreeActionType.UPDATE_NODE, payload: { id, data } });
   };
 
   const removeNode = (id: string) => {
-    dispatch({ type: CanvasActionType.REMOVE_NODE, payload: { id } });
+    dispatch({ type: CanvasTreeActionType.REMOVE_NODE, payload: { id } });
   };
 
   return {

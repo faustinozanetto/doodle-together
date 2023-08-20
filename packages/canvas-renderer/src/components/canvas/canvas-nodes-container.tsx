@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCamera } from '../../hooks/use-camera';
+import { useCanvasCamera } from '@hooks/camera/use-canvas-camera';
 
 type CanvasNodesContainerProps = {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ type CanvasNodesContainerProps = {
 const CanvasNodesContainer: React.FC<CanvasNodesContainerProps> = (props) => {
   const { children } = props;
 
-  const { zoom, position } = useCamera();
+  const { zoom, position } = useCanvasCamera();
 
   const transform = `scale(${zoom}) translate(${position.x}px, ${position.y}px)`;
 

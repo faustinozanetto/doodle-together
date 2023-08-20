@@ -1,12 +1,12 @@
-import { useCameraContext } from './use-camera-context';
-import { CameraActionType } from '../context/camera/types';
-import { ShapeUtils } from '../shapes';
-import { useCanvasBounds } from './use-canvas-bounds';
-import { ICanvasPoint, CanvasPoint } from '../common/canvas-point';
+import { useCanvasBounds } from '@hooks/bounds/use-canvas-bounds';
+import { useCanvasCameraContext } from './use-canvas-camera-context';
+import { ShapeUtils } from '@shapes/shape-utils';
+import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
+import { CanvasCameraActionType } from '@context/canvas-camera/types';
 
-export const useCamera = (zoomStepSize: number = 0.1, zoomMin: number = 0.1, zoomMax: number = 5) => {
+export const useCanvasCamera = (zoomStepSize: number = 0.1, zoomMin: number = 0.1, zoomMax: number = 5) => {
   const { bounds } = useCanvasBounds();
-  const { state, dispatch } = useCameraContext();
+  const { state, dispatch } = useCanvasCameraContext();
 
   const parseZoom = (zoom: number): number => {
     return +Math.min(Math.max(zoom, zoomMin), zoomMax).toFixed(2);
@@ -19,10 +19,9 @@ export const useCamera = (zoomStepSize: number = 0.1, zoomMin: number = 0.1, zoo
     const pointB = CanvasPoint.sub(CanvasPoint.div(canvasCenter, newZoom), prevPosition);
 
     const newPosition = CanvasPoint.add(prevPosition, CanvasPoint.sub(pointB, pointA));
-    console.log({ canvasCenter, prevPosition, prevZoom, newZoom, newPosition });
 
-    dispatch({ type: CameraActionType.SET_POSITION, payload: { position: newPosition } });
-    dispatch({ type: CameraActionType.SET_ZOOM, payload: { zoom: newZoom } });
+    dispatch({ type: CanvasCameraActionType.SET_POSITION, payload: { position: newPosition } });
+    dispatch({ type: CanvasCameraActionType.SET_ZOOM, payload: { zoom: newZoom } });
   };
 
   const zoomIn = () => {

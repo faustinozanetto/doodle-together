@@ -1,4 +1,4 @@
-import { ICanvasPoint } from '../common/canvas-point';
+import { ICanvasPoint } from '@common/canvas-point';
 
 export enum CanvasShapeTypes {
   Draw = 'Draw',

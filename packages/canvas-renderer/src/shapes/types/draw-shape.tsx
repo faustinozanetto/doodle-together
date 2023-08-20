@@ -1,9 +1,13 @@
-import { Shape } from './shape';
-
+import SVGContainer from '@components/svg/svg-container';
+import { ShapeUtils } from '@shapes/shape-utils';
+import {
+  ICanvasDrawShape,
+  ICanvasMouseEvenetsUpdatePayload,
+  ICanvasBounds,
+  ICanvasShapeDimensions,
+} from '@shapes/types';
 import getStroke from 'perfect-freehand';
-import { ICanvasBounds, ICanvasDrawShape, ICanvasMouseEvenetsUpdatePayload, ICanvasShapeDimensions } from '../types';
-import { ShapeUtils } from '../shape-utils';
-import SVGContainer from '../../components/svg/svg-container';
+import { Shape } from './shape';
 
 export class DrawShape extends Shape<ICanvasDrawShape> {
   render(data: ICanvasDrawShape): JSX.Element {

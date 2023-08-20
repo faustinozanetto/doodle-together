@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
-import { ShapeUtils } from '../../shapes';
-import { type CanvasNode as CanvasNodeData } from '../../context/canvas/types';
+import { CanvasTreeNode } from '@context/canvas-tree/types';
+import { ShapeUtils } from '@shapes/shape-utils';
 
 type CanvasNodeProps = {
-  node: CanvasNodeData;
+  node: CanvasTreeNode;
 };
 
 export const CanvasNode: React.FC<CanvasNodeProps> = memo(

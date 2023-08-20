@@ -1,9 +1,14 @@
-import { Shape } from './shape';
+import { ICanvasPoint, CanvasPoint } from '@common/canvas-point';
+import SVGContainer from '@components/svg/svg-container';
+import { ShapeUtils } from '@shapes/shape-utils';
+import {
+  ICanvasBoxShape,
+  ICanvasMouseEvenetsUpdatePayload,
+  ICanvasBounds,
+  ICanvasShapeDimensions,
+} from '@shapes/types';
 import getStroke from 'perfect-freehand';
-import { ICanvasBounds, ICanvasBoxShape, ICanvasMouseEvenetsUpdatePayload, ICanvasShapeDimensions } from '../types';
-import { ShapeUtils } from '../shape-utils';
-import SVGContainer from '../../components/svg/svg-container';
-import { CanvasPoint, ICanvasPoint } from '../../common/canvas-point';
+import { Shape } from './shape';
 
 export class BoxShape extends Shape<ICanvasBoxShape> {
   render(data: ICanvasBoxShape): JSX.Element {
@@ -16,14 +21,20 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const width = Math.max(0, size.width - strokeWidth / 2);
     const heigth = Math.max(0, size.height - strokeWidth / 2);
 
-    const rand = ShapeUtils.random(data.id);
+    const random = ShapeUtils.createSeededRandom(data.id);
+    const cornerOffsets: ICanvasPoint[] = Array.from({ length: 4 }).map(() => {
+      return {
+        x: (random() * strokeWidth) / 2,
+        y: (random() * strokeWidth) / 2,
+      };
+    });
 
     // Corners
     const corners = {
-      topLeft: CanvasPoint.add({ x: strokeWidth / 2, y: strokeWidth / 2 }, { x: 0, y: 0 }),
-      topRight: CanvasPoint.add({ x: width, y: strokeWidth / 2 }, { x: 0, y: 0 }),
-      bottomRight: CanvasPoint.add({ x: width, y: heigth }, { x: 0, y: 0 }),
-      bottomLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth }, { x: 0, y: 0 }),
+      topLeft: CanvasPoint.add({ x: strokeWidth / 2, y: strokeWidth / 2 }, cornerOffsets[0]),
+      topRight: CanvasPoint.add({ x: width, y: strokeWidth / 2 }, cornerOffsets[1]),
+      bottomRight: CanvasPoint.add({ x: width, y: heigth }, cornerOffsets[2]),
+      bottomLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth }, cornerOffsets[3]),
     };
 
     // Points between corners
@@ -57,7 +68,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
 
     return (
       <SVGContainer id={data.id}>
-        <path d={path} />
+        <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" fill={customization.color} />
       </SVGContainer>
     );
   }

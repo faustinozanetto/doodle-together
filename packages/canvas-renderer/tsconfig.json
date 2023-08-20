@@ -1,5 +1,15 @@
 {
   "extends": "@doodle-together/typescript-config/ui-library.json",
   "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@common/*": ["common/*"],
+      "@components/*": ["components/*"],
+      "@context/*": ["context/*"],
+      "@hooks/*": ["hooks/*"],
+      "@shapes/*": ["shapes/*"]
+    }
+  }
 }

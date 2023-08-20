@@ -3,33 +3,26 @@
 import React from 'react';
 
 import { iconButtonVariants } from '@modules/ui/components/icon-button/icon-button';
-import { RoomTool as RoomToolData } from '@doodle-together/shared';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modules/ui/components/tooltip';
-import { capitalize } from '@modules/common/lib/common.lib';
-import { useCustomizationStore } from '@modules/state/customization.slice';
 
 export type RoomToolProps = {
   icon: React.ReactNode;
-  tool: RoomToolData;
+  label: string;
+  isSelected: boolean;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const RoomTool: React.FC<RoomToolProps> = (props) => {
-  const { tool, icon } = props;
-
-  const { setTool, tool: stateTool } = useCustomizationStore();
-
-  const handleToolSelection = () => {
-    setTool(tool);
-  };
+  const { icon, label, onClick, isSelected } = props;
 
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
-        <TooltipTrigger aria-label={`${tool} Tool`} onClick={handleToolSelection}>
-          <div className={iconButtonVariants({ variant: stateTool === tool ? 'default' : 'ghost' })}>{icon}</div>
+        <TooltipTrigger aria-label={label} onClick={onClick}>
+          <div className={iconButtonVariants({ variant: isSelected ? 'default' : 'ghost' })}>{icon}</div>
         </TooltipTrigger>
         <TooltipContent>
-          <span className="font-medium">{capitalize(tool)}</span>
+          <span className="font-medium">{label}</span>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

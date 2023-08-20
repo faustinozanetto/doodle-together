@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import { ShapeUtils } from '../shapes';
-import { useCanvasBounds } from './use-canvas-bounds';
-import { useCamera } from './use-camera';
-import { CanvasPoint, ICanvasPoint } from '../common/canvas-point';
+import { useCanvasBounds } from './bounds/use-canvas-bounds';
+import { useCanvasCamera } from './camera/use-canvas-camera';
+import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
+import { ShapeUtils } from '@shapes/shape-utils';
 
 type UseCanvasMouseEventsProps = {
   onPointerUpCallback: () => void;
@@ -16,7 +16,7 @@ export const useCanvasMouseEvents = ({
   onPointerMoveCallback,
 }: UseCanvasMouseEventsProps) => {
   const { bounds } = useCanvasBounds();
-  const { zoom, position } = useCamera();
+  const { zoom, position } = useCanvasCamera();
 
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
 
