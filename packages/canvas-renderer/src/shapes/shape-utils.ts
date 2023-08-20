@@ -10,7 +10,7 @@ import { BoxShape } from './types/box-shape';
 import { CircleShape } from './types/circle-shape';
 import { DrawShape } from './types/draw-shape';
 import { Shape } from './types/shape';
-import { CanvasCameraContextState } from '@context/canvas-camera/types';
+import { CanvasCameraSliceState } from '@state/canvas-camera.slice';
 
 const SHAPE_CLASSES: Record<CanvasShapeTypes, Shape<CanvasShapes>> = {
   Box: new BoxShape(),
@@ -55,7 +55,7 @@ export class ShapeUtils {
     return { width, height };
   }
 
-  static getCameraTransformedPoint(point: ICanvasPoint, camera: CanvasCameraContextState): ICanvasPoint {
+  static getCameraTransformedPoint(point: ICanvasPoint, camera: CanvasCameraSliceState): ICanvasPoint {
     const { zoom, position } = camera;
     const zoomMapped: ICanvasPoint = {
       x: point.x / zoom,

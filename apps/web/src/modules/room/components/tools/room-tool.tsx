@@ -9,17 +9,21 @@ export type RoomToolProps = {
   icon: React.ReactNode;
   label: string;
   isSelected: boolean;
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onToolClicked: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const RoomTool: React.FC<RoomToolProps> = (props) => {
-  const { icon, label, onClick, isSelected } = props;
+  const { icon, label, onToolClicked, isSelected } = props;
 
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
-        <TooltipTrigger aria-label={label} onClick={onClick}>
-          <div className={iconButtonVariants({ variant: isSelected ? 'default' : 'ghost' })}>{icon}</div>
+        <TooltipTrigger
+          className={iconButtonVariants({ variant: isSelected ? 'default' : 'ghost' })}
+          aria-label={label}
+          onClick={onToolClicked}
+        >
+          {icon}
         </TooltipTrigger>
         <TooltipContent>
           <span className="font-medium">{label}</span>

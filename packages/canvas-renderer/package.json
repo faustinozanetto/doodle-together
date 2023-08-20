@@ -18,17 +18,17 @@
   },
   "dependencies": {
     "nanoid": "4.0.2",
-    "perfect-freehand": "1.2.0"
+    "perfect-freehand": "1.2.0",
+    "zustand": "4.4.1"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "18.2.0"
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@doodle-together/typescript-config": "*",
     "@types/react": "^18.2.14",
-    "@types/react-dom": "18.2.7",
     "eslint": "^8.45.0",
+    "react": "^18.2.0",
     "tsup": "^7.1.0",
     "typescript": "^5.1.6"
   }

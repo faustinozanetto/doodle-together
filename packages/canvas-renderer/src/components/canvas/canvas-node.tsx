@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { CanvasTreeNode } from '@context/canvas-tree/types';
 import { ShapeUtils } from '@shapes/shape-utils';
+import { CanvasTreeNode } from '@state/canvas-tree.slice';
 
 type CanvasNodeProps = {
   node: CanvasTreeNode;

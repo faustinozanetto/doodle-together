@@ -5,7 +5,7 @@ type CanvasNodesContainerProps = {
   children: React.ReactNode;
 };
 
-const CanvasNodesContainer: React.FC<CanvasNodesContainerProps> = (props) => {
+export const CanvasNodesContainer: React.FC<CanvasNodesContainerProps> = (props) => {
   const { children } = props;
 
   const { zoom, position } = useCanvasCamera();
@@ -24,5 +24,3 @@ const CanvasNodesContainer: React.FC<CanvasNodesContainerProps> = (props) => {
     </div>
   );
 };
-
-export default CanvasNodesContainer;

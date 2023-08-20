@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react';
-import { useCanvasCore } from '../core/use-canvas-core';
 import { ICanvasBounds } from '@shapes/types';
+import { useCanvasCoreStore } from '@state/canvas-core.slice';
 
 export const useCanvasBounds = () => {
-  const { setBounds, canvasRef, bounds } = useCanvasCore();
+  const { canvasRef, setBounds, bounds } = useCanvasCoreStore();
 
   const handleBoundsResize = useCallback(() => {
     if (!canvasRef) return;

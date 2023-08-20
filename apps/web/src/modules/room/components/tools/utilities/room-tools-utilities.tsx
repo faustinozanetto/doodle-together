@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import RoomTool, { RoomToolProps } from '../room-tool';
 import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
@@ -72,7 +74,7 @@ const RoomToolsUtilities: React.FC = () => {
             label={utilityLabel}
             icon={utility.icon}
             isSelected={false}
-            onClick={() => {
+            onToolClicked={() => {
               // dispatch({ type: CanvasActionType.SET_SELECTED_SHAPE, payload: { shape: shape.shape } });
             }}
           />

@@ -9,7 +9,8 @@
       "@components/*": ["components/*"],
       "@context/*": ["context/*"],
       "@hooks/*": ["hooks/*"],
-      "@shapes/*": ["shapes/*"]
+      "@shapes/*": ["shapes/*"],
+      "@state/*": ["state/*"]
     }
   }
 }

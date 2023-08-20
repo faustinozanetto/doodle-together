@@ -38,13 +38,13 @@ const TOOL_SHAPES: RoomToolShapeOption[] = [
 ];
 
 const RoomToolsShapes: React.FC = () => {
-  const { setSelectedShape, selectedShape } = useCanvasCore();
+  const { setSelectedShapeType, selectedShapeType } = useCanvasCore();
 
   return (
     <div className="flex gap-2">
       {TOOL_SHAPES.map((shape) => {
         const shapeLabel = `${shape.shape} Shape`;
-        const isSelected = selectedShape === shape.shape;
+        const isSelected = selectedShapeType === shape.shape;
 
         return (
           <RoomTool
@@ -52,8 +52,8 @@ const RoomToolsShapes: React.FC = () => {
             label={shapeLabel}
             icon={shape.icon}
             isSelected={isSelected}
-            onClick={() => {
-              setSelectedShape(shape.shape);
+            onToolClicked={() => {
+              setSelectedShapeType(shape.shape);
             }}
           />
         );

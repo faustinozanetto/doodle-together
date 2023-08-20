@@ -3,14 +3,14 @@ import { useCanvasCore } from '@hooks/core/use-canvas-core';
 import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
 import { useCanvasMouseEvents } from '@hooks/use-canvas-mouse-events';
 import { ShapeUtils } from '@shapes/shape-utils';
-import CanvasNodesContainer from './canvas-nodes-container';
+import { CanvasNodesContainer } from './canvas-nodes-container';
 import { CanvasNode } from './canvas-node';
 
 export const Canvas = () => {
   const canvasRef = useRef<ElementRef<'div'>>(null);
 
-  const { setCanvasRef, selectedShape } = useCanvasCore();
-  const { addNode, updateNode, getLastNode, getNodes } = useCanvasTree();
+  const { setCanvasRef, selectedShapeType } = useCanvasCore();
+  const { addNode, updateNode, getLastNode, nodes } = useCanvasTree();
 
   const {
     onPointerMove,
@@ -25,7 +25,7 @@ export const Canvas = () => {
   } = useCanvasMouseEvents({
     onPointerUpCallback() {},
     onPointerDownCallback() {
-      addNode(selectedShape);
+      addNode(selectedShapeType);
     },
     onPointerMoveCallback() {
       const lastNode = getLastNode();
@@ -83,7 +83,7 @@ export const Canvas = () => {
         }}
       />
       <CanvasNodesContainer>
-        {getNodes().map((node) => {
+        {nodes.map((node) => {
           return <CanvasNode key={node.id} node={node} />;
         })}
       </CanvasNodesContainer>
