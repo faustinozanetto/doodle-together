@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { ShapeUtils } from './shape-utils';
+import { ShapeUtils } from '../utils/shape-utils';
 import { CanvasShapeToolTypes, CanvasShapes, ICanvasDrawShape, ICanvasBoxShape, ICanvasCircleShape } from './types';
 
 export class ShapesFactory {

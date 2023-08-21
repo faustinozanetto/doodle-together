@@ -18,7 +18,7 @@ const RoomCameraZoom: React.FC<RoomCameraZoomProps> = (props) => {
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger aria-label={label} onClick={onZoomClicked}>
-          <div className={iconButtonVariants({ variant: 'ghost' })}>{icon}</div>
+          <div className={iconButtonVariants({ variant: 'outline' })}>{icon}</div>
         </TooltipTrigger>
         <TooltipContent>
           <span className="font-medium">{label}</span>

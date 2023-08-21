@@ -1,4 +1,4 @@
-import { ShapeUtils } from '@shapes/shape-utils';
+import { ShapeUtils } from '@utils/shape-utils';
 import { ICanvasShapeCustomization } from '@shapes/types';
 import { create } from 'zustand';
 

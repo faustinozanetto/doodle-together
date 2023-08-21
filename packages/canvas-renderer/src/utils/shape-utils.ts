@@ -5,12 +5,13 @@ import {
   ICanvasShapeCustomization,
   ICanvasBounds,
   ICanvasShapeDimensions,
-} from './types';
-import { BoxShape } from './types/box-shape';
-import { CircleShape } from './types/circle-shape';
-import { DrawShape } from './types/draw-shape';
-import { Shape } from './types/shape';
+} from '../shapes/types';
+import { BoxShape } from '../shapes/types/box-shape';
+import { CircleShape } from '../shapes/types/circle-shape';
+import { DrawShape } from '../shapes/types/draw-shape';
+import { Shape } from '../shapes/types/shape';
 import { CanvasCameraSliceState } from '@state/canvas-camera.slice';
+import { getStrokePoints } from 'perfect-freehand';
 
 const SHAPE_CLASSES: Record<CanvasShapeToolTypes, Shape<CanvasShapes>> = {
   box: new BoxShape(),
@@ -19,10 +20,10 @@ const SHAPE_CLASSES: Record<CanvasShapeToolTypes, Shape<CanvasShapes>> = {
 };
 
 const SHAPE_SIZES: Record<ICanvasShapeCustomization['size'], number> = {
-  small: 8,
-  medium: 12,
-  large: 14,
-  'extra-large': 18,
+  small: 6,
+  medium: 10,
+  large: 12,
+  'extra-large': 16,
 };
 
 export class ShapeUtils {
@@ -30,7 +31,7 @@ export class ShapeUtils {
     return {
       color: '#000',
       size: 'medium',
-      style: 'solid',
+      style: 'drawn',
     };
   }
 
@@ -111,23 +112,53 @@ export class ShapeUtils {
   }
 
   static getShapePathFromStroke(stroke: number[][]): string {
-    if (!stroke.length) return '';
+    if (stroke.length === 0) return '';
 
     const average = (a: number, b: number) => (a + b) / 2;
 
     const first = stroke[0];
-    let result = `M${first[0].toFixed(3)},${first[1].toFixed(3)}Q`;
+    let result = `M${first[0].toFixed(2)},${first[1].toFixed(2)}Q`;
 
     for (let i = 0, max = stroke.length - 1; i < max; i++) {
-      const a = stroke[i];
-      const b = stroke[i + 1];
-      result += `${a[0].toFixed(3)},${a[1].toFixed(3)} ${average(a[0], b[0]).toFixed(3)},${average(a[1], b[1]).toFixed(
-        3
-      )} `;
+      const current = stroke[i];
+      const next = stroke[i + 1];
+      result += `${current[0].toFixed(2)},${current[1].toFixed(2)} ${average(current[0], next[0]).toFixed(2)},${average(
+        current[1],
+        next[1]
+      ).toFixed(2)} `;
     }
 
-    result += 'Z';
+    return `${result}Z`;
+  }
 
-    return result;
+  static getShapePathFromPoints(points: ICanvasPoint[]) {
+    const pointsLength = points.length;
+
+    if (pointsLength === 0) return 'M 0 0 L 0 0';
+    if (pointsLength < 3) return `M ${points[0].x} ${points[0].y}`;
+
+    const strokePoints = getStrokePoints(points).map((pt) => pt.point);
+
+    const strokePointsLength = strokePoints.length;
+
+    const path = strokePoints.reduce(
+      (acc, [x0, y0], i, arr) => {
+        if (i === strokePointsLength - 1) {
+          acc.push('L', +x0.toFixed(2), +y0.toFixed(2));
+          return acc;
+        }
+
+        const [x1, y1] = arr[i + 1];
+        const xAvg = ((x0 + x1) / 2).toFixed(2);
+        const yAvg = ((y0 + y1) / 2).toFixed(2);
+
+        acc.push(x0.toFixed(2), y0.toFixed(2), xAvg, yAvg);
+
+        return acc;
+      },
+      ['M', strokePoints[0][0], strokePoints[0][1], 'Q']
+    );
+
+    return path.join(' ');
   }
 }

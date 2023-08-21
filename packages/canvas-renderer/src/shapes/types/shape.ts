@@ -6,7 +6,20 @@ export abstract class Shape<T extends CanvasShapes> {
    * @param data Shape data to pass.
    * @returns The react jsx svg element.
    */
-  abstract render(data: T): React.JSX.Element;
+  render(data: T): React.JSX.Element {
+    switch (data.customization.style) {
+      case 'drawn':
+        return this.renderHandDrawn(data);
+      case 'dashed':
+        return this.renderDashed(data);
+      case 'dotted':
+        return this.renderDotted(data);
+    }
+  }
+
+  abstract renderHandDrawn(data: T): React.JSX.Element;
+  abstract renderDashed(data: T): React.JSX.Element;
+  abstract renderDotted(data: T): React.JSX.Element;
 
   /**
    * Method that is executed while creating the shape on mouse move.

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useCanvasBounds } from './bounds/use-canvas-bounds';
 import { useCanvasCamera } from './camera/use-canvas-camera';
 import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
-import { ShapeUtils } from '@shapes/shape-utils';
+import { ShapeUtils } from '@utils/shape-utils';
 
 type UseCanvasMouseEventsProps = {
   /** Callback function executed when the mouse is released */

@@ -1,6 +1,6 @@
 import { ICanvasPoint, CanvasPoint } from '@common/canvas-point';
 import SVGContainer from '@components/svg/svg-container';
-import { ShapeUtils } from '@shapes/shape-utils';
+import { ShapeUtils } from '@utils/shape-utils';
 import {
   ICanvasBoxShape,
   ICanvasMouseEvenetsUpdatePayload,
@@ -11,47 +11,14 @@ import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
 
 export class BoxShape extends Shape<ICanvasBoxShape> {
-  render(data: ICanvasBoxShape): JSX.Element {
-    const { props, customization } = data;
+  renderHandDrawn(data: ICanvasBoxShape): JSX.Element {
+    const { customization } = data;
 
-    const { size } = props;
+    const points = this.calculateBoxPoints(data);
+
+    const closedPathPoints: ICanvasPoint[] = [...points.flat().slice(4), ...points[0].slice(0, 12)];
 
     const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
-
-    const width = Math.max(0, size.width - strokeWidth / 2);
-    const heigth = Math.max(0, size.height - strokeWidth / 2);
-
-    const random = ShapeUtils.createSeededRandom(data.id);
-    const cornerOffsets: ICanvasPoint[] = Array.from({ length: 4 }).map(() => {
-      return {
-        x: (random() * strokeWidth) / 2,
-        y: (random() * strokeWidth) / 2,
-      };
-    });
-
-    // Corners
-    const corners = {
-      topLeft: CanvasPoint.add({ x: strokeWidth / 2, y: strokeWidth / 2 }, cornerOffsets[0]),
-      topRight: CanvasPoint.add({ x: width, y: strokeWidth / 2 }, cornerOffsets[1]),
-      bottomRight: CanvasPoint.add({ x: width, y: heigth }, cornerOffsets[2]),
-      bottomLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth }, cornerOffsets[3]),
-    };
-
-    // Points between corners
-    const topBottomPoints = Math.max(8, Math.floor(width / 12));
-    const leftRightPoints = Math.max(8, Math.floor(heigth / 12));
-
-    const sides: ICanvasPoint[][] = [
-      ShapeUtils.getPointsInBetween(corners.topLeft, corners.topRight, topBottomPoints), // Top Side
-      ShapeUtils.getPointsInBetween(corners.topRight, corners.bottomRight, leftRightPoints), // Right Side
-      ShapeUtils.getPointsInBetween(corners.bottomRight, corners.bottomLeft, topBottomPoints), // Bottom Side
-      ShapeUtils.getPointsInBetween(corners.bottomLeft, corners.topLeft, leftRightPoints), // Left Side
-    ];
-
-    const closedPathPoints: ICanvasPoint[] = [...sides.flat(), ...sides[0], ...sides[1]].slice(
-      4,
-      Math.floor(topBottomPoints / -2) + 2
-    );
 
     const stroke = getStroke(closedPathPoints, {
       size: ShapeUtils.getShapeMappedSize(customization.size),
@@ -68,7 +35,61 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
 
     return (
       <SVGContainer id={data.id}>
-        <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" fill={customization.color} />
+        <path d={path} strokeLinejoin="round" strokeLinecap="round" fill={customization.color} />
+      </SVGContainer>
+    );
+  }
+
+  renderDashed(data: ICanvasBoxShape): JSX.Element {
+    const { customization } = data;
+
+    const points = this.calculateBoxPoints(data);
+
+    const path = ShapeUtils.getShapePathFromPoints(points.flat());
+
+    const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
+    const strokeDashArray = `${strokeWidth * 2.25} ${strokeWidth * 2.5}`;
+    const strokeDashOffset = `${strokeWidth}`;
+
+    return (
+      <SVGContainer id={data.id}>
+        <path
+          d={path}
+          fill="none"
+          stroke={customization.color}
+          strokeWidth={strokeWidth * 1.25}
+          strokeDasharray={strokeDashArray}
+          strokeDashoffset={strokeDashOffset}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+      </SVGContainer>
+    );
+  }
+
+  renderDotted(data: ICanvasBoxShape): JSX.Element {
+    const { customization } = data;
+
+    const points = this.calculateBoxPoints(data);
+
+    const path = ShapeUtils.getShapePathFromPoints(points.flat());
+
+    const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
+    const strokeDashArray = `${strokeWidth / 8} ${strokeWidth * 2.5}`;
+    const strokeDashOffset = `${strokeWidth / 10}`;
+
+    return (
+      <SVGContainer id={data.id}>
+        <path
+          d={path}
+          fill="none"
+          stroke={customization.color}
+          strokeWidth={strokeWidth * 1.5}
+          strokeDasharray={strokeDashArray}
+          strokeDashoffset={strokeDashOffset}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
       </SVGContainer>
     );
   }
@@ -147,5 +168,44 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const { size } = props;
 
     return { width: size.width, height: size.height };
+  }
+
+  private calculateBoxPoints(data: ICanvasBoxShape) {
+    const { props, customization } = data;
+    const { size } = props;
+
+    const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
+
+    const width = Math.max(0, size.width - strokeWidth / 2);
+    const heigth = Math.max(0, size.height - strokeWidth / 2);
+
+    const random = ShapeUtils.createSeededRandom(data.id);
+    const cornerOffsets: ICanvasPoint[] = Array.from({ length: 4 }).map(() => {
+      return {
+        x: (random() * strokeWidth - 4) / 2,
+        y: (random() * strokeWidth - 3.5) / 2,
+      };
+    });
+
+    // Corners
+    const corners = {
+      topLeft: { x: strokeWidth / 2, y: strokeWidth / 2 },
+      topRight: { x: width, y: strokeWidth / 2 },
+      bottomRight: { x: width, y: heigth },
+      bottomLeft: { x: strokeWidth / 2, y: heigth },
+    };
+
+    // Points between corners
+    const topBottomPoints = Math.max(14, Math.floor(width / 20));
+    const leftRightPoints = Math.max(14, Math.floor(heigth / 20));
+
+    const points: ICanvasPoint[][] = [
+      ShapeUtils.getPointsInBetween(corners.topLeft, corners.topRight, topBottomPoints), // Top Side
+      ShapeUtils.getPointsInBetween(corners.topRight, corners.bottomRight, leftRightPoints), // Right Side
+      ShapeUtils.getPointsInBetween(corners.bottomRight, corners.bottomLeft, topBottomPoints), // Bottom Side
+      ShapeUtils.getPointsInBetween(corners.bottomLeft, corners.topLeft, leftRightPoints), // Left Side
+    ];
+
+    return points;
   }
 }

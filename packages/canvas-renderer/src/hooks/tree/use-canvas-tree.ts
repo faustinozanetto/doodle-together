@@ -22,13 +22,11 @@ export const useCanvasTree = () => {
   const getNode = <T extends CanvasShapes>(id: string): CanvasShapes | null => {
     const node = nodes.find((node) => node.id === id);
     if (!node) return null;
-
     return node as T;
   };
 
   const getSelectedNode = <T extends CanvasShapes>() => {
     if (!selectedNodeId) return null;
-
     return getNode<T>(selectedNodeId);
   };
 
@@ -60,6 +58,8 @@ export const useCanvasTree = () => {
     getActiveNode,
     setActiveNodeId,
     clearActiveNode,
+    activeNodeId,
+    selectedNodeId,
     nodes,
   };
 };

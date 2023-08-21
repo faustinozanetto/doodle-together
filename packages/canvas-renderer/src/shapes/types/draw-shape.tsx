@@ -1,5 +1,5 @@
 import SVGContainer from '@components/svg/svg-container';
-import { ShapeUtils } from '@shapes/shape-utils';
+import { ShapeUtils } from '@utils/shape-utils';
 import {
   ICanvasDrawShape,
   ICanvasMouseEvenetsUpdatePayload,
@@ -8,9 +8,10 @@ import {
 } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
+import { JSX } from 'react';
 
 export class DrawShape extends Shape<ICanvasDrawShape> {
-  render(data: ICanvasDrawShape): JSX.Element {
+  renderHandDrawn(data: ICanvasDrawShape): JSX.Element {
     const { props, customization } = data;
 
     const stroke = getStroke(props.points, {
@@ -26,7 +27,67 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
 
     return (
       <SVGContainer id={data.id}>
-        <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" fill={customization.color} />
+        <path
+          d={path}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          pointerEvents="all"
+          fill={customization.color}
+          strokeDasharray="7 7"
+          strokeDashoffset={0}
+        />
+      </SVGContainer>
+    );
+  }
+
+  renderDashed(data: ICanvasDrawShape): JSX.Element {
+    const { props, customization } = data;
+
+    const path = ShapeUtils.getShapePathFromPoints(props.points);
+
+    const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
+    const strokeDashArray = `${strokeWidth * 2.25} ${strokeWidth * 2.5}`;
+    const strokeDashOffset = `${strokeWidth}`;
+
+    return (
+      <SVGContainer id={data.id}>
+        <path
+          d={path}
+          fill="none"
+          stroke={customization.color}
+          strokeWidth={strokeWidth * 1.25}
+          strokeDasharray={strokeDashArray}
+          strokeDashoffset={strokeDashOffset}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          pointerEvents="stroke"
+        />
+      </SVGContainer>
+    );
+  }
+
+  renderDotted(data: ICanvasDrawShape): JSX.Element {
+    const { props, customization } = data;
+
+    const path = ShapeUtils.getShapePathFromPoints(props.points);
+
+    const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
+    const strokeDashArray = `${strokeWidth / 8} ${strokeWidth * 2.5}`;
+    const strokeDashOffset = `${strokeWidth / 10}`;
+
+    return (
+      <SVGContainer id={data.id}>
+        <path
+          d={path}
+          fill="none"
+          stroke={customization.color}
+          strokeWidth={strokeWidth * 1.5}
+          strokeDasharray={strokeDashArray}
+          strokeDashoffset={strokeDashOffset}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          pointerEvents="stroke"
+        />
       </SVGContainer>
     );
   }
@@ -44,7 +105,11 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
   }
 
   shouldRender(prev: ICanvasDrawShape, next: ICanvasDrawShape): boolean {
-    return prev.customization !== next.customization || prev.props.points !== next.props.points;
+    return (
+      prev.customization !== next.customization ||
+      prev.props.points !== next.props.points ||
+      prev.position !== next.position
+    );
   }
 
   calculateBounds(data: ICanvasDrawShape): ICanvasBounds {

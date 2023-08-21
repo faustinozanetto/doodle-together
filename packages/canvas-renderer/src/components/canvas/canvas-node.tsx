@@ -1,8 +1,10 @@
 import React, { memo } from 'react';
-import { ShapeUtils } from '@shapes/shape-utils';
+import clsx from 'clsx';
+import { ShapeUtils } from '@utils/shape-utils';
 import { CanvasTreeNode } from '@state/canvas-tree.slice';
 import { useCanvasTreeNode } from '@hooks/tree/use-canvas-tree-node';
-import { useForceUpdate } from '@hooks/use-force-render';
+import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
+import { useCanvasCore } from '@hooks/core/use-canvas-core';
 
 type CanvasNodeProps = {
   node: CanvasTreeNode;
@@ -12,34 +14,24 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
   (props) => {
     const { node } = props;
 
-    const { onPointerEnter, onPointerLeave, onClick } = useCanvasTreeNode(node);
-
-    const shapeClass = ShapeUtils.getShapeClass(node.type);
-
-    // const dimensions = shapeClass.calculateDimensions(node);
-    const bounds = shapeClass.calculateBounds(node);
-    const dimensions = ShapeUtils.getBoundsDimensions(bounds);
-
-    const padding = '24px';
-    const transform = `translate(calc(${bounds.min.x}px - ${padding}),
-    calc(${bounds.min.y}px - ${padding}))`;
-
-    useForceUpdate();
+    const { selectedNodeId, activeNodeId } = useCanvasTree();
+    const { selectedToolType } = useCanvasCore();
+    const { onPointerEnter, onPointerLeave, onClick, nodeStyles, nodeChildren } = useCanvasTreeNode(node);
 
     return (
       <div
-        className="absolute top-0 left-0 border-2 flex items-center justify-center overflow-clip hover:border-red-500 hover:cursor-pointer"
-        style={{
-          width: `calc(${dimensions.width}px + 2 * ${padding})`,
-          height: `calc(${dimensions.height}px  + 2* ${padding})`,
-          transform,
-          transformOrigin: 'center center',
-        }}
+        className={clsx(
+          'absolute inset-0 border-2',
+          activeNodeId === node.id && 'border-red-500',
+          selectedNodeId === node.id && 'border-blue-500',
+          selectedToolType === 'select' && 'hover:cursor-pointer'
+        )}
+        style={nodeStyles}
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
         onClick={onClick}
       >
-        {shapeClass.render(node)}
+        {nodeChildren}
       </div>
     );
   },

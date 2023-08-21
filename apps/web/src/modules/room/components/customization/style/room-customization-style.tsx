@@ -6,10 +6,11 @@ import { IconButton } from '@modules/ui/components/icon-button/icon-button';
 import { RoomToolStyle } from '@doodle-together/shared';
 import RoomCustomizationSection from '../room-customization-section';
 import { useCustomizationStore } from '@modules/state/customization.slice';
+import RoomCustomizationStyleOption, { RoomCustomizationStyleOptionProps } from './room-customization-style-option';
 
-const TOOL_STYLES: ToolStyleOptionProps[] = [
+const TOOL_STYLES: RoomCustomizationStyleOptionProps[] = [
   {
-    style: 'solid',
+    style: 'drawn',
     icon: (
       <svg
         className="h-5 w-5 stroke-current"
@@ -79,36 +80,12 @@ const TOOL_STYLES: ToolStyleOptionProps[] = [
   },
 ];
 
-type ToolStyleOptionProps = {
-  icon: React.ReactNode;
-  style: RoomToolStyle;
-};
-
-const ToolStyleOption: React.FC<ToolStyleOptionProps> = (props) => {
-  const { style, icon } = props;
-
-  const { style: stateStyle, setStyle } = useCustomizationStore();
-
-  const handleSelectStyle = () => {
-    setStyle(style);
-  };
-
-  return (
-    <IconButton
-      aria-label={`${style} Style`}
-      variant={stateStyle === style ? 'default' : 'ghost'}
-      onClick={handleSelectStyle}
-      icon={icon}
-    />
-  );
-};
-
 const RoomCustomizationStyle: React.FC = () => {
   return (
     <RoomCustomizationSection name="Style">
       <div className="flex gap-1 mx-auto">
         {TOOL_STYLES.map((style) => {
-          return <ToolStyleOption key={style.style} {...style} />;
+          return <RoomCustomizationStyleOption key={style.style} {...style} />;
         })}
       </div>
     </RoomCustomizationSection>

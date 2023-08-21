@@ -10,7 +10,8 @@
       "@context/*": ["context/*"],
       "@hooks/*": ["hooks/*"],
       "@shapes/*": ["shapes/*"],
-      "@state/*": ["state/*"]
+      "@state/*": ["state/*"],
+      "@utils/*": ["utils/*"]
     }
   }
 }

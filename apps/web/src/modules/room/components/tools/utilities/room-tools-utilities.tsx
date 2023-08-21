@@ -4,13 +4,21 @@ import React from 'react';
 import RoomTool, { RoomToolProps } from '../room-tool';
 import { useIsRoomOwner } from '@modules/room/hooks/use-is-room-owner';
 import { useMeStore } from '@modules/state/me.slice';
+import { CanvasUtilityToolTypes, useCanvasCore } from '@doodle-together/canvas-renderer';
+import { PointerIcon } from '@modules/ui/components/icons/pointer-icon';
+import { capitalize } from '@modules/common/lib/common.lib';
 
 type RoomToolUtilityOption = Pick<RoomToolProps, 'icon'> & {
-  utility: 'eraser' | 'clear';
+  utility: CanvasUtilityToolTypes;
   requiresOwner: boolean;
 };
 
 const TOOL_UTILITIES: RoomToolUtilityOption[] = [
+  {
+    requiresOwner: false,
+    utility: 'select',
+    icon: <PointerIcon className="stroke-current" />,
+  },
   {
     requiresOwner: false,
     utility: 'eraser',
@@ -56,8 +64,9 @@ const TOOL_UTILITIES: RoomToolUtilityOption[] = [
 
 const RoomToolsUtilities: React.FC = () => {
   const { me } = useMeStore();
-
   const { isRoomOwner } = useIsRoomOwner(me);
+
+  const { setSelectedToolType, selectedToolType } = useCanvasCore();
 
   // Only render the tools the user has access to.
   const filteredTools = TOOL_UTILITIES.filter((tool) => !tool.requiresOwner || (tool.requiresOwner && isRoomOwner));
@@ -65,17 +74,17 @@ const RoomToolsUtilities: React.FC = () => {
   return (
     <div className="flex gap-2">
       {filteredTools.map((utility) => {
-        const utilityLabel = `${utility.utility} Utility`;
-        // const isSelected = state.selectedShape === shape.shape;
+        const utilityLabel = `${capitalize(utility.utility)} Utility`;
+        const isSelected = selectedToolType === utility.utility;
 
         return (
           <RoomTool
             key={`utility-${utility.utility}`}
             label={utilityLabel}
             icon={utility.icon}
-            isSelected={false}
+            isSelected={isSelected}
             onToolClicked={() => {
-              // dispatch({ type: CanvasActionType.SET_SELECTED_SHAPE, payload: { shape: shape.shape } });
+              setSelectedToolType(utility.utility);
             }}
           />
         );

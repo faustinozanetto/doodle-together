@@ -4,7 +4,12 @@ import { useCanvasCustomizationStore } from '@state/canvas-customization.slice';
 
 export const useCanvasCustomization = () => {
   const { getSelectedNode, updateNode } = useCanvasTree();
-  const { setColor: setColorStore, setSize: setSizeStore, setStyle, customization } = useCanvasCustomizationStore();
+  const {
+    setColor: setColorStore,
+    setSize: setSizeStore,
+    setStyle: setStyleStore,
+    customization,
+  } = useCanvasCustomizationStore();
 
   const setColor = (color: ICanvasShapeCustomization['color']) => {
     const selectedNode = getSelectedNode();
@@ -38,6 +43,23 @@ export const useCanvasCustomization = () => {
     }
 
     setSizeStore(size);
+  };
+
+  const setStyle = (style: ICanvasShapeCustomization['style']) => {
+    const selectedNode = getSelectedNode();
+    if (selectedNode) {
+      const updatedCustomization: ICanvasShapeCustomization = {
+        ...selectedNode.customization,
+        style,
+      };
+      updateNode(selectedNode.id, {
+        ...selectedNode,
+        customization: updatedCustomization,
+      });
+      return;
+    }
+
+    setStyleStore(style);
   };
 
   const getSelectedNodeCustomization = () => {

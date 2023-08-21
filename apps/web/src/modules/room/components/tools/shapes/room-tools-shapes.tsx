@@ -3,6 +3,7 @@ import { SquareIcon } from '@modules/ui/components/icons/square-icon';
 import { CircleIcon } from '@modules/ui/components/icons/circle-icon';
 import RoomTool, { RoomToolProps } from '../room-tool';
 import { CanvasShapeToolTypes, useCanvasCore } from '@doodle-together/canvas-renderer';
+import { capitalize } from '@modules/common/lib/common.lib';
 
 type RoomToolShapeOption = Pick<RoomToolProps, 'icon'> & {
   shape: CanvasShapeToolTypes;
@@ -43,7 +44,7 @@ const RoomToolsShapes: React.FC = () => {
   return (
     <div className="flex gap-2">
       {TOOL_SHAPES.map((shape) => {
-        const shapeLabel = `${shape.shape} Shape`;
+        const shapeLabel = `${capitalize(shape.shape)} Shape`;
         const isSelected = selectedToolType === shape.shape;
 
         return (

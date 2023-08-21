@@ -1,5 +1,5 @@
 import { useCanvasBounds } from '@hooks/bounds/use-canvas-bounds';
-import { ShapeUtils } from '@shapes/shape-utils';
+import { ShapeUtils } from '@utils/shape-utils';
 import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { useCanvasCameraStore } from '@state/canvas-camera.slice';
 

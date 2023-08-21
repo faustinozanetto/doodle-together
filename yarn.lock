@@ -410,6 +410,7 @@ __metadata:
   dependencies:
     "@doodle-together/typescript-config": "*"
     "@types/react": ^18.2.14
+    clsx: 2.0.0
     eslint: ^8.45.0
     nanoid: 4.0.2
     perfect-freehand: 1.2.0

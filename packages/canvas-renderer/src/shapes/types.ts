@@ -2,13 +2,13 @@ import { ICanvasPoint } from '@common/canvas-point';
 
 export type CanvasShapeToolTypes = 'draw' | 'box' | 'circle';
 
-export type CanvasUtilityToolTypes = 'select';
+export type CanvasUtilityToolTypes = 'select' | 'eraser' | 'clear';
 
 export type CanvasToolTypes = CanvasShapeToolTypes | CanvasUtilityToolTypes;
 
 export type CanvasShapeSize = 'small' | 'medium' | 'large' | 'extra-large';
 
-export type CanvasShapeStyle = 'solid' | 'dashed' | 'dotted';
+export type CanvasShapeStyle = 'drawn' | 'dashed' | 'dotted';
 
 export interface ICanvasBounds {
   min: ICanvasPoint;

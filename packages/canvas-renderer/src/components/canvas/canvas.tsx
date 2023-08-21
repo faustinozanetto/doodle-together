@@ -2,13 +2,15 @@ import { ElementRef, useEffect, useRef } from 'react';
 import { useCanvasCore } from '@hooks/core/use-canvas-core';
 import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
 import { useCanvasMouseEvents } from '@hooks/use-canvas-mouse-events';
-import { ShapeUtils } from '@shapes/shape-utils';
+import { ShapeUtils } from '@utils/shape-utils';
 import { CanvasNodesContainer } from './canvas-nodes-container';
 import { CanvasNode } from './canvas-node';
 import { useCanvasCustomization } from '@hooks/customization/use-canvas-customization';
 import { CanvasDebugIndicators } from './canvas-debug-indicators';
 import { CanvasState } from '@state/canvas-core.slice';
 import { CanvasShapeToolTypes } from '@shapes/types';
+import { ToolUtils } from '@utils/tool-utils';
+import clsx from 'clsx';
 
 export const Canvas = () => {
   const canvasRef = useRef<ElementRef<'div'>>(null);
@@ -23,7 +25,6 @@ export const Canvas = () => {
     onPointerDown,
     onPointerUp,
     onClick,
-    isMouseDown,
     cursorPoint,
     originPoint,
     points,
@@ -31,12 +32,14 @@ export const Canvas = () => {
     translatedPoints,
   } = useCanvasMouseEvents({
     onPointerUpCallback() {
-      if (currentState === CanvasState.Editing) return;
+      if (!ToolUtils.isShapeTool(selectedToolType)) return;
 
       clearActiveNode();
       setCurrentState(CanvasState.Idling);
     },
     onPointerDownCallback() {
+      if (!ToolUtils.isShapeTool(selectedToolType)) return;
+
       clearSelectedNode();
       setCurrentState(CanvasState.Drawing);
 
@@ -45,7 +48,7 @@ export const Canvas = () => {
       setActiveNodeId(addedNode.id);
     },
     onPointerMoveCallback() {
-      if (currentState === CanvasState.Editing) return;
+      if (!ToolUtils.isShapeTool(selectedToolType)) return;
 
       const lastNode = getLastNode();
       if (!lastNode || !topLeftPoint.current || !originPoint.current) return;
@@ -63,7 +66,14 @@ export const Canvas = () => {
 
       updateNode(lastNode.id, updatedData);
     },
-    onClickCallback() {},
+    onClickCallback() {
+      // If was with select tool and editing, clicking on canvas sets back to idling.
+      if (selectedToolType === 'select' && currentState === CanvasState.Editing) {
+        clearSelectedNode();
+        clearActiveNode();
+        setCurrentState(CanvasState.Idling);
+      }
+    },
   });
 
   // Canvas ref passed to context
@@ -76,7 +86,7 @@ export const Canvas = () => {
   return (
     <div
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full overflow-hidden"
+      className={clsx('absolute inset-0 w-full h-full overflow-hidden', selectedToolType !== 'select' && 'cursor-cell')}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerDown={onPointerDown}
