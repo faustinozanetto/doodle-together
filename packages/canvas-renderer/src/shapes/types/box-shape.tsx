@@ -1,5 +1,4 @@
-import { ICanvasPoint } from '@common/canvas-point';
-import SVGContainer from '@components/svg/svg-container';
+import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { ShapeUtils } from '@utils/shape-utils';
 import {
   ICanvasBoxShape,
@@ -9,6 +8,7 @@ import {
 } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
+import { CommonUtils } from '@utils/common-utils';
 
 export class BoxShape extends Shape<ICanvasBoxShape> {
   renderHandDrawn(data: ICanvasBoxShape): JSX.Element {
@@ -33,11 +33,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
 
     const path = ShapeUtils.getShapePathFromStroke(stroke);
 
-    return (
-      <SVGContainer id={data.id}>
-        <path d={path} strokeLinejoin="round" strokeLinecap="round" fill={customization.color} />
-      </SVGContainer>
-    );
+    return <path d={path} strokeLinejoin="round" strokeLinecap="round" fill={customization.color} />;
   }
 
   renderDashed(data: ICanvasBoxShape): JSX.Element {
@@ -52,18 +48,16 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const strokeDashOffset = `${strokeWidth}`;
 
     return (
-      <SVGContainer id={data.id}>
-        <path
-          d={path}
-          fill="none"
-          stroke={customization.color}
-          strokeWidth={strokeWidth * 1.25}
-          strokeDasharray={strokeDashArray}
-          strokeDashoffset={strokeDashOffset}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        />
-      </SVGContainer>
+      <path
+        d={path}
+        fill="none"
+        stroke={customization.color}
+        strokeWidth={strokeWidth * 1.25}
+        strokeDasharray={strokeDashArray}
+        strokeDashoffset={strokeDashOffset}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
     );
   }
 
@@ -79,18 +73,16 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const strokeDashOffset = `${strokeWidth / 10}`;
 
     return (
-      <SVGContainer id={data.id}>
-        <path
-          d={path}
-          fill="none"
-          stroke={customization.color}
-          strokeWidth={strokeWidth * 1.5}
-          strokeDasharray={strokeDashArray}
-          strokeDashoffset={strokeDashOffset}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        />
-      </SVGContainer>
+      <path
+        d={path}
+        fill="none"
+        stroke={customization.color}
+        strokeWidth={strokeWidth * 1.5}
+        strokeDasharray={strokeDashArray}
+        strokeDashoffset={strokeDashOffset}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
     );
   }
 
@@ -179,7 +171,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const width = Math.max(0, size.width - strokeWidth / 2);
     const heigth = Math.max(0, size.height - strokeWidth / 2);
 
-    const random = ShapeUtils.createSeededRandom(data.id);
+    const random = CommonUtils.createSeededRandom(data.id);
     const cornerOffsets: ICanvasPoint[] = Array.from({ length: 4 }).map(() => {
       return {
         x: (random() * strokeWidth - 4) / 2,
@@ -189,10 +181,10 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
 
     // Corners
     const corners = {
-      topLeft: { x: strokeWidth / 2, y: strokeWidth / 2 },
-      topRight: { x: width, y: strokeWidth / 2 },
-      bottomRight: { x: width, y: heigth },
-      bottomLeft: { x: strokeWidth / 2, y: heigth },
+      topLeft: CanvasPoint.add({ x: strokeWidth / 2, y: strokeWidth / 2 }, cornerOffsets[0]),
+      topRight: CanvasPoint.add({ x: width, y: strokeWidth / 2 }, cornerOffsets[1]),
+      bottomRight: CanvasPoint.add({ x: width, y: heigth }, cornerOffsets[2]),
+      bottomLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth }, cornerOffsets[3]),
     };
 
     // Points between corners

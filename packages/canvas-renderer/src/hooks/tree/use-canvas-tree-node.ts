@@ -6,6 +6,7 @@ import { ShapeUtils } from '@utils/shape-utils';
 import { useMemo } from 'react';
 import { ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
 import { ToolUtils } from '@utils/tool-utils';
+import { CommonUtils } from '@utils/common-utils';
 
 interface UseCanvasTreeNodeInterface {
   onPointerEnter: (event: React.PointerEvent<HTMLDivElement>) => void;
@@ -21,8 +22,6 @@ export const useCanvasTreeNode = (node: CanvasTreeNode): UseCanvasTreeNodeInterf
   const { setCurrentState, currentState, selectedToolType } = useCanvasCore();
   const { setSelectedNodeId, setActiveNodeId, clearActiveNode, clearSelectedNode, updateNode, removeNode } =
     useCanvasTree();
-
-  const PADDING = '24px';
 
   const shapeClass = ShapeUtils.getShapeClass(node.type);
 
@@ -68,16 +67,16 @@ export const useCanvasTreeNode = (node: CanvasTreeNode): UseCanvasTreeNodeInterf
   };
 
   const calculateTransform = () => {
-    const transform = `translate(calc(${bounds.min.x}px - ${PADDING}),
-    calc(${bounds.min.y}px - ${PADDING}))`;
+    const transform = `translate(${bounds.min.x - CommonUtils.SHAPE_PADDING}px,
+    ${bounds.min.y - CommonUtils.SHAPE_PADDING}px)`;
 
     return transform;
   };
 
   const nodeStyles = useMemo(() => {
     const styles: React.CSSProperties = {
-      width: `calc(${dimensions.width}px + 2 * ${PADDING})`,
-      height: `calc(${dimensions.height}px  + 2 * ${PADDING})`,
+      width: `${dimensions.width + 2 * CommonUtils.SHAPE_PADDING}px`,
+      height: `${dimensions.height + 2 * CommonUtils.SHAPE_PADDING}px`,
       transform: calculateTransform(),
       pointerEvents: 'all',
       transformOrigin: 'center center',

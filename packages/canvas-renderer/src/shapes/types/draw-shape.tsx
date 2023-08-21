@@ -1,4 +1,3 @@
-import SVGContainer from '@components/svg/svg-container';
 import { ShapeUtils } from '@utils/shape-utils';
 import {
   ICanvasDrawShape,
@@ -26,17 +25,15 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
     const path = ShapeUtils.getShapePathFromStroke(stroke);
 
     return (
-      <SVGContainer id={data.id}>
-        <path
-          d={path}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          pointerEvents="all"
-          fill={customization.color}
-          strokeDasharray="7 7"
-          strokeDashoffset={0}
-        />
-      </SVGContainer>
+      <path
+        d={path}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        pointerEvents="all"
+        fill={customization.color}
+        strokeDasharray="7 7"
+        strokeDashoffset={0}
+      />
     );
   }
 
@@ -50,19 +47,17 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
     const strokeDashOffset = `${strokeWidth}`;
 
     return (
-      <SVGContainer id={data.id}>
-        <path
-          d={path}
-          fill="none"
-          stroke={customization.color}
-          strokeWidth={strokeWidth * 1.25}
-          strokeDasharray={strokeDashArray}
-          strokeDashoffset={strokeDashOffset}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          pointerEvents="stroke"
-        />
-      </SVGContainer>
+      <path
+        d={path}
+        fill="none"
+        stroke={customization.color}
+        strokeWidth={strokeWidth * 1.25}
+        strokeDasharray={strokeDashArray}
+        strokeDashoffset={strokeDashOffset}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        pointerEvents="stroke"
+      />
     );
   }
 
@@ -76,19 +71,17 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
     const strokeDashOffset = `${strokeWidth / 10}`;
 
     return (
-      <SVGContainer id={data.id}>
-        <path
-          d={path}
-          fill="none"
-          stroke={customization.color}
-          strokeWidth={strokeWidth * 1.5}
-          strokeDasharray={strokeDashArray}
-          strokeDashoffset={strokeDashOffset}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          pointerEvents="stroke"
-        />
-      </SVGContainer>
+      <path
+        d={path}
+        fill="none"
+        stroke={customization.color}
+        strokeWidth={strokeWidth * 1.5}
+        strokeDasharray={strokeDashArray}
+        strokeDashoffset={strokeDashOffset}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        pointerEvents="stroke"
+      />
     );
   }
 

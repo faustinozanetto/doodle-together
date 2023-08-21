@@ -6,6 +6,10 @@ import { useCanvasTreeNode } from '@hooks/tree/use-canvas-tree-node';
 import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
 import { useCanvasCore } from '@hooks/core/use-canvas-core';
 
+import { ICanvasShapeDimensions } from '@shapes/types';
+import CanvasNodeSVGContainer from '@components/canvas/node/canvas-node-svg-container';
+import { CommonUtils } from '@utils/common-utils';
+
 type CanvasNodeProps = {
   node: CanvasTreeNode;
 };
@@ -16,12 +20,17 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
 
     const { selectedNodeId, activeNodeId } = useCanvasTree();
     const { selectedToolType } = useCanvasCore();
-    const { onPointerEnter, onPointerLeave, onClick, nodeStyles, nodeChildren } = useCanvasTreeNode(node);
+    const { onPointerEnter, onPointerLeave, onClick, dimensions, nodeStyles, nodeChildren } = useCanvasTreeNode(node);
+
+    const dimensionsWithPadding: ICanvasShapeDimensions = {
+      width: dimensions.width + CommonUtils.SHAPE_PADDING * 2,
+      height: dimensions.height + CommonUtils.SHAPE_PADDING * 2,
+    };
 
     return (
       <div
         className={clsx(
-          'absolute inset-0 border-2',
+          'absolute inset-0',
           activeNodeId === node.id && 'border-red-500',
           selectedNodeId === node.id && 'border-blue-500',
           selectedToolType === 'select' && 'hover:cursor-pointer'
@@ -31,7 +40,14 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
         onPointerLeave={onPointerLeave}
         onClick={onClick}
       >
-        {nodeChildren}
+        <CanvasNodeSVGContainer
+          id={node.id}
+          isActiveNode={activeNodeId === node.id}
+          isSelectedNode={selectedNodeId === node.id}
+          dimensions={dimensionsWithPadding}
+        >
+          {nodeChildren}
+        </CanvasNodeSVGContainer>
       </div>
     );
   },

@@ -4,7 +4,7 @@ import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
 import { useCanvasMouseEvents } from '@hooks/use-canvas-mouse-events';
 import { ShapeUtils } from '@utils/shape-utils';
 import { CanvasNodesContainer } from './canvas-nodes-container';
-import { CanvasNode } from './canvas-node';
+import { CanvasNode } from './node/canvas-node';
 import { useCanvasCustomization } from '@hooks/customization/use-canvas-customization';
 import { CanvasDebugIndicators } from './canvas-debug-indicators';
 import { CanvasState } from '@state/canvas-core.slice';

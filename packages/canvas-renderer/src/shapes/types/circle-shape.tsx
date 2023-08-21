@@ -1,5 +1,4 @@
 import { ICanvasPoint } from '@common/canvas-point';
-import SVGContainer from '@components/svg/svg-container';
 import { ShapeUtils } from '@utils/shape-utils';
 import {
   ICanvasCircleShape,
@@ -9,6 +8,7 @@ import {
 } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
+import { CommonUtils } from '@utils/common-utils';
 
 export class CircleShape extends Shape<ICanvasCircleShape> {
   renderHandDrawn(data: ICanvasCircleShape): JSX.Element {
@@ -28,9 +28,7 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
     const path = ShapeUtils.getShapePathFromStroke(stroke);
 
     return (
-      <SVGContainer id={data.id}>
-        <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" fill={customization.color} />
-      </SVGContainer>
+      <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" fill={customization.color} />
     );
   }
 
@@ -46,18 +44,16 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
     const strokeDashOffset = `${strokeWidth}`;
 
     return (
-      <SVGContainer id={data.id}>
-        <path
-          d={path}
-          fill="none"
-          stroke={customization.color}
-          strokeWidth={strokeWidth * 1.25}
-          strokeDasharray={strokeDashArray}
-          strokeDashoffset={strokeDashOffset}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        />
-      </SVGContainer>
+      <path
+        d={path}
+        fill="none"
+        stroke={customization.color}
+        strokeWidth={strokeWidth * 1.25}
+        strokeDasharray={strokeDashArray}
+        strokeDashoffset={strokeDashOffset}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
     );
   }
 
@@ -74,18 +70,16 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
     const strokeDashOffset = `${strokeWidth / 10}`;
 
     return (
-      <SVGContainer id={data.id}>
-        <path
-          d={path}
-          fill="none"
-          stroke={customization.color}
-          strokeWidth={strokeWidth * 1.5}
-          strokeDasharray={strokeDashArray}
-          strokeDashoffset={strokeDashOffset}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        />
-      </SVGContainer>
+      <path
+        d={path}
+        fill="none"
+        stroke={customization.color}
+        strokeWidth={strokeWidth * 1.5}
+        strokeDasharray={strokeDashArray}
+        strokeDashoffset={strokeDashOffset}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
     );
   }
 
@@ -143,10 +137,20 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
     const segments = 24 + Math.floor(radius / 100);
     const center = { x: radius, y: radius };
 
+    const random = CommonUtils.createSeededRandom(data.id);
+    const offsets: ICanvasPoint[] = Array.from({ length: segments }).map(() => {
+      return {
+        x: random() * 2.5,
+        y: random() * 2.5,
+      };
+    });
+
     const points: ICanvasPoint[] = Array.from({ length: segments }).map((v, index) => {
       const angle = (index / segments) * 2 * Math.PI;
-      const x = center.x + radius * Math.cos(angle);
-      const y = center.y + radius * Math.sin(angle);
+      const offset = offsets[index];
+
+      const x = center.x + radius * Math.cos(angle) + offset.x;
+      const y = center.y + radius * Math.sin(angle) + offset.y;
       return {
         x,
         y,
