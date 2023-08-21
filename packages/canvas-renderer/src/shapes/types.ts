@@ -34,6 +34,11 @@ export interface ICanvasShapeCustomization {
   style: CanvasShapeStyle;
 }
 
+export interface ICanvasBackgroundCustomization {
+  enableGrid: boolean;
+  gridSize: number;
+}
+
 export interface ICanvasBaseShape {
   id: string;
   position: ICanvasPoint;

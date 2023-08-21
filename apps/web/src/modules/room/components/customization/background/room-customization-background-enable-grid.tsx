@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { useCustomizationStore } from '@modules/state/customization.slice';
 import { Switch } from '@modules/ui/components/switch/switch';
+import { useCanvasCustomization } from '@doodle-together/canvas-renderer';
 
 const RoomCustomizationBackgroundEnableGrid: React.FC = () => {
-  const { background, setBackgroundGridEnabled } = useCustomizationStore();
+  const { background, setBackgroundGridEnabled } = useCanvasCustomization();
 
   const handleEnableGridChange = (checked: boolean) => {
     setBackgroundGridEnabled(!!checked);

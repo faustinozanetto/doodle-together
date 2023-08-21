@@ -11,6 +11,7 @@ import { CanvasState } from '@state/canvas-core.slice';
 import { CanvasShapeToolTypes } from '@shapes/types';
 import { ToolUtils } from '@utils/tool-utils';
 import clsx from 'clsx';
+import { CanvasBackground } from './canvas-background';
 
 export const Canvas = () => {
   const canvasRef = useRef<ElementRef<'div'>>(null);
@@ -32,12 +33,14 @@ export const Canvas = () => {
     translatedPoints,
   } = useCanvasMouseEvents({
     onPointerUpCallback() {
+      // If current tool is shape type, clear active node and switch to idling.
       if (!ToolUtils.isShapeTool(selectedToolType)) return;
 
       clearActiveNode();
       setCurrentState(CanvasState.Idling);
     },
     onPointerDownCallback() {
+      // If current  tool is shape type, add new node and switch to drawing.
       if (!ToolUtils.isShapeTool(selectedToolType)) return;
 
       clearSelectedNode();
@@ -48,6 +51,7 @@ export const Canvas = () => {
       setActiveNodeId(addedNode.id);
     },
     onPointerMoveCallback() {
+      // If current tool is shape type, call mouseUpdate method on current active node.
       if (!ToolUtils.isShapeTool(selectedToolType)) return;
 
       const lastNode = getLastNode();
@@ -95,6 +99,7 @@ export const Canvas = () => {
         transformOrigin: 'center center',
       }}
     >
+      <CanvasBackground />
       <span className="absolute left-1/2 top-0 pointer-events-none">{currentState}</span>
       {/* <CanvasDebugIndicators
         cursorPoint={cursorPoint.current}

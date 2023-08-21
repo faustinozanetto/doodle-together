@@ -1,4 +1,4 @@
-import { ICanvasPoint, CanvasPoint } from '@common/canvas-point';
+import { ICanvasPoint } from '@common/canvas-point';
 import SVGContainer from '@components/svg/svg-container';
 import { ShapeUtils } from '@utils/shape-utils';
 import {

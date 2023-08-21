@@ -1,9 +1,9 @@
 import React from 'react';
-import { useCustomizationStore } from '@modules/state/customization.slice';
 import { Slider } from '@modules/ui/components/slider/slider';
+import { useCanvasCustomization } from '@doodle-together/canvas-renderer';
 
 const RoomCustomizationBackgroundGridSize: React.FC = () => {
-  const { background, setBackgroundGridSize } = useCustomizationStore();
+  const { background, setBackgroundGridSize } = useCanvasCustomization();
 
   const handleGridSizeChange = (value: number[]) => {
     setBackgroundGridSize(value[0]);

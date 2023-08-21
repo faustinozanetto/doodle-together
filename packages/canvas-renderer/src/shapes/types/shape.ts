@@ -17,9 +17,9 @@ export abstract class Shape<T extends CanvasShapes> {
     }
   }
 
-  abstract renderHandDrawn(data: T): React.JSX.Element;
-  abstract renderDashed(data: T): React.JSX.Element;
-  abstract renderDotted(data: T): React.JSX.Element;
+  protected abstract renderHandDrawn(data: T): React.JSX.Element;
+  protected abstract renderDashed(data: T): React.JSX.Element;
+  protected abstract renderDotted(data: T): React.JSX.Element;
 
   /**
    * Method that is executed while creating the shape on mouse move.

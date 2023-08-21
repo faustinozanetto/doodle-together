@@ -8,7 +8,10 @@ export const useCanvasCustomization = () => {
     setColor: setColorStore,
     setSize: setSizeStore,
     setStyle: setStyleStore,
+    setBackgroundGridEnabled,
+    setBackgroundGridSize,
     customization,
+    background,
   } = useCanvasCustomizationStore();
 
   const setColor = (color: ICanvasShapeCustomization['color']) => {
@@ -73,7 +76,10 @@ export const useCanvasCustomization = () => {
     setColor,
     setSize,
     setStyle,
+    setBackgroundGridEnabled,
+    setBackgroundGridSize,
     getSelectedNodeCustomization,
     customization,
+    background,
   };
 };
