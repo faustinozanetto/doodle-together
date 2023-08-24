@@ -12,6 +12,7 @@ import { DrawShape } from '../shapes/types/draw-shape';
 import { Shape } from '../shapes/types/shape';
 import { CanvasCameraSliceState } from '@state/canvas-camera.slice';
 import { getStrokePoints } from 'perfect-freehand';
+import { CanvasTreeNode } from '@state/canvas-tree.slice';
 
 const SHAPE_CLASSES: Record<CanvasShapeToolTypes, Shape<CanvasShapes>> = {
   box: new BoxShape(),
@@ -35,6 +36,21 @@ export class ShapeUtils {
     };
   }
 
+  static serializeShapes(shapes: CanvasTreeNode[]) {
+    const serialized = shapes
+      .map((shape, index) => {
+        return JSON.stringify(shape);
+      })
+      .join(',');
+    const encoder = new TextEncoder();
+    const encoded = encoder.encode(serialized);
+
+    const decoder = new TextDecoder();
+    const decoded = decoder.decode(encoded);
+    console.log({ encoded: encoded.toString() });
+    console.log({ decoded });
+  }
+
   static getShapeMappedSize(size: ICanvasShapeCustomization['size']): number {
     return SHAPE_SIZES[size];
   }
@@ -54,19 +70,6 @@ export class ShapeUtils {
     const width = max.x - min.x;
     const height = max.y - min.y;
     return { width, height };
-  }
-
-  static getCameraTransformedPoint(point: ICanvasPoint, camera: CanvasCameraSliceState): ICanvasPoint {
-    const { zoom, position } = camera;
-    const zoomMapped: ICanvasPoint = {
-      x: point.x / zoom,
-      y: point.y / zoom,
-    };
-    const translated: ICanvasPoint = {
-      x: zoomMapped.x - position.x,
-      y: zoomMapped.y - position.y,
-    };
-    return translated;
   }
 
   static lerpCanvasPoints(start: ICanvasPoint, end: ICanvasPoint, t: number) {

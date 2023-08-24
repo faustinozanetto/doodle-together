@@ -6,6 +6,7 @@ export enum CanvasState {
   Idling = 'Idling',
   Editing = 'Editing',
   Drawing = 'Drawing',
+  Dragging = 'Dragging',
   Hovering = 'Hovering',
 }
 

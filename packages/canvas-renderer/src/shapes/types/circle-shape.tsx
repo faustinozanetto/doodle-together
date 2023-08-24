@@ -1,11 +1,6 @@
 import { ICanvasPoint } from '@common/canvas-point';
 import { ShapeUtils } from '@utils/shape-utils';
-import {
-  ICanvasCircleShape,
-  ICanvasMouseEvenetsUpdatePayload,
-  ICanvasBounds,
-  ICanvasShapeDimensions,
-} from '@shapes/types';
+import { ICanvasCircleShape, ICanvasEvenetsData, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
 import { CommonUtils } from '@utils/common-utils';
@@ -28,7 +23,7 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
     const path = ShapeUtils.getShapePathFromStroke(stroke);
 
     return (
-      <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="all" fill={customization.color} />
+      <path d={path} strokeLinejoin="round" strokeLinecap="round" pointerEvents="none" fill={customization.color} />
     );
   }
 
@@ -47,6 +42,7 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
       <path
         d={path}
         fill="none"
+        pointerEvents="none"
         stroke={customization.color}
         strokeWidth={strokeWidth * 1.25}
         strokeDasharray={strokeDashArray}
@@ -73,6 +69,7 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
       <path
         d={path}
         fill="none"
+        pointerEvents="none"
         stroke={customization.color}
         strokeWidth={strokeWidth * 1.5}
         strokeDasharray={strokeDashArray}
@@ -83,14 +80,16 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
     );
   }
 
-  mouseUpdate(data: ICanvasCircleShape, updatePayload: ICanvasMouseEvenetsUpdatePayload): ICanvasCircleShape {
+  mouseUpdate(data: ICanvasCircleShape, updatePayload: ICanvasEvenetsData): ICanvasCircleShape {
     const { originPoint, cursorPoint } = updatePayload;
+
+    if (!originPoint) return data;
 
     const radius = Math.max(Math.abs(originPoint.x - cursorPoint.x), Math.abs(originPoint.y - cursorPoint.y));
 
     const updatedData: ICanvasCircleShape = {
       ...data,
-      position: updatePayload.originPoint,
+      position: originPoint,
       props: { ...data.props, radius },
     };
 

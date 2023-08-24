@@ -1,10 +1,5 @@
 import { ShapeUtils } from '@utils/shape-utils';
-import {
-  ICanvasDrawShape,
-  ICanvasMouseEvenetsUpdatePayload,
-  ICanvasBounds,
-  ICanvasShapeDimensions,
-} from '@shapes/types';
+import { ICanvasDrawShape, ICanvasEvenetsData, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
 import { JSX } from 'react';
@@ -13,13 +8,16 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
   renderHandDrawn(data: ICanvasDrawShape): JSX.Element {
     const { props, customization } = data;
 
+    const strokeWidth = ShapeUtils.getShapeMappedSize(customization.size);
+
     const stroke = getStroke(props.points, {
-      size: ShapeUtils.getShapeMappedSize(customization.size),
+      size: strokeWidth,
       thinning: 0.6,
       streamline: 0.85,
       smoothing: 0.5,
       end: { taper: 6.5 * 4 },
       start: { taper: 8.5 * 2.5 },
+      last: true,
     });
 
     const path = ShapeUtils.getShapePathFromStroke(stroke);
@@ -29,10 +27,9 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
         d={path}
         strokeLinejoin="round"
         strokeLinecap="round"
-        pointerEvents="all"
+        pointerEvents="none"
+        strokeWidth={strokeWidth}
         fill={customization.color}
-        strokeDasharray="7 7"
-        strokeDashoffset={0}
       />
     );
   }
@@ -50,13 +47,13 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
       <path
         d={path}
         fill="none"
+        pointerEvents="none"
         stroke={customization.color}
         strokeWidth={strokeWidth * 1.25}
         strokeDasharray={strokeDashArray}
         strokeDashoffset={strokeDashOffset}
         strokeLinejoin="round"
         strokeLinecap="round"
-        pointerEvents="stroke"
       />
     );
   }
@@ -80,13 +77,15 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
         strokeDashoffset={strokeDashOffset}
         strokeLinejoin="round"
         strokeLinecap="round"
-        pointerEvents="stroke"
+        pointerEvents="none"
       />
     );
   }
 
-  mouseUpdate(data: ICanvasDrawShape, updatePayload: ICanvasMouseEvenetsUpdatePayload): ICanvasDrawShape {
+  mouseUpdate(data: ICanvasDrawShape, updatePayload: ICanvasEvenetsData): ICanvasDrawShape {
     const { topLeftPoint, translatedPoints } = updatePayload;
+
+    if (!topLeftPoint) return data;
 
     const updatedData: ICanvasDrawShape = {
       ...data,

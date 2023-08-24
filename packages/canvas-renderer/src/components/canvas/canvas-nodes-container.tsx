@@ -14,7 +14,7 @@ export const CanvasNodesContainer: React.FC<CanvasNodesContainerProps> = (props)
 
   return (
     <div
-      className="absolute top-0 left-0 w-1 h-1 pointer-events-none z-[20]"
+      className="absolute top-0 left-0 w-1 h-1 pointer-events-none z-[20] select-none"
       style={{
         transform,
         transformOrigin: 'center center',

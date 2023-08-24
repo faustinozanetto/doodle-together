@@ -11,6 +11,7 @@ export type CanvasTreeSliceState = {
 };
 
 export type CanvasTreeSliceActions = {
+  setNodes: (nodes: CanvasTreeNode[]) => void;
   addNode: (type: CanvasShapeToolTypes, customization?: ICanvasShapeCustomization) => CanvasTreeNode;
   removeNode: (id: string) => void;
   updateNode: (id: string, data: CanvasShapes) => void;
@@ -24,6 +25,9 @@ export const useCanvasTreeStore = create<CanvasTreeSliceState & CanvasTreeSliceA
   nodes: [],
   selectedNodeId: null,
   activeNodeId: null,
+  setNodes: (nodes) => {
+    set({ nodes });
+  },
   addNode: (type, customization) => {
     const node = ShapesFactory.createShape(type);
     if (customization) node.customization = customization;

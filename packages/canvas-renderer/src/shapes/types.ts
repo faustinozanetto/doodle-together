@@ -15,10 +15,10 @@ export interface ICanvasBounds {
   max: ICanvasPoint;
 }
 
-export interface ICanvasMouseEvenetsUpdatePayload {
+export interface ICanvasEvenetsData {
   cursorPoint: ICanvasPoint;
-  originPoint: ICanvasPoint;
-  topLeftPoint: ICanvasPoint;
+  originPoint: ICanvasPoint | null;
+  topLeftPoint: ICanvasPoint | null;
   points: ICanvasPoint[];
   translatedPoints: ICanvasPoint[];
 }

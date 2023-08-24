@@ -13,10 +13,10 @@ const RoomPanel: React.FC<RoomPanelProps> = (props) => {
 
   return (
     <div
-      className={cn(
-        'bg-background p-2.5 rounded-lg shadow-lg border pointer-events-auto gap-2 flex flex-col z-[100]',
-        className
-      )}
+      className={cn('bg-background p-2.5 rounded-lg shadow-lg border gap-2 flex flex-col z-[100]', className)}
+      style={{
+        pointerEvents: 'all',
+      }}
     >
       {label ? (
         <>

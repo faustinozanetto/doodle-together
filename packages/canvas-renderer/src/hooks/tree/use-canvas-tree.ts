@@ -3,6 +3,7 @@ import { useCanvasTreeStore } from '@state/canvas-tree.slice';
 
 export const useCanvasTree = () => {
   const {
+    setNodes,
     addNode,
     removeNode,
     setSelectedNodeId,
@@ -46,6 +47,7 @@ export const useCanvasTree = () => {
   };
 
   return {
+    setNodes,
     addNode,
     updateNode,
     removeNode,

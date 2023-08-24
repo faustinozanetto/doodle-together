@@ -1,11 +1,6 @@
 import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { ShapeUtils } from '@utils/shape-utils';
-import {
-  ICanvasBoxShape,
-  ICanvasMouseEvenetsUpdatePayload,
-  ICanvasBounds,
-  ICanvasShapeDimensions,
-} from '@shapes/types';
+import { ICanvasBoxShape, ICanvasEvenetsData, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
 import { CommonUtils } from '@utils/common-utils';
@@ -33,7 +28,9 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
 
     const path = ShapeUtils.getShapePathFromStroke(stroke);
 
-    return <path d={path} strokeLinejoin="round" strokeLinecap="round" fill={customization.color} />;
+    return (
+      <path d={path} strokeLinejoin="round" strokeLinecap="round" fill={customization.color} pointerEvents="none" />
+    );
   }
 
   renderDashed(data: ICanvasBoxShape): JSX.Element {
@@ -51,6 +48,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
       <path
         d={path}
         fill="none"
+        pointerEvents="none"
         stroke={customization.color}
         strokeWidth={strokeWidth * 1.25}
         strokeDasharray={strokeDashArray}
@@ -76,6 +74,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
       <path
         d={path}
         fill="none"
+        pointerEvents="none"
         stroke={customization.color}
         strokeWidth={strokeWidth * 1.5}
         strokeDasharray={strokeDashArray}
@@ -86,8 +85,10 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  mouseUpdate(data: ICanvasBoxShape, updatePayload: ICanvasMouseEvenetsUpdatePayload): ICanvasBoxShape {
+  mouseUpdate(data: ICanvasBoxShape, updatePayload: ICanvasEvenetsData): ICanvasBoxShape {
     const { cursorPoint, originPoint } = updatePayload;
+
+    if (!originPoint) return data;
 
     const width = Math.abs(cursorPoint.x - originPoint.x);
     const height = Math.abs(cursorPoint.y - originPoint.y);

@@ -93,20 +93,19 @@ const Room: React.FC<RoomProps> = (props) => {
       <CanvasRenderer />
 
       {/* Panels */}
+      {/*
       <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
-        {/* Top */}
         <div className="flex justify-between items-start">
           <RoomUsers />
           <RoomCustomization />
         </div>
 
-        {/* Bottom  */}
         <div className="flex justify-between items-end">
           <RoomCamera />
           <RoomTools />
           <RoomManagement />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

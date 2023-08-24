@@ -1,5 +1,9 @@
+import { ICanvasPoint } from '@common/canvas-point';
+import { ICanvasBounds } from '@shapes/types';
+import { CanvasCameraSliceState } from '@state/canvas-camera.slice';
+
 export class CommonUtils {
-  static SHAPE_PADDING: number = 36;
+  static SHAPE_PADDING: number = 48;
 
   private static hashString(str: string): number {
     let hash = 0;
@@ -28,5 +32,41 @@ export class CommonUtils {
     };
 
     return () => this.getNextSeedRandomValue(state);
+  }
+
+  static getPoint(event: React.PointerEvent, bounds: ICanvasBounds): ICanvasPoint {
+    const { clientX, clientY } = event;
+
+    return {
+      x: +clientX.toFixed(2) - bounds.min.x,
+      y: +clientY.toFixed(2) - bounds.min.y,
+    };
+  }
+
+  static getCameraTransformedPoint(point: ICanvasPoint, camera: CanvasCameraSliceState): ICanvasPoint {
+    const { zoom, position } = camera;
+
+    const zoomMapped: ICanvasPoint = {
+      x: point.x / zoom,
+      y: point.y / zoom,
+    };
+
+    const translated: ICanvasPoint = {
+      x: zoomMapped.x - position.x,
+      y: zoomMapped.y - position.y,
+    };
+
+    return translated;
+  }
+
+  static getTransformedEventPoint(
+    event: React.PointerEvent<HTMLDivElement>,
+    bounds: ICanvasBounds,
+    camera: CanvasCameraSliceState
+  ): ICanvasPoint {
+    const point = this.getPoint(event, bounds);
+    const transformedPoint = this.getCameraTransformedPoint(point, camera);
+
+    return transformedPoint;
   }
 }

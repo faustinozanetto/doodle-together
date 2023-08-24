@@ -12,5 +12,5 @@ export const CanvasBackground: React.FC = () => {
     backgroundSize: `${gridSize}px ${gridSize}px`,
   };
 
-  return <div id="canvas-background" className="absolute inset-0" style={styles} />;
+  return <div id="canvas-background" className="absolute inset-0 pointer-events-none select-none" style={styles} />;
 };

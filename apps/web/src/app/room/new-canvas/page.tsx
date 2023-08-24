@@ -9,7 +9,6 @@ import RoomUsers from '@modules/room/components/users/room-users';
 export default function NewCanvasPage() {
   return (
     <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
-      {/* <RoomCanvas /> */}
       <CanvasRenderer />
 
       {/* Panels */}
@@ -24,7 +23,7 @@ export default function NewCanvasPage() {
         <div className="flex justify-between items-end">
           <RoomCamera />
           <RoomTools />
-          {/* <RoomManagement /> */}
+          <RoomManagement />
         </div>
       </div>
     </div>

@@ -1,14 +1,10 @@
 import React, { memo } from 'react';
-import clsx from 'clsx';
 import { ShapeUtils } from '@utils/shape-utils';
 import { CanvasTreeNode } from '@state/canvas-tree.slice';
-import { useCanvasTreeNode } from '@hooks/tree/use-canvas-tree-node';
-import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
-import { useCanvasCore } from '@hooks/core/use-canvas-core';
 
-import { ICanvasShapeDimensions } from '@shapes/types';
 import CanvasNodeSVGContainer from '@components/canvas/node/canvas-node-svg-container';
-import { CommonUtils } from '@utils/common-utils';
+import { useCanvasTreeNodeStyles } from '@hooks/tree/node/use-canvas-node-styles';
+import { useCanvasTreeNodeEvents } from '@hooks/tree/node/use-canvas-node-events';
 
 type CanvasNodeProps = {
   node: CanvasTreeNode;
@@ -18,36 +14,14 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
   (props) => {
     const { node } = props;
 
-    const { selectedNodeId, activeNodeId } = useCanvasTree();
-    const { selectedToolType } = useCanvasCore();
-    const { onPointerEnter, onPointerLeave, onClick, dimensions, nodeStyles, nodeChildren } = useCanvasTreeNode(node);
-
-    const dimensionsWithPadding: ICanvasShapeDimensions = {
-      width: dimensions.width + CommonUtils.SHAPE_PADDING * 2,
-      height: dimensions.height + CommonUtils.SHAPE_PADDING * 2,
-    };
+    const { nodeStyles, nodeClassNames } = useCanvasTreeNodeStyles(node);
+    const { events } = useCanvasTreeNodeEvents(node);
+    const shapeClass = ShapeUtils.getShapeClass(node.type);
 
     return (
-      <div
-        className={clsx(
-          'absolute inset-0',
-          activeNodeId === node.id && 'border-red-500',
-          selectedNodeId === node.id && 'border-blue-500',
-          selectedToolType === 'select' && 'hover:cursor-pointer'
-        )}
-        style={nodeStyles}
-        onPointerEnter={onPointerEnter}
-        onPointerLeave={onPointerLeave}
-        onClick={onClick}
-      >
-        <CanvasNodeSVGContainer
-          id={node.id}
-          isActiveNode={activeNodeId === node.id}
-          isSelectedNode={selectedNodeId === node.id}
-          dimensions={dimensionsWithPadding}
-        >
-          {nodeChildren}
-        </CanvasNodeSVGContainer>
+      <div className={nodeClassNames} style={nodeStyles} {...events}>
+        <span>{node.id}</span>
+        <CanvasNodeSVGContainer id={node.id}>{shapeClass.render(node)}</CanvasNodeSVGContainer>
       </div>
     );
   },
