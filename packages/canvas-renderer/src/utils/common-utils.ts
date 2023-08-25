@@ -1,9 +1,22 @@
 import { ICanvasPoint } from '@common/canvas-point';
 import { ICanvasBounds } from '@shapes/types';
 import { CanvasCameraSliceState } from '@state/canvas-camera.slice';
+import { CanvasState } from '@state/canvas-core.slice';
+
+const CURSOR_STYLES: Record<CanvasState, NonNullable<React.CSSProperties['cursor']>> = {
+  Dragging: 'grabbing',
+  Drawing: 'cell',
+  Editing: 'pointer',
+  Hovering: 'pointer',
+  Idling: 'default',
+};
 
 export class CommonUtils {
   static SHAPE_PADDING: number = 48;
+
+  static getCursorStylesByState(canvasState: CanvasState): string {
+    return CURSOR_STYLES[canvasState];
+  }
 
   private static hashString(str: string): number {
     let hash = 0;
@@ -60,7 +73,7 @@ export class CommonUtils {
   }
 
   static getTransformedEventPoint(
-    event: React.PointerEvent<HTMLDivElement>,
+    event: React.PointerEvent,
     bounds: ICanvasBounds,
     camera: CanvasCameraSliceState
   ): ICanvasPoint {

@@ -34,6 +34,7 @@ export const useCanvasCamera = (zoomStepSize: number = 0.1, zoomMin: number = 0.
   };
 
   return {
+    setPosition,
     zoomIn,
     zoomOut,
     zoom,

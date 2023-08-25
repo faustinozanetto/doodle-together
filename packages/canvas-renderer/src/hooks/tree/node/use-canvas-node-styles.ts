@@ -1,7 +1,6 @@
 import { CanvasTreeNode } from '@state/canvas-tree.slice';
 import { useCanvasTree } from '../use-canvas-tree';
 import { useCanvasCore } from '@hooks/core/use-canvas-core';
-import { CanvasState } from '@state/canvas-core.slice';
 import { useMemo } from 'react';
 import { ShapeUtils } from '@utils/shape-utils';
 import { CommonUtils } from '@utils/common-utils';
@@ -13,14 +12,6 @@ export const useCanvasTreeNodeStyles = (node: CanvasTreeNode) => {
 
   const shapeClass = ShapeUtils.getShapeClass(node.type);
 
-  const CURSOR_STYLES: Record<CanvasState, React.CSSProperties['cursor']> = {
-    Dragging: 'grabbing',
-    Drawing: 'cell',
-    Editing: 'pointer',
-    Hovering: 'pointer',
-    Idling: 'default',
-  };
-
   const dimensions = useMemo(() => {
     return shapeClass.calculateDimensions(node);
   }, [node]);
@@ -28,10 +19,6 @@ export const useCanvasTreeNodeStyles = (node: CanvasTreeNode) => {
   const bounds = useMemo(() => {
     return shapeClass.calculateBounds(node);
   }, [node]);
-
-  const getNodeCursorStyles = () => {
-    return CURSOR_STYLES[currentState] ?? 'default';
-  };
 
   const getNodeDimensionsStyles = () => {
     return {
@@ -50,7 +37,6 @@ export const useCanvasTreeNodeStyles = (node: CanvasTreeNode) => {
   const nodeStyles = useMemo(() => {
     const styles: React.CSSProperties = {
       transformOrigin: 'center center',
-      cursor: getNodeCursorStyles(),
       pointerEvents: 'all',
       ...getNodeDimensionsStyles(),
       ...getNodeTransformStyles(),

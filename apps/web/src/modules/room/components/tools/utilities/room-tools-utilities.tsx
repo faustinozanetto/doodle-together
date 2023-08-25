@@ -7,6 +7,7 @@ import { useMeStore } from '@modules/state/me.slice';
 import { CanvasUtilityToolTypes, useCanvasCore } from '@doodle-together/canvas-renderer';
 import { PointerIcon } from '@modules/ui/components/icons/pointer-icon';
 import { capitalize } from '@modules/common/lib/common.lib';
+import { HandIcon } from '@modules/ui/components/icons/hand-icon';
 
 type RoomToolUtilityOption = Pick<RoomToolProps, 'icon'> & {
   utility: CanvasUtilityToolTypes;
@@ -18,6 +19,11 @@ const TOOL_UTILITIES: RoomToolUtilityOption[] = [
     requiresOwner: false,
     utility: 'select',
     icon: <PointerIcon className="stroke-current" />,
+  },
+  {
+    requiresOwner: false,
+    utility: 'hand',
+    icon: <HandIcon className="stroke-current" />,
   },
   {
     requiresOwner: false,

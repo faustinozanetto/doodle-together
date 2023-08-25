@@ -21,7 +21,11 @@ export const useCanvasTreeNodeEvents = (node: CanvasTreeNode): UseCanvasNodeEven
 
   const { setSelectedNodeId, setActiveNodeId, clearActiveNode, clearSelectedNode, removeNode } = useCanvasTree();
 
-  const { onDragPointerMove, onDragPointerDown, onDragPointerUp } = useCanvasTreeNodeDrag(node);
+  const {
+    onPointerDown: onDragPointerDown,
+    onPointerMove: onDragPointerMove,
+    onPointerUp: onDragPointerUp,
+  } = useCanvasTreeNodeDrag(node);
 
   const onPointerEnter = (event: React.PointerEvent<HTMLDivElement>) => {
     if (selectedToolType !== 'select') return;

@@ -2,7 +2,7 @@ import { ICanvasPoint } from '@common/canvas-point';
 
 export type CanvasShapeToolTypes = 'draw' | 'box' | 'circle';
 
-export type CanvasUtilityToolTypes = 'select' | 'eraser' | 'clear';
+export type CanvasUtilityToolTypes = 'select' | 'hand' | 'eraser' | 'clear';
 
 export type CanvasToolTypes = CanvasShapeToolTypes | CanvasUtilityToolTypes;
 
@@ -13,14 +13,6 @@ export type CanvasShapeStyle = 'drawn' | 'dashed' | 'dotted';
 export interface ICanvasBounds {
   min: ICanvasPoint;
   max: ICanvasPoint;
-}
-
-export interface ICanvasEvenetsData {
-  cursorPoint: ICanvasPoint;
-  originPoint: ICanvasPoint | null;
-  topLeftPoint: ICanvasPoint | null;
-  points: ICanvasPoint[];
-  translatedPoints: ICanvasPoint[];
 }
 
 export interface ICanvasShapeDimensions {

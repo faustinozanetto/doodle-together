@@ -20,7 +20,7 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
 
     return (
       <div className={nodeClassNames} style={nodeStyles} {...events}>
-        <span>{node.id}</span>
+        <span className="absolute top-2 left-2">{node.id}</span>
         <CanvasNodeSVGContainer id={node.id}>{shapeClass.render(node)}</CanvasNodeSVGContainer>
       </div>
     );

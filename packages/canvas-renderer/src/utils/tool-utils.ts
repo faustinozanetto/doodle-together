@@ -2,10 +2,12 @@ import { CanvasToolTypes } from '@shapes/types';
 
 export class ToolUtils {
   static isShapeTool(tool: CanvasToolTypes): boolean {
-    return tool === 'box' || tool === 'circle' || tool === 'draw';
+    const tools: CanvasToolTypes[] = ['box', 'circle', 'draw'];
+    return tools.includes(tool);
   }
 
   static isUtilityTool(tool: CanvasToolTypes): boolean {
-    return tool === 'select' || tool === 'eraser' || tool === 'clear';
+    const tools: CanvasToolTypes[] = ['select', 'hand', 'clear', 'eraser'];
+    return tools.includes(tool);
   }
 }
