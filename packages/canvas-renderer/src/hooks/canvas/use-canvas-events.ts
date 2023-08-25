@@ -29,7 +29,7 @@ type UseCanvasEventsReturn = {
 };
 
 /**
- * Main hook responsible for the mouse interactions and points registrations.
+ * Hook responsible for binding canvas events with each callback.
  */
 export const useCanvasEvents = ({
   onPointerUpCallback,

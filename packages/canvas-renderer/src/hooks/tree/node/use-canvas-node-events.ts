@@ -16,6 +16,11 @@ type UseCanvasNodeEvents = {
   };
 };
 
+/**
+ * Hook responsible for handling mouse events for a canvas node.
+ * @param node Node data.
+ * @returns Events.
+ */
 export const useCanvasTreeNodeEvents = (node: CanvasTreeNode): UseCanvasNodeEvents => {
   const { setCurrentState, currentState, selectedToolType } = useCanvasCore();
 
@@ -28,11 +33,11 @@ export const useCanvasTreeNodeEvents = (node: CanvasTreeNode): UseCanvasNodeEven
   } = useCanvasTreeNodeDrag(node);
 
   const onPointerEnter = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (selectedToolType !== 'select') return;
+    if (selectedToolType !== 'select' && selectedToolType !== 'eraser') return;
 
     if (currentState === CanvasState.Dragging) return;
 
-    // If we are idling switch to hovering.
+    // If we are idling switch to hovering and set node as active.
     if (currentState === CanvasState.Idling) {
       setCurrentState(CanvasState.Hovering);
       setActiveNodeId(node.id);
@@ -40,8 +45,6 @@ export const useCanvasTreeNodeEvents = (node: CanvasTreeNode): UseCanvasNodeEven
   };
 
   const onPointerLeave = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (selectedToolType !== 'select') return;
-
     // If we are hovering, stop it.
     if (currentState === CanvasState.Hovering) {
       setCurrentState(CanvasState.Idling);

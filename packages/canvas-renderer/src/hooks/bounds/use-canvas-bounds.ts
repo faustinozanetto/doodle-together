@@ -2,7 +2,15 @@ import { useCallback, useEffect } from 'react';
 import { ICanvasBounds } from '@shapes/types';
 import { useCanvasCoreStore } from '@state/canvas-core.slice';
 
-export const useCanvasBounds = () => {
+type UseCanvasBoundsReturn = {
+  bounds: ICanvasBounds;
+};
+
+/**
+ * Hook responsible for updating the canvas bounding box.
+ * @returns Canvas bounding box.
+ */
+export const useCanvasBounds = (): UseCanvasBoundsReturn => {
   const { canvasRef, setBounds, bounds } = useCanvasCoreStore();
 
   const handleBoundsResize = useCallback(() => {

@@ -26,7 +26,7 @@ type UseMouseDragParams = {
   };
 };
 
-type UserMouseDragReturn = {
+export type UserMouseDragReturn = {
   events: {
     /**
      * Pointer move event

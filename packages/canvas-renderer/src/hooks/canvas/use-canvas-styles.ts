@@ -3,10 +3,15 @@ import { useMemo } from 'react';
 import clsx from 'clsx';
 import { CommonUtils } from '@utils/common-utils';
 
+type UseCanvasStylesReturn = {
+  canvasStyles: React.CSSProperties;
+  canvasClassNames: string;
+};
+
 /**
  * Hook responsible for the styling of the canvas div.
  */
-export const useCanvasStyles = () => {
+export const useCanvasStyles = (): UseCanvasStylesReturn => {
   const { currentState } = useCanvasCore();
 
   const canvasStyles = useMemo(() => {

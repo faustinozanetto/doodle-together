@@ -1,9 +1,14 @@
 import { CanvasShapes } from '@shapes/types';
 import { useCanvasTreeStore } from '@state/canvas-tree.slice';
 
+/**
+ * Hook responsible for providing functions to edit canvas tree.
+ * @returns
+ */
 export const useCanvasTree = () => {
   const {
     setNodes,
+    clerNodes,
     addNode,
     removeNode,
     setSelectedNodeId,
@@ -48,6 +53,7 @@ export const useCanvasTree = () => {
 
   return {
     setNodes,
+    clerNodes,
     addNode,
     updateNode,
     removeNode,

@@ -2,8 +2,18 @@ import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { useCanvasCamera } from '@hooks/camera/use-canvas-camera';
 import { useMouseDrag } from '@hooks/common/use-mouse-drag';
 
-export const useCanvasDrag = () => {
-  const { setPosition, position } = useCanvasCamera();
+type UseCanvasDragReturn = {
+  onDragPointerUp: (event: React.PointerEvent) => void;
+  onDragPointerDown: (event: React.PointerEvent) => void;
+  onDragPointerMove: (event: React.PointerEvent) => void;
+};
+
+/**
+ * Hook responsible for canvas drag interaction with mouse.
+ * @returns Pointer events.
+ */
+export const useCanvasDrag = (): UseCanvasDragReturn => {
+  const { setPosition, position, zoom } = useCanvasCamera();
 
   const { events } = useMouseDrag({
     useCameraTransformation: false,
@@ -11,7 +21,8 @@ export const useCanvasDrag = () => {
       onPointerDownCallback(event) {},
       onPointerUpCallback(event) {},
       onPointerMoveCallback(delta) {
-        const newPosition: ICanvasPoint = CanvasPoint.add(position, delta);
+        // Calculate new camera position and use zoom to maintain speed.
+        const newPosition: ICanvasPoint = CanvasPoint.add(position, CanvasPoint.div(delta, zoom));
         setPosition(newPosition);
       },
     },

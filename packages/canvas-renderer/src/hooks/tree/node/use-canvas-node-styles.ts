@@ -6,7 +6,17 @@ import { ShapeUtils } from '@utils/shape-utils';
 import { CommonUtils } from '@utils/common-utils';
 import clsx from 'clsx';
 
-export const useCanvasTreeNodeStyles = (node: CanvasTreeNode) => {
+type UseCanvasTreeNodeStylesReturn = {
+  nodeStyles: React.CSSProperties;
+  nodeClassNames: string;
+};
+
+/**
+ * Hook responsible for managing styles of a canvas node.
+ * @param node Node data.
+ * @returns Node styles and classnames.
+ */
+export const useCanvasTreeNodeStyles = (node: CanvasTreeNode): UseCanvasTreeNodeStylesReturn => {
   const { currentState } = useCanvasCore();
   const { activeNodeId, selectedNodeId } = useCanvasTree();
 
@@ -50,9 +60,9 @@ export const useCanvasTreeNodeStyles = (node: CanvasTreeNode) => {
     const isSelectedNode = selectedNodeId === node.id;
 
     return clsx(
-      'absolute inset-0 border-2 rounded-lg select-none',
-      isActiveNode && 'border-blue-500',
-      isSelectedNode && 'border-red-500'
+      'absolute inset-0 rounded-lg select-none',
+      isActiveNode && 'border-blue-500 border-2',
+      isSelectedNode && 'border-red-500 border-2'
     );
   }, [selectedNodeId, activeNodeId, node]);
 
