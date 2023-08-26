@@ -1,16 +1,16 @@
 import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { ShapeUtils } from '@utils/shape-utils';
-import { ICanvasBoxShape, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
+import { ICanvasDiamondShape, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
 import { CommonUtils } from '@utils/common-utils';
 import { PointerMoveData } from '@hooks/canvas/use-canvas-draw';
 
-export class BoxShape extends Shape<ICanvasBoxShape> {
-  renderHandDrawn(data: ICanvasBoxShape): JSX.Element {
+export class DiamondShape extends Shape<ICanvasDiamondShape> {
+  renderHandDrawn(data: ICanvasDiamondShape): JSX.Element {
     const { customization } = data;
 
-    const points = this.calculateBoxPoints(data);
+    const points = this.calculateDiamondPoints(data);
 
     const closedPathPoints: ICanvasPoint[] = [...points.flat().slice(4), ...points[0].slice(0, 12)];
 
@@ -34,10 +34,10 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  renderDashed(data: ICanvasBoxShape): JSX.Element {
+  renderDashed(data: ICanvasDiamondShape): JSX.Element {
     const { customization } = data;
 
-    const points = this.calculateBoxPoints(data);
+    const points = this.calculateDiamondPoints(data);
 
     const path = ShapeUtils.getShapePathFromPoints(points.flat());
 
@@ -60,10 +60,10 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  renderDotted(data: ICanvasBoxShape): JSX.Element {
+  renderDotted(data: ICanvasDiamondShape): JSX.Element {
     const { customization } = data;
 
-    const points = this.calculateBoxPoints(data);
+    const points = this.calculateDiamondPoints(data);
 
     const path = ShapeUtils.getShapePathFromPoints(points.flat());
 
@@ -86,7 +86,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  mouseUpdate(data: ICanvasBoxShape, updatePayload: PointerMoveData): ICanvasBoxShape {
+  mouseUpdate(data: ICanvasDiamondShape, updatePayload: PointerMoveData): ICanvasDiamondShape {
     const { cursorPoint, originPoint } = updatePayload;
 
     if (!originPoint) return data;
@@ -114,7 +114,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     } else if (originPoint.x < cursorPoint.x && originPoint.y < cursorPoint.y) {
     }
 
-    const updatedData: ICanvasBoxShape = {
+    const updatedData: ICanvasDiamondShape = {
       ...data,
       position: finalPoint,
       props: {
@@ -129,7 +129,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     return updatedData;
   }
 
-  shouldRender(prev: ICanvasBoxShape, next: ICanvasBoxShape): boolean {
+  shouldRender(prev: ICanvasDiamondShape, next: ICanvasDiamondShape): boolean {
     return (
       prev.position !== next.position ||
       prev.props.size !== next.props.size ||
@@ -137,7 +137,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  calculateBounds(data: ICanvasBoxShape): ICanvasBounds {
+  calculateBounds(data: ICanvasDiamondShape): ICanvasBounds {
     const { props, position } = data;
     const { size } = props;
 
@@ -157,14 +157,14 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     return translatedBounds;
   }
 
-  calculateDimensions(data: ICanvasBoxShape): ICanvasShapeDimensions {
+  calculateDimensions(data: ICanvasDiamondShape): ICanvasShapeDimensions {
     const { props } = data;
     const { size } = props;
 
     return { width: size.width, height: size.height };
   }
 
-  private calculateBoxPoints(data: ICanvasBoxShape) {
+  private calculateDiamondPoints(data: ICanvasDiamondShape) {
     const { props, customization } = data;
     const { size } = props;
 
@@ -183,10 +183,10 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
 
     // Corners
     const corners = {
-      topLeft: CanvasPoint.add({ x: strokeWidth / 2, y: strokeWidth / 2 }, cornerOffsets[0]),
-      topRight: CanvasPoint.add({ x: width, y: strokeWidth / 2 }, cornerOffsets[1]),
-      bottomRight: CanvasPoint.add({ x: width, y: heigth }, cornerOffsets[2]),
-      bottomLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth }, cornerOffsets[3]),
+      top: CanvasPoint.add({ x: width / 2, y: strokeWidth / 2 }, cornerOffsets[0]),
+      left: CanvasPoint.add({ x: strokeWidth / 2, y: heigth / 2 }, cornerOffsets[1]),
+      right: CanvasPoint.add({ x: width, y: heigth / 2 }, cornerOffsets[2]),
+      bottom: CanvasPoint.add({ x: width / 2, y: heigth }, cornerOffsets[3]),
     };
 
     // Points between corners
@@ -194,10 +194,10 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const leftRightPoints = Math.max(14, Math.floor(heigth / 20));
 
     const points: ICanvasPoint[][] = [
-      ShapeUtils.getPointsInBetween(corners.topLeft, corners.topRight, topBottomPoints), // Top Side
-      ShapeUtils.getPointsInBetween(corners.topRight, corners.bottomRight, leftRightPoints), // Right Side
-      ShapeUtils.getPointsInBetween(corners.bottomRight, corners.bottomLeft, topBottomPoints), // Bottom Side
-      ShapeUtils.getPointsInBetween(corners.bottomLeft, corners.topLeft, leftRightPoints), // Left Side
+      ShapeUtils.getPointsInBetween(corners.top, corners.right, topBottomPoints),
+      ShapeUtils.getPointsInBetween(corners.right, corners.bottom, leftRightPoints),
+      ShapeUtils.getPointsInBetween(corners.bottom, corners.left, topBottomPoints),
+      ShapeUtils.getPointsInBetween(corners.left, corners.top, leftRightPoints),
     ];
 
     return points;

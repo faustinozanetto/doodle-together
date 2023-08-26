@@ -4,7 +4,7 @@ import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { CommonUtils } from '@utils/common-utils';
 import { useCanvasCore } from '../core/use-canvas-core';
 
-type PointerMoveData = {
+export type PointerMoveData = {
   cursorPoint: ICanvasPoint;
   originPoint: ICanvasPoint | null;
   topLeftPoint: ICanvasPoint | null;

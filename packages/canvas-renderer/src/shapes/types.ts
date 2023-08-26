@@ -1,6 +1,6 @@
 import { ICanvasPoint } from '@common/canvas-point';
 
-export type CanvasShapeToolTypes = 'draw' | 'box' | 'circle';
+export type CanvasShapeToolTypes = 'draw' | 'box' | 'circle' | 'diamond' | 'hexagon' | 'triangle';
 
 export type CanvasUtilityToolTypes = 'select' | 'hand' | 'eraser' | 'clear';
 
@@ -54,10 +54,34 @@ export interface ICanvasBoxShape extends ICanvasShape {
   };
 }
 
+export interface ICanvasDiamondShape extends ICanvasShape {
+  props: {
+    size: ICanvasShapeDimensions;
+  };
+}
+
 export interface ICanvasCircleShape extends ICanvasShape {
   props: {
     radius: number;
   };
 }
 
-export type CanvasShapes = ICanvasDrawShape | ICanvasBoxShape | ICanvasCircleShape;
+export interface ICanvasHexagonShape extends ICanvasShape {
+  props: {
+    size: ICanvasShapeDimensions;
+  };
+}
+
+export interface ICanvasTriangleShape extends ICanvasShape {
+  props: {
+    size: ICanvasShapeDimensions;
+  };
+}
+
+export type CanvasShapes =
+  | ICanvasDrawShape
+  | ICanvasBoxShape
+  | ICanvasCircleShape
+  | ICanvasDiamondShape
+  | ICanvasHexagonShape
+  | ICanvasTriangleShape;

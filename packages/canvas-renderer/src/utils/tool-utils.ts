@@ -2,7 +2,7 @@ import { CanvasToolTypes } from '@shapes/types';
 
 export class ToolUtils {
   static isShapeTool(tool: CanvasToolTypes): boolean {
-    const tools: CanvasToolTypes[] = ['box', 'circle', 'draw'];
+    const tools: CanvasToolTypes[] = ['box', 'circle', 'draw', 'diamond', 'hexagon', 'triangle'];
     return tools.includes(tool);
   }
 

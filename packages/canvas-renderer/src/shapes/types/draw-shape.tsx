@@ -1,8 +1,9 @@
 import { ShapeUtils } from '@utils/shape-utils';
-import { ICanvasDrawShape, ICanvasEvenetsData, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
+import { ICanvasDrawShape, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
 import { JSX } from 'react';
+import { PointerMoveData } from '@hooks/canvas/use-canvas-draw';
 
 export class DrawShape extends Shape<ICanvasDrawShape> {
   renderHandDrawn(data: ICanvasDrawShape): JSX.Element {
@@ -82,7 +83,7 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
     );
   }
 
-  mouseUpdate(data: ICanvasDrawShape, updatePayload: ICanvasEvenetsData): ICanvasDrawShape {
+  mouseUpdate(data: ICanvasDrawShape, updatePayload: PointerMoveData): ICanvasDrawShape {
     const { topLeftPoint, translatedPoints } = updatePayload;
 
     if (!topLeftPoint) return data;

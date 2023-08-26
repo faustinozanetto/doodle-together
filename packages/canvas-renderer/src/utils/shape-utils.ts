@@ -10,14 +10,19 @@ import { BoxShape } from '../shapes/types/box-shape';
 import { CircleShape } from '../shapes/types/circle-shape';
 import { DrawShape } from '../shapes/types/draw-shape';
 import { Shape } from '../shapes/types/shape';
-import { CanvasCameraSliceState } from '@state/canvas-camera.slice';
 import { getStrokePoints } from 'perfect-freehand';
 import { CanvasTreeNode } from '@state/canvas-tree.slice';
+import { DiamondShape } from '@shapes/types/diamond-shape';
+import { HexagonShape } from '@shapes/types/hexagon-shape';
+import { TriangleShape } from '@shapes/types/triangle-shape';
 
 const SHAPE_CLASSES: Record<CanvasShapeToolTypes, Shape<CanvasShapes>> = {
   box: new BoxShape(),
   draw: new DrawShape(),
   circle: new CircleShape(),
+  diamond: new DiamondShape(),
+  hexagon: new HexagonShape(),
+  triangle: new TriangleShape(),
 };
 
 const SHAPE_SIZES: Record<ICanvasShapeCustomization['size'], number> = {

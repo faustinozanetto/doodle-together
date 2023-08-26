@@ -1,9 +1,10 @@
 import { ICanvasPoint } from '@common/canvas-point';
 import { ShapeUtils } from '@utils/shape-utils';
-import { ICanvasCircleShape, ICanvasEvenetsData, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
+import { ICanvasCircleShape, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
 import { CommonUtils } from '@utils/common-utils';
+import { PointerMoveData } from '@hooks/canvas/use-canvas-draw';
 
 export class CircleShape extends Shape<ICanvasCircleShape> {
   renderHandDrawn(data: ICanvasCircleShape): JSX.Element {
@@ -80,7 +81,7 @@ export class CircleShape extends Shape<ICanvasCircleShape> {
     );
   }
 
-  mouseUpdate(data: ICanvasCircleShape, updatePayload: ICanvasEvenetsData): ICanvasCircleShape {
+  mouseUpdate(data: ICanvasCircleShape, updatePayload: PointerMoveData): ICanvasCircleShape {
     const { originPoint, cursorPoint } = updatePayload;
 
     if (!originPoint) return data;

@@ -4,6 +4,9 @@ import { CircleIcon } from '@modules/ui/components/icons/circle-icon';
 import RoomTool, { RoomToolProps } from '../room-tool';
 import { CanvasShapeToolTypes, useCanvasCore } from '@doodle-together/canvas-renderer';
 import { capitalize } from '@modules/common/lib/common.lib';
+import { DiamondIcon } from '@modules/ui/components/icons/diamond-icon';
+import { HexagonIcon } from '@modules/ui/components/icons/hexagon-icon';
+import { TriangleIcon } from '@modules/ui/components/icons/triangle-icon';
 
 type RoomToolShapeOption = Pick<RoomToolProps, 'icon'> & {
   shape: CanvasShapeToolTypes;
@@ -35,6 +38,18 @@ const TOOL_SHAPES: RoomToolShapeOption[] = [
   {
     shape: 'circle',
     icon: <CircleIcon className="stroke-current" />,
+  },
+  {
+    shape: 'diamond',
+    icon: <DiamondIcon className="stroke-current" />,
+  },
+  {
+    shape: 'hexagon',
+    icon: <HexagonIcon className="stroke-current" />,
+  },
+  {
+    shape: 'triangle',
+    icon: <TriangleIcon className="stroke-current" />,
   },
 ];
 

@@ -1,4 +1,5 @@
-import { CanvasShapes, ICanvasBounds, ICanvasEvenetsData, ICanvasShapeDimensions } from '../types';
+import { PointerMoveData } from '@hooks/canvas/use-canvas-draw';
+import { CanvasShapes, ICanvasBounds, ICanvasShapeDimensions } from '../types';
 
 export abstract class Shape<T extends CanvasShapes> {
   /**
@@ -27,7 +28,7 @@ export abstract class Shape<T extends CanvasShapes> {
    * @param updatePayload Mouse move update payload.
    * @returns Updated shape data.
    */
-  abstract mouseUpdate(data: T, updatePayload: ICanvasEvenetsData): T;
+  abstract mouseUpdate(data: T, updatePayload: PointerMoveData): T;
 
   /**
    * Method that checks if the shape should re-render or not.

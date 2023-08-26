@@ -1,16 +1,16 @@
 import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { ShapeUtils } from '@utils/shape-utils';
-import { ICanvasBoxShape, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
+import { ICanvasHexagonShape, ICanvasBounds, ICanvasShapeDimensions } from '@shapes/types';
 import getStroke from 'perfect-freehand';
 import { Shape } from './shape';
 import { CommonUtils } from '@utils/common-utils';
 import { PointerMoveData } from '@hooks/canvas/use-canvas-draw';
 
-export class BoxShape extends Shape<ICanvasBoxShape> {
-  renderHandDrawn(data: ICanvasBoxShape): JSX.Element {
+export class HexagonShape extends Shape<ICanvasHexagonShape> {
+  renderHandDrawn(data: ICanvasHexagonShape): JSX.Element {
     const { customization } = data;
 
-    const points = this.calculateBoxPoints(data);
+    const points = this.calculateHexagonPoints(data);
 
     const closedPathPoints: ICanvasPoint[] = [...points.flat().slice(4), ...points[0].slice(0, 12)];
 
@@ -34,10 +34,10 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  renderDashed(data: ICanvasBoxShape): JSX.Element {
+  renderDashed(data: ICanvasHexagonShape): JSX.Element {
     const { customization } = data;
 
-    const points = this.calculateBoxPoints(data);
+    const points = this.calculateHexagonPoints(data);
 
     const path = ShapeUtils.getShapePathFromPoints(points.flat());
 
@@ -60,10 +60,10 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  renderDotted(data: ICanvasBoxShape): JSX.Element {
+  renderDotted(data: ICanvasHexagonShape): JSX.Element {
     const { customization } = data;
 
-    const points = this.calculateBoxPoints(data);
+    const points = this.calculateHexagonPoints(data);
 
     const path = ShapeUtils.getShapePathFromPoints(points.flat());
 
@@ -86,7 +86,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  mouseUpdate(data: ICanvasBoxShape, updatePayload: PointerMoveData): ICanvasBoxShape {
+  mouseUpdate(data: ICanvasHexagonShape, updatePayload: PointerMoveData): ICanvasHexagonShape {
     const { cursorPoint, originPoint } = updatePayload;
 
     if (!originPoint) return data;
@@ -114,7 +114,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     } else if (originPoint.x < cursorPoint.x && originPoint.y < cursorPoint.y) {
     }
 
-    const updatedData: ICanvasBoxShape = {
+    const updatedData: ICanvasHexagonShape = {
       ...data,
       position: finalPoint,
       props: {
@@ -129,7 +129,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     return updatedData;
   }
 
-  shouldRender(prev: ICanvasBoxShape, next: ICanvasBoxShape): boolean {
+  shouldRender(prev: ICanvasHexagonShape, next: ICanvasHexagonShape): boolean {
     return (
       prev.position !== next.position ||
       prev.props.size !== next.props.size ||
@@ -137,7 +137,7 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     );
   }
 
-  calculateBounds(data: ICanvasBoxShape): ICanvasBounds {
+  calculateBounds(data: ICanvasHexagonShape): ICanvasBounds {
     const { props, position } = data;
     const { size } = props;
 
@@ -157,14 +157,14 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     return translatedBounds;
   }
 
-  calculateDimensions(data: ICanvasBoxShape): ICanvasShapeDimensions {
+  calculateDimensions(data: ICanvasHexagonShape): ICanvasShapeDimensions {
     const { props } = data;
     const { size } = props;
 
     return { width: size.width, height: size.height };
   }
 
-  private calculateBoxPoints(data: ICanvasBoxShape) {
+  private calculateHexagonPoints(data: ICanvasHexagonShape) {
     const { props, customization } = data;
     const { size } = props;
 
@@ -174,30 +174,35 @@ export class BoxShape extends Shape<ICanvasBoxShape> {
     const heigth = Math.max(0, size.height - strokeWidth / 2);
 
     const random = CommonUtils.createSeededRandom(data.id);
-    const cornerOffsets: ICanvasPoint[] = Array.from({ length: 4 }).map(() => {
+    const cornerOffsets: ICanvasPoint[] = Array.from({ length: 6 }).map(() => {
       return {
         x: (random() * strokeWidth - 4) / 2,
         y: (random() * strokeWidth - 3.5) / 2,
       };
     });
 
+    const heightSteps = Array.from({ length: 5 }).map((_, i) => i / 4);
+
     // Corners
     const corners = {
-      topLeft: CanvasPoint.add({ x: strokeWidth / 2, y: strokeWidth / 2 }, cornerOffsets[0]),
-      topRight: CanvasPoint.add({ x: width, y: strokeWidth / 2 }, cornerOffsets[1]),
-      bottomRight: CanvasPoint.add({ x: width, y: heigth }, cornerOffsets[2]),
-      bottomLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth }, cornerOffsets[3]),
+      topLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth * heightSteps[1] }, cornerOffsets[0]),
+      topMiddle: CanvasPoint.add({ x: width / 2, y: strokeWidth / 2 }, cornerOffsets[1]),
+      topRight: CanvasPoint.add({ x: width, y: heigth * heightSteps[1] }, cornerOffsets[2]),
+      bottomLeft: CanvasPoint.add({ x: strokeWidth / 2, y: heigth * heightSteps[3] }, cornerOffsets[3]),
+      bottomMiddle: CanvasPoint.add({ x: width / 2, y: heigth }, cornerOffsets[4]),
+      bottomRight: CanvasPoint.add({ x: width, y: heigth * heightSteps[3] }, cornerOffsets[5]),
     };
 
     // Points between corners
-    const topBottomPoints = Math.max(14, Math.floor(width / 20));
-    const leftRightPoints = Math.max(14, Math.floor(heigth / 20));
+    const pointsInBetween = Math.max(14, Math.floor(width / 20));
 
     const points: ICanvasPoint[][] = [
-      ShapeUtils.getPointsInBetween(corners.topLeft, corners.topRight, topBottomPoints), // Top Side
-      ShapeUtils.getPointsInBetween(corners.topRight, corners.bottomRight, leftRightPoints), // Right Side
-      ShapeUtils.getPointsInBetween(corners.bottomRight, corners.bottomLeft, topBottomPoints), // Bottom Side
-      ShapeUtils.getPointsInBetween(corners.bottomLeft, corners.topLeft, leftRightPoints), // Left Side
+      ShapeUtils.getPointsInBetween(corners.topLeft, corners.topMiddle, pointsInBetween),
+      ShapeUtils.getPointsInBetween(corners.topMiddle, corners.topRight, pointsInBetween),
+      ShapeUtils.getPointsInBetween(corners.topRight, corners.bottomRight, pointsInBetween),
+      ShapeUtils.getPointsInBetween(corners.bottomRight, corners.bottomMiddle, pointsInBetween),
+      ShapeUtils.getPointsInBetween(corners.bottomMiddle, corners.bottomLeft, pointsInBetween),
+      ShapeUtils.getPointsInBetween(corners.bottomLeft, corners.topLeft, pointsInBetween),
     ];
 
     return points;
