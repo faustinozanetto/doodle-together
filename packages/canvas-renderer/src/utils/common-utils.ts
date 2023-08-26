@@ -47,6 +47,12 @@ export class CommonUtils {
     return () => this.getNextSeedRandomValue(state);
   }
 
+  /**
+   * Gets a point from a pointer event and a bounding box.
+   * @param event Pointer event.
+   * @param bounds Bounding box.
+   * @returns Canvas point.
+   */
   static getPoint(event: React.PointerEvent, bounds: ICanvasBounds): ICanvasPoint {
     const { clientX, clientY } = event;
 
@@ -56,6 +62,12 @@ export class CommonUtils {
     };
   }
 
+  /**
+   * Returns a point with camera transformation applied.
+   * @param point Point to transform.
+   * @param camera Camera data.
+   * @returns Transformed point.
+   */
   static getCameraTransformedPoint(point: ICanvasPoint, camera: CanvasCameraSliceState): ICanvasPoint {
     const { zoom, position } = camera;
 
@@ -72,6 +84,13 @@ export class CommonUtils {
     return translated;
   }
 
+  /**
+   * Gets a point from a pointer event with camera transformation.
+   * @param event Pointer event.
+   * @param bounds Bounding box.
+   * @param camera Camera data.
+   * @returns Computed point.
+   */
   static getTransformedEventPoint(
     event: React.PointerEvent,
     bounds: ICanvasBounds,

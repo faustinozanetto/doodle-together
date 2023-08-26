@@ -59,13 +59,12 @@ const RoomToolsShapes: React.FC = () => {
   return (
     <div className="flex gap-2">
       {TOOL_SHAPES.map((shape) => {
-        const shapeLabel = `${capitalize(shape.shape)} Shape`;
         const isSelected = selectedToolType === shape.shape;
 
         return (
           <RoomTool
             key={`shape-${shape.shape}`}
-            label={shapeLabel}
+            tool={shape.shape}
             icon={shape.icon}
             isSelected={isSelected}
             onToolClicked={() => {

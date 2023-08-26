@@ -3,6 +3,7 @@ import { useCanvasCamera } from '@hooks/camera/use-canvas-camera';
 import { useCanvasCore } from '@hooks/core/use-canvas-core';
 import { CommonUtils } from '@utils/common-utils';
 import { useState } from 'react';
+import { useThrottle } from './use-throttle';
 
 type UseMouseDragParams = {
   /** Wether if camera location and zoom should be used. */

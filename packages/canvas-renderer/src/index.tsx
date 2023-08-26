@@ -9,5 +9,6 @@ export { useCanvasTree } from './hooks/tree/use-canvas-tree';
 
 // Types
 export * from './shapes/types';
-export * from './utils/shape-utils';
-export * from './shapes/shapes-factory';
+
+// Utils
+export * from './utils/keys-utils';

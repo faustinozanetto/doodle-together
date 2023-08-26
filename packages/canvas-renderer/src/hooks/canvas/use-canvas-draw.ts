@@ -3,6 +3,7 @@ import { useCanvasCamera } from '../camera/use-canvas-camera';
 import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { CommonUtils } from '@utils/common-utils';
 import { useCanvasCore } from '../core/use-canvas-core';
+import { useThrottle } from '@hooks/common/use-throttle';
 
 export type PointerMoveData = {
   cursorPoint: ICanvasPoint;
@@ -102,6 +103,8 @@ export const useCanvasDraw = ({
     onPointerMoveCallback(data);
   };
 
+  const throttledPointerMove = useThrottle(10)(onDrawPointerMove);
+
   const onDrawPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
     isMouseDown.current = false;
     originPoint.current = null;
@@ -123,7 +126,7 @@ export const useCanvasDraw = ({
   };
 
   return {
-    onDrawPointerMove,
+    onDrawPointerMove: throttledPointerMove,
     onDrawPointerUp,
     onDrawPointerDown,
   };

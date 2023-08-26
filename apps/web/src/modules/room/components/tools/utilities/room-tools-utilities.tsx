@@ -80,13 +80,12 @@ const RoomToolsUtilities: React.FC = () => {
   return (
     <div className="flex gap-2">
       {TOOL_UTILITIES.map((utility) => {
-        const utilityLabel = `${capitalize(utility.utility)} Utility`;
         const isSelected = selectedToolType === utility.utility;
 
         return (
           <RoomTool
             key={`utility-${utility.utility}`}
-            label={utilityLabel}
+            tool={utility.utility}
             icon={utility.icon}
             isSelected={isSelected}
             onToolClicked={() => {

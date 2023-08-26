@@ -6,11 +6,14 @@ import { CanvasNode } from './node/canvas-node';
 import { CanvasBackground } from './canvas-background';
 import { CanvasSerializer } from 'serialization/canvas-serializer';
 import { CanvasContainer } from './canvas-container';
+import { useToolsKeysInput } from '@hooks/input/use-tools-keys-input';
 
 export const Canvas = () => {
   const { setNodes, nodes, activeNodeId, selectedNodeId } = useCanvasTree();
 
   const { currentState } = useCanvasCore();
+
+  useToolsKeysInput();
 
   useEffect(() => {
     const nodesFromStorage = localStorage.getItem('nodes');

@@ -13,9 +13,9 @@ export class DrawShape extends Shape<ICanvasDrawShape> {
 
     const stroke = getStroke(props.points, {
       size: strokeWidth,
-      thinning: 0.6,
-      streamline: 0.85,
-      smoothing: 0.5,
+      thinning: 0.25,
+      streamline: 0.55,
+      smoothing: 0.25,
       end: { taper: 6.5 * 4 },
       start: { taper: 8.5 * 2.5 },
       last: true,
