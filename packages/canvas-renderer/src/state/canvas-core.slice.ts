@@ -15,6 +15,8 @@ export type CanvasCoreSliceState = {
   bounds: ICanvasBounds;
   selectedToolType: CanvasToolTypes;
   currentState: CanvasState;
+  selectedNodeId: string | null;
+  activeNodeId: string | null;
 };
 
 export type CanvasCoreSliceActions = {
@@ -22,6 +24,10 @@ export type CanvasCoreSliceActions = {
   setBounds: (bounds: ICanvasBounds) => void;
   setCanvasRef: (canvasRef: ElementRef<'div'>) => void;
   setSelectedToolType: (type: CanvasToolTypes) => void;
+  setSelectedNodeId: (id: string) => void;
+  clearSelectedNode: () => void;
+  setActiveNodeId: (id: string) => void;
+  clearActiveNode: () => void;
 };
 
 export const useCanvasCoreStore = create<CanvasCoreSliceState & CanvasCoreSliceActions>((set) => ({
@@ -32,6 +38,8 @@ export const useCanvasCoreStore = create<CanvasCoreSliceState & CanvasCoreSliceA
     min: { x: Infinity, y: Infinity },
     max: { x: -Infinity, y: -Infinity },
   },
+  selectedNodeId: null,
+  activeNodeId: null,
   setCurrentState: (currentState) => {
     set({ currentState });
   },
@@ -43,5 +51,17 @@ export const useCanvasCoreStore = create<CanvasCoreSliceState & CanvasCoreSliceA
   },
   setSelectedToolType: (type) => {
     set({ selectedToolType: type });
+  },
+  setSelectedNodeId: (id) => {
+    set({ selectedNodeId: id });
+  },
+  clearSelectedNode: () => {
+    set({ selectedNodeId: null });
+  },
+  setActiveNodeId: (id) => {
+    set({ activeNodeId: id });
+  },
+  clearActiveNode: () => {
+    set({ activeNodeId: null });
   },
 }));

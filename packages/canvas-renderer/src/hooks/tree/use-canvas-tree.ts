@@ -1,4 +1,5 @@
 import { CanvasShapes } from '@shapes/types';
+import { useCanvasCoreStore } from '@state/canvas-core.slice';
 import { useCanvasTreeStore } from '@state/canvas-tree.slice';
 
 /**
@@ -6,20 +7,10 @@ import { useCanvasTreeStore } from '@state/canvas-tree.slice';
  * @returns
  */
 export const useCanvasTree = () => {
-  const {
-    setNodes,
-    clerNodes,
-    addNode,
-    removeNode,
-    setSelectedNodeId,
-    clearSelectedNode,
-    updateNode,
-    setActiveNodeId,
-    clearActiveNode,
-    nodes,
-    selectedNodeId,
-    activeNodeId,
-  } = useCanvasTreeStore();
+  const { setNodes, clerNodes, addNode, removeNode, updateNode, nodes } = useCanvasTreeStore();
+
+  const { selectedNodeId, activeNodeId, setActiveNodeId, clearActiveNode, setSelectedNodeId, clearSelectedNode } =
+    useCanvasCoreStore();
 
   const nodesIsEmpty = () => {
     return nodes.length === 0;

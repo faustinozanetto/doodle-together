@@ -2,7 +2,7 @@ import React from 'react';
 import { SquareIcon } from '@modules/ui/components/icons/square-icon';
 import { CircleIcon } from '@modules/ui/components/icons/circle-icon';
 import RoomTool, { RoomToolProps } from '../room-tool';
-import { CanvasShapeToolTypes, useCanvasCore } from '@doodle-together/canvas-renderer';
+import { CanvasShapeToolTypes, useCanvasCoreStore } from '@doodle-together/canvas-renderer';
 import { capitalize } from '@modules/common/lib/common.lib';
 import { DiamondIcon } from '@modules/ui/components/icons/diamond-icon';
 import { HexagonIcon } from '@modules/ui/components/icons/hexagon-icon';
@@ -54,7 +54,7 @@ const TOOL_SHAPES: RoomToolShapeOption[] = [
 ];
 
 const RoomToolsShapes: React.FC = () => {
-  const { setSelectedToolType, selectedToolType } = useCanvasCore();
+  const { setSelectedToolType, selectedToolType } = useCanvasCoreStore();
 
   return (
     <div className="flex gap-2">

@@ -8,12 +8,11 @@ import RoomUsers from './users/room-users';
 import RoomCustomization from './customization/room-customization';
 import RoomCanvas from './canvas/room-canvas';
 import RoomTools from './tools/room-tools';
-import { CanvasRenderer } from '@doodle-together/canvas-renderer';
 import { User } from '@doodle-together/database';
 import { useUpdateRoomSocket } from '../hooks/sockets/use-update-room-socket';
 import { useDeleteRoomSocket } from '../hooks/sockets/use-delete-room-socket';
 import { useKickRequestRoomSocket } from '../hooks/sockets/use-kick-request-room-socket';
-import { RequestCanvasStateSocketPayload, RoomWithUsers, SocketNames } from '@doodle-together/shared';
+import { RoomWithUsers, SocketNames } from '@doodle-together/shared';
 
 import { useMeStore } from '@modules/state/me.slice';
 import { getDataFromToken } from '@modules/common/lib/common.lib';
@@ -35,24 +34,20 @@ const Room: React.FC<RoomProps> = (props) => {
 
   const { setMe, setAccessToken, clearAccessToken } = useMeStore();
 
-  /*
   useRoomNotifications();
 
   // Socket hooks
   useUpdateRoomSocket();
   useDeleteRoomSocket();
-  useKickRequestRoomSocket();*/
+  useKickRequestRoomSocket();
 
   useEffect(() => {
     if (!room) {
-      console.log('Invalid room!');
       return router.push('/');
     }
 
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) {
-      console.log('Invalid access token!');
-
       const joinRoomURL = new URL('/room/join', siteConfig.url);
       joinRoomURL.searchParams.append('roomId', room.id);
       return router.push(joinRoomURL.toString());
@@ -61,15 +56,12 @@ const Room: React.FC<RoomProps> = (props) => {
     const { sub: userId, roomId, username, exp: accessTokenExpiry } = getDataFromToken(accessToken);
 
     if (roomId !== room.id) {
-      console.log('Room ids do not match!');
       clearAccessToken();
       return router.push('/');
     }
 
     const currentTimeInSeconds = Date.now() / 1000;
     if (accessTokenExpiry <= currentTimeInSeconds) {
-      console.log('Access token expired!');
-
       clearAccessToken();
       return router.push('/');
     }
@@ -84,16 +76,14 @@ const Room: React.FC<RoomProps> = (props) => {
     setMe(user);
     setAccessToken(accessToken);
 
+    // Notify backend that client successfully connected.
     socket.emit(SocketNames.CLIENT_READY);
   }, []);
 
   return (
     <div className="fixed bottom-0 right-0 left-0 top-20 overflow-hidden">
-      {/* <RoomCanvas /> */}
-      <CanvasRenderer />
+      <RoomCanvas />
 
-      {/* Panels */}
-      {/*
       <div className="pointer-events-none absolute inset-0 p-2 flex flex-col justify-between select-none overflow-clip">
         <div className="flex justify-between items-start">
           <RoomUsers />
@@ -105,7 +95,7 @@ const Room: React.FC<RoomProps> = (props) => {
           <RoomTools />
           <RoomManagement />
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

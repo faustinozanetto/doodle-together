@@ -1,7 +1,7 @@
-import { useCanvasCore } from '@hooks/core/use-canvas-core';
 import { useMemo } from 'react';
 import clsx from 'clsx';
 import { CommonUtils } from '@utils/common-utils';
+import { useCanvasCoreStore } from '@state/canvas-core.slice';
 
 type UseCanvasStylesReturn = {
   canvasStyles: React.CSSProperties;
@@ -12,7 +12,7 @@ type UseCanvasStylesReturn = {
  * Hook responsible for the styling of the canvas div.
  */
 export const useCanvasStyles = (): UseCanvasStylesReturn => {
-  const { currentState } = useCanvasCore();
+  const { currentState } = useCanvasCoreStore();
 
   const canvasStyles = useMemo(() => {
     const styles: React.CSSProperties = {

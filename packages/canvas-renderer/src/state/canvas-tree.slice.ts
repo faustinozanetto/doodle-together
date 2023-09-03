@@ -1,70 +1,78 @@
+import { DeepPartial } from '@common/types';
 import { ShapesFactory } from '@shapes/shapes-factory';
 import { CanvasShapeToolTypes, CanvasShapes, ICanvasShapeCustomization } from '@shapes/types';
-import { create } from 'zustand';
+import { produce } from 'immer';
+
+import { StateCreator, StoreApi, create } from 'zustand';
 
 export type CanvasTreeNode = CanvasShapes;
 
 export type CanvasTreeSliceState = {
   nodes: CanvasTreeNode[];
-  selectedNodeId: string | null;
-  activeNodeId: string | null;
 };
 
 export type CanvasTreeSliceActions = {
   setNodes: (nodes: CanvasTreeNode[]) => void;
   clerNodes: () => void;
-  addNode: (type: CanvasShapeToolTypes, customization?: ICanvasShapeCustomization) => CanvasTreeNode;
+  addNode: (type: CanvasShapeToolTypes, customization?: ICanvasShapeCustomization) => void;
   removeNode: (id: string) => void;
-  updateNode: (id: string, data: CanvasShapes) => void;
-  setSelectedNodeId: (id: string) => void;
-  clearSelectedNode: () => void;
-  setActiveNodeId: (id: string) => void;
-  clearActiveNode: () => void;
+  updateNode: (id: string, data: DeepPartial<CanvasShapes>) => void;
 };
 
-export const useCanvasTreeStore = create<CanvasTreeSliceState & CanvasTreeSliceActions>((set, get) => ({
-  nodes: [],
-  selectedNodeId: null,
-  activeNodeId: null,
-  setNodes: (nodes) => {
-    set({ nodes });
-  },
-  clerNodes: () => {
-    set({ nodes: [] });
-  },
-  addNode: (type, customization) => {
-    const node = ShapesFactory.createShape(type);
-    if (customization) node.customization = customization;
+type Middleware<S> = (
+  config: StateCreator<S>
+) => (set: StoreApi<S>['setState'], get: StoreApi<S>['getState'], api: StoreApi<S>) => S;
 
-    const updatedNodes = [...get().nodes, node];
-    set({ nodes: updatedNodes });
-    return node;
-  },
-  removeNode: (id) => {
-    const updatedNodes: CanvasTreeNode[] = get().nodes.filter((node) => node.id !== id);
-    set({ nodes: updatedNodes });
-  },
-  updateNode: (id, data) => {
-    const updatedNodes: CanvasTreeNode[] = get().nodes.map((node) => {
-      if (node.id === id) {
-        return {
-          ...data,
-        };
+const log: Middleware<CanvasTreeSliceState & CanvasTreeSliceActions> = (config) => (set, get, api) =>
+  config(
+    (args) => {
+      const changes = args;
+      console.log({ changes });
+      if (typeof changes === 'function') {
+        const res = changes(get());
+        console.log({ res });
       }
-      return { ...node };
-    });
-    set({ nodes: updatedNodes });
-  },
-  setSelectedNodeId: (id) => {
-    set({ selectedNodeId: id });
-  },
-  clearSelectedNode: () => {
-    set({ selectedNodeId: null });
-  },
-  setActiveNodeId: (id) => {
-    set({ activeNodeId: id });
-  },
-  clearActiveNode: () => {
-    set({ activeNodeId: null });
-  },
-}));
+
+      console.log('  applying', args);
+      set(args);
+      console.log('  new state', get());
+    },
+    get,
+    api
+  );
+
+export const useCanvasTreeStore = create<CanvasTreeSliceState & CanvasTreeSliceActions>(
+  log((set) => ({
+    nodes: [],
+    setNodes: (nodes) => {
+      set({ nodes });
+    },
+    clerNodes: () => {
+      set({ nodes: [] });
+    },
+    addNode: (type, customization) =>
+      set(
+        produce((state: CanvasTreeSliceState) => {
+          const node = ShapesFactory.createShape(type);
+          if (customization) node.customization = customization;
+          state.nodes.push(node);
+        })
+      ),
+    removeNode: (id) =>
+      set(
+        produce((state: CanvasTreeSliceState) => {
+          const index = state.nodes.findIndex((node) => node.id === id);
+
+          if (index !== -1) state.nodes.splice(index, 1);
+        })
+      ),
+    updateNode: (id, data) =>
+      set(
+        produce((state: CanvasTreeSliceState) => {
+          const index = state.nodes.findIndex((node) => node.id === id);
+
+          if (index !== -1) Object.assign(state.nodes[index], data);
+        })
+      ),
+  }))
+);

@@ -31,3 +31,5 @@ export const CanvasNode: React.FC<CanvasNodeProps> = memo(
     return !ShapeUtils.getShapeClass(prev.node.type).shouldRender(prev.node, next.node);
   }
 );
+
+CanvasNode.displayName = 'CanvasNode';

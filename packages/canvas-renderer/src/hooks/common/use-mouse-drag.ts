@@ -1,9 +1,8 @@
 import { ICanvasPoint, CanvasPoint } from '@common/canvas-point';
 import { useCanvasCamera } from '@hooks/camera/use-canvas-camera';
-import { useCanvasCore } from '@hooks/core/use-canvas-core';
+import { useCanvasCoreStore } from '@state/canvas-core.slice';
 import { CommonUtils } from '@utils/common-utils';
-import { useState } from 'react';
-import { useThrottle } from './use-throttle';
+import { useCallback, useRef, useState } from 'react';
 
 type UseMouseDragParams = {
   /** Wether if camera location and zoom should be used. */
@@ -53,23 +52,32 @@ export const useMouseDrag = ({
 }: UseMouseDragParams): UserMouseDragReturn => {
   const { onPointerDownCallback, onPointerMoveCallback, onPointerUpCallback } = callbacks;
 
-  const { bounds } = useCanvasCore();
+  const { bounds } = useCanvasCoreStore();
   const camera = useCanvasCamera();
 
   const [prevPoint, setPrevPoint] = useState<ICanvasPoint>({ x: 0, y: 0 });
   const [originPoint, setOriginPoint] = useState<ICanvasPoint>({ x: 0, y: 0 });
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
 
-  const getPointFromEvent = (event: React.PointerEvent) => {
-    let point: ICanvasPoint;
-    if (useCameraTransformation) point = CommonUtils.getTransformedEventPoint(event, bounds, camera);
-    else point = CommonUtils.getPoint(event, bounds);
+  const pointerTimestamp = useRef<number>(0);
 
-    return point;
-  };
+  const getPointFromEvent = useCallback(
+    (event: React.PointerEvent) => {
+      let point: ICanvasPoint;
+      if (useCameraTransformation) point = CommonUtils.getTransformedEventPoint(event, bounds, camera);
+      else point = CommonUtils.getPoint(event, bounds);
+
+      return point;
+    },
+    [bounds, camera, useCameraTransformation]
+  );
 
   const onPointerMove = (event: React.PointerEvent) => {
-    if (!isMouseDown || !originPoint) return;
+    if (!isMouseDown) return;
+
+    // Workaround to fix unwanted results when dev tools are open. It seems like events are triggered more.
+    if (event.timeStamp - pointerTimestamp.current < 1000 / 60) return;
+    pointerTimestamp.current = event.timeStamp;
 
     const point = getPointFromEvent(event);
     const delta = CanvasPoint.sub(point, originPoint);

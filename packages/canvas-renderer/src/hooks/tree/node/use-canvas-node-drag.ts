@@ -19,7 +19,6 @@ export const useCanvasTreeNodeDrag = (node: CanvasTreeNode) => {
       onPointerMoveCallback(delta) {
         const newPosition: ICanvasPoint = CanvasPoint.add(node.position, delta);
         updateNode(node.id, {
-          ...node,
           position: newPosition,
         });
       },

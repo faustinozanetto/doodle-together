@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "clsx": "2.0.0",
+    "immer": "10.0.2",
     "nanoid": "4.0.2",
     "perfect-freehand": "1.2.0",
     "zustand": "4.4.1"

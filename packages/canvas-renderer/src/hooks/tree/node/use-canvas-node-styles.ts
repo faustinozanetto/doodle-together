@@ -1,10 +1,10 @@
 import { CanvasTreeNode } from '@state/canvas-tree.slice';
 import { useCanvasTree } from '../use-canvas-tree';
-import { useCanvasCore } from '@hooks/core/use-canvas-core';
 import { useMemo } from 'react';
 import { ShapeUtils } from '@utils/shape-utils';
 import { CommonUtils } from '@utils/common-utils';
 import clsx from 'clsx';
+import { useCanvasCoreStore } from '@state/canvas-core.slice';
 
 type UseCanvasTreeNodeStylesReturn = {
   nodeStyles: React.CSSProperties;
@@ -17,7 +17,7 @@ type UseCanvasTreeNodeStylesReturn = {
  * @returns Node styles and classnames.
  */
 export const useCanvasTreeNodeStyles = (node: CanvasTreeNode): UseCanvasTreeNodeStylesReturn => {
-  const { currentState } = useCanvasCore();
+  const { currentState } = useCanvasCoreStore();
   const { activeNodeId, selectedNodeId } = useCanvasTree();
 
   const shapeClass = ShapeUtils.getShapeClass(node.type);

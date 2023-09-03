@@ -1,14 +1,13 @@
-import { useCanvasCore } from '@hooks/core/use-canvas-core';
 import { KeysUtils } from '@utils/keys-utils';
 import { useKeydownEvent } from './use-keydown-event';
-import { CanvasState } from '@state/canvas-core.slice';
+import { CanvasState, useCanvasCoreStore } from '@state/canvas-core.slice';
 import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
 
 /**
  * Hook responsible for selecting tools with keys.
  */
 export const useToolsKeysInput = () => {
-  const { setSelectedToolType, setCurrentState } = useCanvasCore();
+  const { setSelectedToolType, setCurrentState } = useCanvasCoreStore();
   const { clearActiveNode, clearSelectedNode } = useCanvasTree();
 
   useKeydownEvent({

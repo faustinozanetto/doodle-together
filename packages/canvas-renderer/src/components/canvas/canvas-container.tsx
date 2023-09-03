@@ -1,10 +1,9 @@
 import React, { ElementRef, useEffect, useRef } from 'react';
-import { useCanvasCore } from '@hooks/core/use-canvas-core';
 import { useCanvasTree } from '@hooks/tree/use-canvas-tree';
 import { useCanvasEvents } from '@hooks/canvas/use-canvas-events';
 import { ShapeUtils } from '@utils/shape-utils';
 import { useCanvasCustomization } from '@hooks/customization/use-canvas-customization';
-import { CanvasState } from '@state/canvas-core.slice';
+import { CanvasState, useCanvasCoreStore } from '@state/canvas-core.slice';
 import { CanvasShapeToolTypes } from '@shapes/types';
 import { ToolUtils } from '@utils/tool-utils';
 import { useCanvasDrag } from '@hooks/canvas/use-canvas-drag';
@@ -26,7 +25,7 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = (props) => {
   const { clerNodes, addNode, updateNode, getLastNode, setActiveNodeId, clearActiveNode, clearSelectedNode } =
     useCanvasTree();
 
-  const { setCanvasRef, setCurrentState, currentState, selectedToolType } = useCanvasCore();
+  const { setCanvasRef, setCurrentState, currentState, selectedToolType } = useCanvasCoreStore();
 
   const { onDragPointerDown, onDragPointerMove, onDragPointerUp } = useCanvasDrag();
 
@@ -40,8 +39,10 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = (props) => {
       setCurrentState(CanvasState.Drawing);
 
       // Create a node with selected shape type global customization and set as active one.
-      const addedNode = addNode(selectedToolType as CanvasShapeToolTypes, customization);
-      setActiveNodeId(addedNode.id);
+      addNode(selectedToolType as CanvasShapeToolTypes, customization);
+      const node = getLastNode();
+      if (!node) return;
+      setActiveNodeId(node.id);
     },
     onPointerUpCallback(event) {
       // If current tool is shape type, clear active node and switch to idling.

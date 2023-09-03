@@ -2,8 +2,8 @@ import { useRef } from 'react';
 import { useCanvasCamera } from '../camera/use-canvas-camera';
 import { CanvasPoint, ICanvasPoint } from '@common/canvas-point';
 import { CommonUtils } from '@utils/common-utils';
-import { useCanvasCore } from '../core/use-canvas-core';
 import { useThrottle } from '@hooks/common/use-throttle';
+import { useCanvasCoreStore } from '@state/canvas-core.slice';
 
 export type PointerMoveData = {
   cursorPoint: ICanvasPoint;
@@ -48,7 +48,7 @@ export const useCanvasDraw = ({
   onPointerMoveCallback,
 }: UseCanvasDrawParams): UseCanvasEventsReturn => {
   const camera = useCanvasCamera();
-  const { bounds } = useCanvasCore();
+  const { bounds } = useCanvasCoreStore();
 
   const isMouseDown = useRef<boolean>(false);
   const originPoint = useRef<ICanvasPoint | null>(null);

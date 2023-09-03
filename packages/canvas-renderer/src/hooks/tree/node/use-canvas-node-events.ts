@@ -1,5 +1,4 @@
-import { useCanvasCore } from '@hooks/core/use-canvas-core';
-import { CanvasState } from '@state/canvas-core.slice';
+import { CanvasState, useCanvasCoreStore } from '@state/canvas-core.slice';
 import { ToolUtils } from '@utils/tool-utils';
 import { useCanvasTree } from '../use-canvas-tree';
 import { CanvasTreeNode } from '@state/canvas-tree.slice';
@@ -22,7 +21,7 @@ type UseCanvasNodeEvents = {
  * @returns Events.
  */
 export const useCanvasTreeNodeEvents = (node: CanvasTreeNode): UseCanvasNodeEvents => {
-  const { setCurrentState, currentState, selectedToolType } = useCanvasCore();
+  const { setCurrentState, currentState, selectedToolType } = useCanvasCoreStore();
 
   const { setSelectedNodeId, setActiveNodeId, clearActiveNode, clearSelectedNode, removeNode } = useCanvasTree();
 
