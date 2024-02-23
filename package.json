@@ -23,7 +23,7 @@
   "devDependencies": {
     "@commitlint/cli": "17.7.1",
     "@commitlint/config-conventional": "17.7.0",
-    "eslint": "8.45.0",
+    "eslint": "8.57.0",
     "eslint-config-doodle-together": "*",
     "husky": "8.0.3",
     "lint-staged": "14.0.0",
