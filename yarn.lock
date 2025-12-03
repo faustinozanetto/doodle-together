@@ -487,7 +487,7 @@ __metadata:
     typescript: ^5.1.6
     utf-8-validate: 6.0.3
     valtio: 1.11.2
-    zod: 3.22.1
+    zod: 3.25.76
     zustand: 4.4.1
   languageName: unknown
   linkType: soft
@@ -12020,10 +12020,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:3.22.1":
-  version: 3.22.1
-  resolution: "zod@npm:3.22.1"
-  checksum: 05b62cc1069da6e6349ad2325ec6b7d0c00699f0796e0fd071bcc2b44ac711679e52ad00bc563019504c7e64bbf0bf73737f31366d882a856962cd6e2882cf0e
+"zod@npm:3.25.76":
+  version: 3.25.76
+  resolution: "zod@npm:3.25.76"
+  checksum: c9a403a62b329188a5f6bd24d5d935d2bba345f7ab8151d1baa1505b5da9f227fb139354b043711490c798e91f3df75991395e40142e6510a4b16409f302b849
   languageName: node
   linkType: hard
 
